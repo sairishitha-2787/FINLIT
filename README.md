@@ -2,29 +2,31 @@
 
 AI-powered financial literacy platform that teaches finance through personalized interest-based analogies.
 
-## Project Status: COMPLETE ✅
+## Project Status: COMPLETE
 
 All features implemented and tested:
-- ✅ Backend API with OpenAI & Giphy integration
-- ✅ Frontend React app with Tailwind CSS & Framer Motion
-- ✅ Complete user flow: Landing → Onboarding → Dashboard → Learning → Quiz
-- ✅ 11 interest domains
-- ✅ Personalized AI explanations
-- ✅ Interactive quizzes with GIF feedback
-- ✅ localStorage persistence
+- Backend API with Hugging Face AI & Giphy integration
+- Frontend React app with Neo-Brutalist design
+- Complete user flow: Landing → Onboarding → Dashboard → Learning → Quiz
+- 3-Level Quiz System (Understanding → Application → Boss Fight)
+- Gamification system (XP, Levels, Streaks, Badges)
+- Floating AI Mentor chatbot
+- 30+ financial topics across 6 categories
+- Interest-based learning (Gaming, Music, Sports, CSE, Fashion, Writing)
 
 ## Tech Stack
 
 ### Backend
 - Node.js + Express
-- OpenAI API (GPT-4o-mini)
-- Giphy API
+- Hugging Face API (Mistral-7B-Instruct) with comprehensive fallbacks
+- Giphy API for feedback GIFs
 - CORS, dotenv
 
 ### Frontend
 - React 18
-- Tailwind CSS
-- Framer Motion
+- Tailwind CSS (Neo-Brutalist design system)
+- Framer Motion (animations)
+- Canvas-Confetti (celebrations)
 - React Router
 - Axios
 - Context API for state management
@@ -35,49 +37,56 @@ All features implemented and tested:
 FINLIT/
 ├── backend/
 │   ├── services/
-│   │   ├── openaiService.js    # AI explanation & quiz generation
-│   │   └── giphyService.js     # GIF fetching for feedback
+│   │   ├── huggingfaceService.js  # AI explanation & quiz generation
+│   │   └── giphyService.js        # GIF fetching for feedback
 │   ├── config/
-│   │   └── interestDomains.js  # 11 interest domains & topics
-│   ├── server.js               # Express server with API endpoints
+│   │   └── interestDomains.js     # Interest domains & topics
+│   ├── server.js                  # Express server with API endpoints
 │   ├── package.json
-│   └── .env                    # API keys (update before running)
+│   └── .env                       # API keys (create before running)
 │
 └── frontend/
     ├── src/
     │   ├── components/
-    │   │   ├── onboarding/     # Interest selector & onboarding
-    │   │   ├── learning/       # Explanation display
-    │   │   ├── quiz/          # Quiz environment & feedback
-    │   │   └── shared/        # Button, Loading, ProgressBar
+    │   │   ├── dashboard/         # BentoDashboard, TopicSelector
+    │   │   ├── learning/          # ExplanationDisplay, JargonFlashcard
+    │   │   ├── quiz/              # NeoQuizEnvironment, AnimatedFeedback
+    │   │   ├── mentor/            # FloatingMentor chatbot
+    │   │   ├── onboarding/        # InterestSelector
+    │   │   └── shared/            # Button, Loading, XPPopup, LevelUpModal
     │   ├── pages/
-    │   │   ├── Landing.jsx    # Entry page
-    │   │   ├── Onboarding.jsx # 5-question flow
-    │   │   ├── Dashboard.jsx  # Main hub
-    │   │   └── Learning.jsx   # Topic learning & quiz
+    │   │   ├── Landing.jsx        # Entry page
+    │   │   ├── Onboarding.jsx     # 5-question flow
+    │   │   ├── Dashboard.jsx      # Main hub with Bento grid
+    │   │   └── Learning.jsx       # Topic learning & quiz
     │   ├── context/
-    │   │   └── UserContext.jsx # Global state
+    │   │   └── UserContext.jsx    # Global state
+    │   ├── hooks/
+    │   │   └── useGamification.js # XP, levels, badges, streaks
     │   ├── services/
-    │   │   └── api.js         # Backend API calls
-    │   ├── utils/
-    │   │   ├── constants.js
-    │   │   └── storage.js     # localStorage utilities
-    │   ├── App.jsx
-    │   └── index.js
-    ├── tailwind.config.js
+    │   │   └── api.js             # Backend API calls
+    │   └── utils/
+    │       ├── constants.js
+    │       └── storage.js         # localStorage utilities
+    ├── tailwind.config.js         # Neo-Brutalist design tokens
     └── package.json
 ```
 
 ## Setup Instructions
 
-### 1. Update API Keys
+### 1. Create Environment Files
 
-Edit `backend/.env`:
+Create `backend/.env`:
 ```env
-OPENAI_API_KEY=your_full_openai_key_here
-GIPHY_API_KEY=qcB4dkjdoj3nfNZExr24MFT1U5Ecv2c4
+HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+GIPHY_API_KEY=your_giphy_api_key_here
 PORT=3001
 FRONTEND_URL=http://localhost:3000
+```
+
+Create `frontend/.env`:
+```env
+REACT_APP_API_URL=http://localhost:3001/api
 ```
 
 ### 2. Install Dependencies
@@ -99,21 +108,21 @@ npm install
 cd backend
 npm start
 ```
-Backend will run on http://localhost:3001
+Backend runs on http://localhost:3001
 
 **Terminal 2 - Frontend:**
 ```bash
 cd frontend
 npm start
 ```
-Frontend will run on http://localhost:3000
+Frontend runs on http://localhost:3000
 
 ## API Endpoints
 
 ### Backend (Port 3001)
 
 - `GET /api/health` - Health check
-- `GET /api/interests` - Get all 11 interest domains
+- `GET /api/interests` - Get all interest domains
 - `GET /api/topics?difficulty=beginner` - Get topics by difficulty
 - `POST /api/explain` - Generate personalized explanation
   ```json
@@ -123,138 +132,105 @@ Frontend will run on http://localhost:3000
     "difficulty": "beginner"
   }
   ```
-- `POST /api/quiz` - Generate quiz questions
+- `POST /api/quiz` - Generate 3-level quiz questions
 - `GET /api/gifs/correct` - Get celebration GIF
 - `GET /api/gifs/wrong` - Get encouragement GIF
+- `GET /api/gifs/celebration` - Get completion GIF
 - `POST /api/recommend` - Get topic recommendations
 
-## User Flow
+## 3-Level Quiz System
 
-1. **Landing Page** → Click "Start Your Journey"
-2. **Onboarding (5 Questions)**:
-   - Name
-   - Primary interest (11 options)
-   - Current situation
-   - Biggest financial challenge
-   - Knowledge level
-3. **Dashboard** → View recommended topics based on your interest
-4. **Learning Module**:
-   - AI-generated explanation with 4 sections (analogy, meaning, example, takeaway)
-   - Click "Take the Quiz"
-5. **Quiz**:
-   - 5 multiple-choice questions
-   - Instant feedback with GIFs
-   - Correct: Green celebration GIF
-   - Wrong: Red encouragement GIF + explanation
-6. **Results** → Return to dashboard to learn more topics
+Each quiz contains 5 questions across 3 levels:
+
+### Level 1: UNDERSTANDING (2 questions)
+- Conceptual mapping with interest-based analogies
+- Tests core principle comprehension
+
+### Level 2: APPLICATION (2 questions)
+- Quantitative math problems
+- Real-world calculations
+
+### Level 3: BOSS FIGHT (1 question)
+- Immersive simulation scenario
+- Complex decision-making with multiple variables
+
+## Gamification System
+
+- **XP Points**: Earn XP for reading (+10), chatting (+20), quizzes (+30-50)
+- **Levels**: 10 levels with progressive thresholds
+- **Streaks**: Daily login streak tracking
+- **Badges**: 6 unlockable badges
+- **Level-Up Modal**: Celebration with confetti on level up
 
 ## Interest Domains
 
-1. Writing & Storytelling ✍️
-2. Movies & TV Shows 🎬
-3. Gaming 🎮
-4. Music 🎵
-5. Fashion 👗
-6. Technology 💻
-7. Business 💼
-8. Food 🍕
-9. College Life 🎓
-10. Art 🎨
-11. Sports ⚽
+Supported interests with specialized analogies:
+- Gaming (XP, resources, boss fights)
+- Computer Science / CSE (Big O, tech debt, APIs)
+- Music (mixing, production, fanbase)
+- Sports (training, game film, contracts)
+- Fashion (capsule wardrobe, cost-per-wear)
+- Writing (manuscripts, editing, publishing)
 
-## Financial Topics by Difficulty
+Aliases supported: cse, cs, programming, coding, tech, gym, fitness, dance, reading, books, esports
 
-### Beginner
-- Budgeting Basics, Saving Money, Understanding Income, Credit vs Debit, Emergency Funds, Simple Interest, Banking Accounts, Tracking Expenses
+## Neo-Brutalist Design System
 
-### Intermediate
-- Compound Interest, Credit Scores, Investing Basics, Stocks & Bonds, Retirement Accounts, Tax Fundamentals, Debt Management, Insurance Types, Real Estate Basics
+### Colors
+- Background: `#F4F4F0` (brutal-bg)
+- Primary Blue: `#3352FF` (brutal-blue)
+- Accent Pink: `#FF90E8` (brutal-pink)
+- Success Green: `#70FFCA` (brutal-green)
+- Black: `#000000` (brutal-black)
+- White: `#FFFFFF` (brutal-white)
 
-### Advanced
-- Portfolio Diversification, Asset Allocation, Options Trading, Cryptocurrency, Tax Optimization, Estate Planning, Risk Management, Alternative Investments
+### Design Tokens
+- Borders: `border-4 border-brutal-black`
+- Shadows: `shadow-brutal` (8px 8px 0px black)
+- No rounded corners: `rounded-none`
+- Typography: `font-black` (900 weight)
 
 ## Features
 
 ### Core Functionality
-- ✅ Personalized AI explanations using OpenAI GPT-4o-mini
-- ✅ Interest-based analogies (11 domains)
-- ✅ Interactive 5-question quizzes
-- ✅ Animated GIF feedback (Giphy API)
-- ✅ Progress tracking with localStorage
-- ✅ Topic recommendations based on difficulty
+- Personalized AI explanations using Hugging Face Mistral-7B
+- Interest-based analogies (6+ domains)
+- 3-level quiz progression system
+- Animated GIF feedback (Giphy API)
+- Progress tracking with localStorage
+- Topic recommendations based on difficulty
 
 ### UI/UX
-- ✅ Smooth animations with Framer Motion
-- ✅ Responsive design (mobile-first)
-- ✅ Dark theme with gradient backgrounds
-- ✅ Card hover effects
-- ✅ Loading animations
-- ✅ Progress bars
+- Neo-Brutalist design (bold, stark, memorable)
+- Bento grid dashboard layout
+- Smooth animations with Framer Motion
+- Canvas-confetti celebrations
+- Floating AI mentor chatbot
+- Responsive design (mobile-first)
 
-### State Management
-- ✅ React Context API for global state
-- ✅ localStorage for data persistence
-- ✅ User profile, progress, and completed topics
+### Gamification
+- XP system with floating popups
+- Level progression with modal celebrations
+- Daily streak counter
+- Badge unlocking system
 
 ## Development Notes
 
-### Warnings (Non-Breaking)
-The frontend compiles with minor ESLint warnings about React Hook dependencies. These don't affect functionality:
-- `useEffect` dependency warnings (intentional for preventing infinite loops)
-- Unused import in UserContext (reserved for future features)
+### Fallback System
+The app includes comprehensive fallback quiz templates for 6 interests when the Hugging Face API is unavailable. This ensures the demo always works.
 
-### Cost Optimization
-- Using GPT-4o-mini (cheapest OpenAI model)
-- Keeping prompts under 1000 tokens
-- Caching enabled for Giphy API (15-minute cache)
-
-## Testing
-
-Both servers are running successfully:
-- ✅ Backend: http://localhost:3001
-- ✅ Frontend: http://localhost:3000
-- ✅ Health check: Confirmed working
-- ✅ API endpoints: All operational
-- ✅ Frontend compilation: Successful
-
-## Next Steps (Post-Hackathon)
-
-1. **Deployment**:
-   - Frontend: Vercel
-   - Backend: Render
-
-2. **Enhancements**:
-   - Add user authentication
-   - Leaderboards
-   - Social sharing
-   - More topics per difficulty level
-   - Certificate generation on completion
-
-3. **Bug Fixes**:
-   - Fix React Hook dependency warnings
-   - Add error boundaries
-   - Improve loading states
-
-## Project Stats
-
-- **Total Files Created**: 30+
-- **Lines of Code**: ~2500+
-- **Development Time**: ~2-3 hours (estimated)
-- **APIs Integrated**: 2 (OpenAI, Giphy)
-- **Components Built**: 15+
-- **Pages**: 4
-
-## License
-
-Built for hackathon. Open source - use freely!
+### localStorage Keys
+- `finlit_gamification` - XP, level, streak, badges
+- `finlit_profile` - User profile data
+- `finlit_progress` - Completed topics
 
 ## Credits
 
 Built with Claude Code by Anthropic
 - AI-powered financial education
 - Interest-based personalization
-- Interactive learning experience
+- Neo-Brutalist design aesthetic
 
 ---
 
-**Ready to teach finance! 🚀📚💰**
+**Ready to teach finance!**
