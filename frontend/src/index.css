@@ -11,7 +11,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,21 +27,21 @@ code {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1E293B;
+  background: #0a0e27;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6366F1;
-  border-radius: 4px;
+  background: #6c3ce0;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #818CF8;
+  background: #a78bfa;
 }
 
 /* Animations */
@@ -69,7 +69,7 @@ code {
   animation: slideUp 0.5s ease-out;
 }
 
-/* Custom gradient background */
+/* Legacy gradient background */
 .gradient-bg {
   background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
 }
@@ -87,4 +87,199 @@ code {
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+/* ============================================
+   COSMIC THEME - Landing & Onboarding
+   ============================================ */
+
+.cosmic-bg {
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1050 40%, #2d1b69 70%, #0f1135 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.cosmic-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at 30% 20%, rgba(108, 60, 224, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.glass-card-hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(167, 139, 250, 0.3);
+  box-shadow: 0 0 30px rgba(108, 60, 224, 0.2), 0 8px 32px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Glass input */
+.glass-input {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: rgba(167, 139, 250, 0.6);
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.15), 0 0 0 1px rgba(167, 139, 250, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Cosmic button */
+.cosmic-btn {
+  background: linear-gradient(135deg, #6c3ce0 0%, #4f46e5 50%, #6c3ce0 100%);
+  background-size: 200% 200%;
+  border: none;
+  border-radius: 16px;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cosmic-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cosmic-btn:hover {
+  background-position: 100% 100%;
+  box-shadow: 0 0 30px rgba(108, 60, 224, 0.5), 0 0 60px rgba(108, 60, 224, 0.2);
+  transform: translateY(-1px);
+}
+
+.cosmic-btn:hover::before {
+  opacity: 1;
+}
+
+.cosmic-btn:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.cosmic-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cosmic-btn-ghost:hover {
+  border-color: rgba(167, 139, 250, 0.4);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Cosmic text glow */
+.text-glow {
+  text-shadow: 0 0 20px rgba(167, 139, 250, 0.5), 0 0 40px rgba(167, 139, 250, 0.2);
+}
+
+.text-glow-pink {
+  text-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 40px rgba(236, 72, 153, 0.2);
+}
+
+/* Floating particles background */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translate(10px, -20px) scale(1.1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-5px, -40px) scale(0.9);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translate(15px, -20px) scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+@keyframes nebulaDrift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.3;
+  }
+  33% {
+    transform: translate(30px, -20px) rotate(120deg);
+    opacity: 0.5;
+  }
+  66% {
+    transform: translate(-20px, 10px) rotate(240deg);
+    opacity: 0.35;
+  }
+}
+
+/* Selected card glow ring */
+@keyframes selectedGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(108, 60, 224, 0.4), inset 0 0 20px rgba(108, 60, 224, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(108, 60, 224, 0.6), inset 0 0 30px rgba(108, 60, 224, 0.15);
+  }
+}
+
+.selected-glow {
+  animation: selectedGlow 2s ease-in-out infinite;
+}
+
+/* Progress orbit dot */
+.orbit-dot {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.orbit-dot-active {
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.8), 0 0 24px rgba(167, 139, 250, 0.4);
+}
+
+.orbit-dot-complete {
+  box-shadow: 0 0 10px rgba(112, 255, 202, 0.6), 0 0 20px rgba(112, 255, 202, 0.3);
 }
