@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import { getRecommendations } from '../services/api';
 import BentoDashboard from '../components/dashboard/BentoDashboard';
 import XPPopup from '../components/shared/XPPopup';
@@ -15,6 +16,7 @@ import useGamification from '../hooks/useGamification';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { profile, stats, completedTopics } = useUser();
+  const { logout } = useAuth();
   const { xpPopups } = useGamification();
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,9 +71,17 @@ const Dashboard = () => {
           <h1 className="text-5xl md:text-6xl font-black text-brutal-green mb-2">
             FINLIT
           </h1>
-          <p className="text-2xl text-brutal-white font-bold">
-            Welcome back, {profile.name}! 👋
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-2xl text-brutal-white font-bold">
+              Welcome back, {profile.name}! 👋
+            </p>
+            <button
+              onClick={async () => { await logout(); navigate('/login', { replace: true }); }}
+              className="bg-brutal-white border-2 border-brutal-white text-brutal-black font-bold px-4 py-2 text-sm hover:bg-brutal-pink hover:border-brutal-pink transition-colors"
+            >
+              LOGOUT
+            </button>
+          </div>
         </div>
       </motion.div>
 

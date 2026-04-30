@@ -7,6 +7,7 @@ const cors = require('cors');
 const { generateExplanation, generateQuiz } = require('./services/huggingfaceService');
 const { getCorrectGif, getWrongGif, getCelebrationGif } = require('./services/giphyService');
 const { interestDomains, financialTopics } = require('./config/interestDomains');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,6 +24,9 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import { ONBOARDING_QUESTIONS } from '../utils/constants';
 import InterestSelector from '../components/onboarding/InterestSelector';
 
@@ -148,9 +149,12 @@ const OrbitProgress = ({ currentStep, totalSteps }) => {
 const Onboarding = () => {
   const navigate = useNavigate();
   const { completeOnboarding } = useUser();
+  const { logout } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const currentQuestion = ONBOARDING_QUESTIONS[currentStep];
   const totalSteps = ONBOARDING_QUESTIONS.length;
@@ -160,21 +164,27 @@ const Onboarding = () => {
     setAnswers({ ...answers, [questionId]: value });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const currentAnswer = answers[currentQuestion.id];
-    if (!currentAnswer) return;
+    if (!currentAnswer || saving) return;
 
     if (isLastStep) {
+      setSaving(true);
+      setSaveError('');
       const profileData = {
         name: answers.name,
         primaryInterest: answers.interest,
         situation: answers.situation,
         challenge: answers.challenge,
         difficulty: answers.knowledge,
-        createdAt: new Date().toISOString()
       };
-      completeOnboarding(profileData);
-      navigate('/dashboard');
+      const result = await completeOnboarding(profileData);
+      setSaving(false);
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setSaveError(result.error || 'Failed to save. Please try again.');
+      }
     } else {
       setDirection(1);
       setCurrentStep(currentStep + 1);
@@ -229,7 +239,7 @@ const Onboarding = () => {
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-2"
+          className="text-center mb-2 relative"
         >
           <motion.h1
             className="text-3xl md:text-4xl font-bold text-white mb-1"
@@ -243,6 +253,12 @@ const Onboarding = () => {
           <p className="text-white/35 text-sm tracking-wide">
             Personalizing your experience
           </p>
+          <button
+            onClick={async () => { await logout(); navigate('/login', { replace: true }); }}
+            className="absolute right-0 top-0 text-white/25 hover:text-white/60 text-xs transition-colors"
+          >
+            Sign out
+          </button>
         </motion.div>
 
         {/* Orbit Progress */}
@@ -290,24 +306,43 @@ const Onboarding = () => {
 
           <motion.button
             onClick={handleNext}
-            disabled={!answers[currentQuestion.id]}
-            whileHover={answers[currentQuestion.id] ? { scale: 1.03 } : {}}
-            whileTap={answers[currentQuestion.id] ? { scale: 0.97 } : {}}
+            disabled={!answers[currentQuestion.id] || saving}
+            whileHover={answers[currentQuestion.id] && !saving ? { scale: 1.03 } : {}}
+            whileTap={answers[currentQuestion.id] && !saving ? { scale: 0.97 } : {}}
             className={`cosmic-btn px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300 ${
-              !answers[currentQuestion.id] ? 'opacity-40 cursor-not-allowed' : ''
+              !answers[currentQuestion.id] || saving ? 'opacity-40 cursor-not-allowed' : ''
             }`}
           >
             <span className="relative z-10 flex items-center gap-2">
-              {isLastStep ? 'Launch FINLIT' : 'Continue'}
-              <motion.span
-                animate={answers[currentQuestion.id] ? { x: [0, 3, 0] } : {}}
-                transition={{ duration: 1.2, repeat: Infinity }}
-              >
-                {isLastStep ? '🚀' : '→'}
-              </motion.span>
+              {saving ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  {isLastStep ? 'Launch FINLIT' : 'Continue'}
+                  <motion.span
+                    animate={answers[currentQuestion.id] ? { x: [0, 3, 0] } : {}}
+                    transition={{ duration: 1.2, repeat: Infinity }}
+                  >
+                    {isLastStep ? '🚀' : '→'}
+                  </motion.span>
+                </>
+              )}
             </span>
           </motion.button>
         </motion.div>
+
+        {saveError && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mt-4 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
+          >
+            {saveError}
+          </motion.div>
+        )}
       </div>
     </div>
   );

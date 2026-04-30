@@ -4,6 +4,8 @@
   "description": "FINLIT Frontend - AI-powered financial literacy platform",
   "private": true,
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.1",
     "axios": "^1.6.2",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^10.16.16",
