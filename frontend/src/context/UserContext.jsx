@@ -7,7 +7,7 @@ import {
   getCompletedTopics,
   getUserStats
 } from '../utils/storage';
-import { saveTopicProgress } from '../services/progressService';
+import { saveTopicProgress, fetchUserProgress } from '../services/progressService';
 
 const UserContext = createContext();
 
@@ -45,6 +45,7 @@ export const UserProvider = ({ children }) => {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [progress, setProgress] = useState([]);
+  const [completedTopics, setCompletedTopics] = useState(() => getCompletedTopics());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -63,10 +64,28 @@ export const UserProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: fetchError } = await fetchProfile(user.id); // fetchProfile queries by user_id
+      const [{ data, error: fetchError }, { data: progressRows }] = await Promise.all([
+        fetchProfile(user.id),
+        fetchUserProgress(user.id),
+      ]);
+
       if (fetchError) throw fetchError;
-      setProfile(data ? normalizeProfile(data) : null);
-      setProgress(getProgress()); // progress stays in localStorage until Session 4
+
+      const normalized = data ? normalizeProfile(data) : null;
+      if (normalized && !normalized.primaryInterest) {
+        const cached = localStorage.getItem(`finlit_interest_${user.id}`);
+        if (cached) normalized.primaryInterest = cached;
+      }
+      setProfile(normalized);
+      setProgress(getProgress());
+
+      // Build completedTopics from Supabase (source of truth for cross-device sync)
+      if (progressRows && progressRows.length > 0) {
+        const supabaseTopics = progressRows.map(r => r.topic);
+        const localTopics = getCompletedTopics();
+        const merged = [...new Set([...supabaseTopics, ...localTopics])];
+        setCompletedTopics(merged);
+      }
     } catch (err) {
       console.error('Error loading profile:', err);
       setError('Failed to load profile. Please refresh.');
@@ -86,6 +105,13 @@ export const UserProvider = ({ children }) => {
         throw saveError;
       }
       setProfile(normalizeProfile(data));
+      // Belt-and-suspenders: persist completion flag so the user never gets
+      // bounced back to onboarding if the DB fetch later returns null
+      localStorage.setItem(`finlit_ob_done_${user.id}`, '1');
+      // Cache the interest so loadProfile can recover if Supabase returns NULL
+      if (profileData.primaryInterest) {
+        localStorage.setItem(`finlit_interest_${user.id}`, profileData.primaryInterest.toLowerCase());
+      }
       return { success: true };
     } catch (err) {
       console.error('Error saving onboarding profile:', err);
@@ -104,6 +130,9 @@ export const UserProvider = ({ children }) => {
       const { data, error: updateError } = await updateProfileFields(user.id, toDbFields(merged));
       if (updateError) throw updateError;
       setProfile(normalizeProfile(data));
+      if (updates.primaryInterest) {
+        localStorage.setItem(`finlit_interest_${user.id}`, updates.primaryInterest.toLowerCase());
+      }
       return { success: true };
     } catch (err) {
       console.error('Error updating profile:', err);
@@ -119,11 +148,13 @@ export const UserProvider = ({ children }) => {
       difficulty: topicData.difficulty,
       completedAt: new Date().toISOString(),
     };
-    // Persist locally for immediate stats (localStorage)
     saveProgress(newItem);
     setProgress((prev) => [...prev, newItem]);
+    setCompletedTopics(prev => {
+      if (prev.includes(topicData.topic)) return prev;
+      return [...prev, topicData.topic];
+    });
 
-    // Also persist to Supabase if logged in
     if (user) {
       saveTopicProgress(user.id, {
         topic: topicData.topic,
@@ -145,14 +176,12 @@ export const UserProvider = ({ children }) => {
     if (user) loadProfile();
   };
 
-  // Onboarding is complete when the profile exists and has a real interest (not the 'general' placeholder)
-  const onboardingComplete = !!(
-    profile &&
-    profile.primaryInterest &&
-    profile.primaryInterest !== 'general'
-  );
+  // Onboarding is complete when:
+  // (a) the loaded profile has a real interest set, OR
+  // (b) localStorage says this user has already done onboarding (handles DB fetch hiccups)
+  const localFlag = user ? !!localStorage.getItem(`finlit_ob_done_${user.id}`) : false;
+  const onboardingComplete = localFlag || !!(profile && profile.primaryInterest);
 
-  const completedTopics = getCompletedTopics();
   const stats = getUserStats();
 
   return (

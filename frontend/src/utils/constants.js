@@ -17,9 +17,9 @@ export const DIFFICULTY_LEVELS = {
 export const ONBOARDING_QUESTIONS = [
   {
     id: 'name',
-    question: "What's your name?",
+    question: "What should we call you?",
     type: 'text',
-    placeholder: 'Enter your name'
+    placeholder: 'Your name or nickname'
   },
   {
     id: 'interest',
@@ -32,10 +32,10 @@ export const ONBOARDING_QUESTIONS = [
     question: 'What\'s your current situation?',
     type: 'multiple-choice',
     options: [
-      { value: 'student', label: 'Student', icon: '🎓' },
-      { value: 'working', label: 'Working Professional', icon: '💼' },
-      { value: 'business', label: 'Business Owner', icon: '🚀' },
-      { value: 'other', label: 'Other', icon: '✨' }
+      { value: 'student', label: 'Student', icon: 'GraduationCap' },
+      { value: 'working', label: 'Working Professional', icon: 'Briefcase' },
+      { value: 'business', label: 'Business Owner', icon: 'Rocket' },
+      { value: 'other', label: 'Other', icon: 'Sparkles' }
     ]
   },
   {
@@ -43,11 +43,11 @@ export const ONBOARDING_QUESTIONS = [
     question: 'What\'s your biggest financial challenge?',
     type: 'multiple-choice',
     options: [
-      { value: 'debt', label: 'Managing Debt', icon: '💳' },
-      { value: 'saving', label: 'Saving Money', icon: '💰' },
-      { value: 'investing', label: 'Learning to Invest', icon: '📈' },
-      { value: 'budgeting', label: 'Budgeting', icon: '📊' },
-      { value: 'understanding', label: 'Understanding Finance', icon: '🤔' }
+      { value: 'debt', label: 'Managing Debt', icon: 'CreditCard' },
+      { value: 'saving', label: 'Saving Money', icon: 'PiggyBank' },
+      { value: 'investing', label: 'Learning to Invest', icon: 'TrendingUp' },
+      { value: 'budgeting', label: 'Budgeting', icon: 'BarChart2' },
+      { value: 'understanding', label: 'Understanding Finance', icon: 'HelpCircle' }
     ]
   },
   {
@@ -55,9 +55,9 @@ export const ONBOARDING_QUESTIONS = [
     question: 'How would you rate your financial knowledge?',
     type: 'multiple-choice',
     options: [
-      { value: 'beginner', label: 'Just Starting Out', icon: '🌱', description: 'I\'m new to personal finance' },
-      { value: 'intermediate', label: 'Some Experience', icon: '🌿', description: 'I know the basics' },
-      { value: 'advanced', label: 'Pretty Confident', icon: '🌳', description: 'I want to level up' }
+      { value: 'beginner', label: 'Just Starting Out', icon: 'Sprout', description: 'I\'m new to personal finance' },
+      { value: 'intermediate', label: 'Some Experience', icon: 'Leaf', description: 'I know the basics' },
+      { value: 'advanced', label: 'Pretty Confident', icon: 'TreePine', description: 'I want to level up' }
     ]
   }
 ];

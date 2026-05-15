@@ -25,6 +25,10 @@ code {
     monospace;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -87,6 +91,135 @@ code {
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+/* ============================================
+   GLASSMORPHISM LIGHT THEME - Auth & Onboarding
+   ============================================ */
+
+.gl-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #EAF6FF 0%, #D0EAFF 50%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.gl-card {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.09), 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.gl-card-lg {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 20px;
+  box-shadow: 0 16px 64px rgba(15, 23, 42, 0.12), 0 2px 4px rgba(15, 23, 42, 0.04);
+}
+
+.gl-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(203, 213, 225, 0.80);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #1e293b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.gl-input::placeholder {
+  color: rgba(148, 163, 184, 0.65);
+  font-weight: 400;
+}
+
+.gl-input:focus {
+  border-color: #3A8DFF;
+  box-shadow: 0 0 0 3px rgba(58, 141, 255, 0.18);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.gl-btn {
+  background: linear-gradient(135deg, #3A8DFF 0%, #5FB3FF 100%);
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(58, 141, 255, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gl-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2979E8 0%, #4DA0F0 100%);
+  box-shadow: 0 6px 24px rgba(58, 141, 255, 0.40);
+}
+
+.gl-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.gl-btn:disabled {
+  opacity: 0.50;
+  cursor: not-allowed;
+}
+
+.gl-btn-ghost {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 12px;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gl-btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(203, 213, 225, 0.80);
+}
+
+.gl-label {
+  display: block;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.gl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
 /* ============================================

@@ -4,6 +4,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Brain, Gamepad2, Rocket, ArrowRight } from 'lucide-react';
+import AnimatedIcon from '../components/shared/AnimatedIcon';
 
 // Canvas-based floating particles
 const CosmicParticles = () => {
@@ -104,21 +106,9 @@ const Landing = () => {
   const navigate = useNavigate();
 
   const features = [
-    {
-      icon: '🧠',
-      title: 'AI-Powered',
-      description: 'Learn finance through your passions',
-    },
-    {
-      icon: '🎮',
-      title: 'Gamified',
-      description: 'Level up with XP, badges & streaks',
-    },
-    {
-      icon: '🚀',
-      title: 'Adaptive',
-      description: '3-level quizzes that grow with you',
-    },
+    { Icon: Brain,    animation: 'wiggle', title: 'AI-Powered', description: 'Learn finance through your passions' },
+    { Icon: Gamepad2, animation: 'bounce', title: 'Gamified',   description: 'Level up with XP, badges & streaks' },
+    { Icon: Rocket,   animation: 'float',  title: 'Adaptive',   description: '3-level quizzes that grow with you' },
   ];
 
   return (
@@ -198,13 +188,9 @@ const Landing = () => {
                 whileHover={{ y: -4, scale: 1.02 }}
                 className="glass-card-hover p-6 text-center"
               >
-                <motion.div
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: index * 0.5 }}
-                  className="text-4xl mb-3"
-                >
-                  {feature.icon}
-                </motion.div>
+                <div className="mb-3 text-white flex justify-center">
+                  <AnimatedIcon icon={feature.Icon} size={40} animation={feature.animation} />
+                </div>
                 <h3 className="text-lg font-semibold text-white mb-1">{feature.title}</h3>
                 <p className="text-white/45 text-sm">{feature.description}</p>
               </motion.div>
@@ -225,12 +211,7 @@ const Landing = () => {
             >
               <span className="relative z-10 flex items-center gap-3">
                 Begin Your Journey
-                <motion.span
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  →
-                </motion.span>
+                <AnimatedIcon icon={ArrowRight} size={20} animation="bounce" />
               </span>
             </motion.button>
           </motion.div>

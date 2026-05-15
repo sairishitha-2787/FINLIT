@@ -3,6 +3,22 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  safelist: [
+    // Slate palette (used in glassmorphism pages)
+    { pattern: /^text-slate-(300|400|500|600|700|800)$/ },
+    { pattern: /^bg-slate-(100|200)$/ },
+    { pattern: /^border-slate-(200|300)$/ },
+    // Teal palette
+    { pattern: /^(text|bg|border)-teal-(50|100|200|400|500|600|700)$/ },
+    // Emerald palette
+    { pattern: /^(text|bg|border)-emerald-(100|200|400|500|600)$/ },
+    // Amber / red for error states
+    { pattern: /^(text|bg|border)-(amber|red)-(50|200|400|500|600|700)$/ },
+    // White opacity variants used in Onboarding inline styles
+    'bg-white/40', 'bg-white/60', 'bg-white/70', 'bg-white/80',
+    'border-white/40', 'border-white/50', 'border-white/60', 'border-white/65',
+    'border-slate-200/60',
+  ],
   theme: {
     extend: {
       colors: {
