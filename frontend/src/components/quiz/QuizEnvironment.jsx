@@ -51,8 +51,8 @@ const QuizEnvironment = ({ questions, topic, onComplete }) => {
     setSelectedAnswer(null);
 
     if (isLastQuestion) {
-      // Quiz complete
-      onComplete(score + (selectedAnswer === currentQuestion.correctAnswer ? 1 : 0), totalQuestions);
+      // Quiz complete — score was already incremented in handleSubmitAnswer
+      onComplete(score, totalQuestions);
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }

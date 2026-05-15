@@ -3,6 +3,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, Lock, Lightbulb, Gem } from 'lucide-react';
+import AnimatedIcon from '../shared/AnimatedIcon';
 
 const JargonFlashcard = ({ jargonGuide }) => {
   if (!jargonGuide || jargonGuide.length === 0) {
@@ -18,7 +20,7 @@ const JargonFlashcard = ({ jargonGuide }) => {
         className="bg-brutal-black border-4 border-brutal-black shadow-brutal rounded-none p-6 mb-6"
       >
         <div className="flex items-center gap-3">
-          <span className="text-4xl">📚</span>
+          <AnimatedIcon icon={BookOpen} size={40} animation="none" className="text-brutal-green" />
           <div>
             <h2 className="text-3xl font-black text-brutal-green">
               DEVELOPER'S GUIDE TO FINANCE JARGON
@@ -64,7 +66,7 @@ const FlipCard = ({ item, index }) => {
           }`}
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <div className="text-6xl mb-4">🔒</div>
+          <div className="mb-4 text-brutal-black"><AnimatedIcon icon={Lock} size={48} animation="none" /></div>
           <h3 className="text-3xl font-black text-brutal-black mb-2">
             {item.jargon}
           </h3>
@@ -88,7 +90,7 @@ const FlipCard = ({ item, index }) => {
               <h3 className="text-2xl font-black text-brutal-black">
                 {item.jargon}
               </h3>
-              <div className="text-3xl">💡</div>
+              <AnimatedIcon icon={Lightbulb} size={28} animation="flash" className="text-brutal-black" />
             </div>
 
             <div className="mb-4">
@@ -102,8 +104,8 @@ const FlipCard = ({ item, index }) => {
           </div>
 
           <div className="bg-brutal-black border-2 border-brutal-black rounded-none p-3 mt-4">
-            <p className="text-xs font-bold text-brutal-white uppercase mb-1">
-              💎 PRO TIP
+            <p className="text-xs font-bold text-brutal-white uppercase mb-1 flex items-center gap-1">
+              <Gem size={12} strokeWidth={2.5} /> PRO TIP
             </p>
             <p className="text-brutal-green text-sm font-bold">
               {item.proTip}

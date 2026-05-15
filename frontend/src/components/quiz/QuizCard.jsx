@@ -3,10 +3,116 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
+import { gamingTheme } from '../../styles/gamingTheme';
 
-const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, totalQuestions }) => {
+function hexToRgbStr(hex = '#000000') {
+  const h = hex.replace('#', '');
+  return `${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)}`;
+}
+
+const optionText = (opt) => (opt && typeof opt === 'object' ? opt.text : opt);
+
+const FQ = { h: "'Playfair Display',serif", ui: "'DM Sans',sans-serif" };
+const FC = { deep: '#9d1f4a', mid: '#d4537e', body: '#b0627a', label: '#c98a9e', pink: '#f7a0b8' };
+
+const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, totalQuestions, gamingMode, gamingColors, fashionMode }) => {
   const answerLabels = ['A', 'B', 'C', 'D'];
+  const gc = gamingColors || {};
 
+  // ── Fashion render ──────────────────────────────────────────────────────────
+  if (fashionMode) {
+    return (
+      <div style={{ background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(24px) saturate(200%)', WebkitBackdropFilter: 'blur(24px) saturate(200%)', borderTop: '1.5px solid rgba(255,255,255,0.65)', borderLeft: '1.5px solid rgba(255,255,255,0.65)', borderBottom: '1.5px solid rgba(247,160,184,0.28)', borderRight: '1.5px solid rgba(247,160,184,0.28)', borderRadius: 24, padding: '28px', boxShadow: '0 16px 48px rgba(247,160,184,0.18), 0 6px 20px rgba(192,132,252,0.10)' }}>
+        {/* Progress dots */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+          <span style={{ fontFamily: FQ.ui, fontSize: 10, color: FC.label, letterSpacing: '0.18em', textTransform: 'uppercase' }}>Look {questionNumber} of {totalQuestions}</span>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[...Array(totalQuestions)].map((_, i) => (
+              <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i + 1 === questionNumber ? FC.pink : 'rgba(247,160,184,0.25)', boxShadow: i + 1 === questionNumber ? '0 0 6px rgba(247,160,184,0.55)' : 'none', transition: 'all 0.2s' }} />
+            ))}
+          </div>
+        </div>
+        {/* Question */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 28 }}>
+          <h2 style={{ fontFamily: FQ.h, fontSize: 20, fontWeight: 500, color: FC.deep, lineHeight: 1.45, margin: 0 }}>
+            {question.question || question.text || question.prompt || ''}
+          </h2>
+        </motion.div>
+        {/* Options */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {question.options.map((option, index) => {
+            const label = answerLabels[index];
+            const sel = selectedAnswer === label;
+            return (
+              <motion.div key={index} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.07 }}
+                onClick={() => onSelectAnswer(label)} whileHover={!sel ? { y: -2 } : {}} whileTap={{ scale: 0.99 }}
+                style={{ padding: '14px 18px', borderRadius: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, background: sel ? 'rgba(247,160,184,0.12)' : 'rgba(255,255,255,0.35)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,255,255,0.62)', borderLeft: '1px solid rgba(255,255,255,0.55)', borderBottom: sel ? '1.5px solid rgba(247,160,184,0.50)' : '1px solid rgba(247,160,184,0.18)', borderRight: sel ? '1.5px solid rgba(247,160,184,0.35)' : '1px solid rgba(247,160,184,0.18)', boxShadow: sel ? '0 0 16px rgba(247,160,184,0.18)' : 'none', transition: 'all 0.18s ease' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: sel ? 'rgba(247,160,184,0.18)' : 'rgba(255,255,255,0.38)', border: sel ? '1px solid rgba(247,160,184,0.48)' : '1px solid rgba(255,255,255,0.58)' }}>
+                  <span style={{ fontFamily: FQ.ui, fontWeight: 600, fontSize: 12, color: sel ? FC.deep : FC.label }}>{label}</span>
+                </div>
+                <p style={{ flex: 1, fontFamily: FQ.ui, fontSize: 14, color: sel ? FC.deep : FC.body, margin: 0, lineHeight: 1.4 }}>{optionText(option)}</p>
+                {sel && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ width: 20, height: 20, borderRadius: '50%', background: 'linear-gradient(135deg,#f7a0b8,#c084fc)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Check size={11} strokeWidth={3} color="#fff" /></motion.div>}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  if (gamingMode && gc.primary) {
+    return (
+      <div style={{ background: gamingTheme.cardBg, border: gamingTheme.borderThin, borderRadius: '16px', padding: '28px', backdropFilter: `blur(${gamingTheme.glassBlur})`, boxShadow: gamingTheme.shadowCard }}>
+        {/* Progress dots */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', color: gc.primary, letterSpacing: '2px' }}>Q{questionNumber} / {totalQuestions}</span>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {[...Array(totalQuestions)].map((_, i) => (
+              <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i + 1 === questionNumber ? gc.primary : 'rgba(139,184,233,0.25)', boxShadow: i + 1 === questionNumber ? `0 0 6px ${gc.glow}` : 'none', transition: 'all 0.2s' }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Question text */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '28px' }}>
+          <h2 style={{ fontFamily: gamingTheme.fontBody, fontSize: '20px', fontWeight: 600, color: gamingTheme.stellarWhite, lineHeight: 1.5, margin: 0 }}>{question.question || question.text || question.prompt || ''}</h2>
+        </motion.div>
+
+        {/* Answer options */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {question.options.map((option, index) => {
+            const label = answerLabels[index];
+            const isSelected = selectedAnswer === label;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.07 }}
+                onClick={() => onSelectAnswer(label)}
+                whileHover={{ scale: isSelected ? 1 : 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                style={{ padding: '14px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px', background: isSelected ? `rgba(${hexToRgbStr(gc.primary)},0.15)` : 'rgba(30,42,69,0.55)', border: isSelected ? `1.5px solid ${gc.primary}` : '1px solid rgba(139,184,233,0.18)', boxShadow: isSelected ? `0 0 12px ${gc.glow}` : 'none', transition: 'all 0.18s ease' }}
+              >
+                <div style={{ width: 32, height: 32, borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isSelected ? `rgba(${hexToRgbStr(gc.primary)},0.25)` : 'rgba(61,78,122,0.6)', border: `1px solid rgba(${hexToRgbStr(gc.primary)},${isSelected ? '0.6' : '0.2'})` }}>
+                  <span style={{ fontFamily: gamingTheme.fontHeading, fontSize: '11px', fontWeight: 700, color: isSelected ? gc.primary : gamingTheme.mutedBlue }}>{label}</span>
+                </div>
+                <p style={{ flex: 1, fontFamily: gamingTheme.fontBody, fontSize: '15px', color: isSelected ? gamingTheme.stellarWhite : gamingTheme.seafoam, margin: 0, lineHeight: 1.4 }}>{optionText(option)}</p>
+                {isSelected && (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ width: 20, height: 20, borderRadius: '50%', background: gc.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Check size={11} strokeWidth={3} color={gamingTheme.bgDark} />
+                  </motion.div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Brutalist render
   return (
     <div className="bg-brutal-white border-4 border-brutal-black shadow-brutal rounded-none p-8">
       {/* Progress Indicator */}
@@ -35,7 +141,7 @@ const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, to
         className="mb-8"
       >
         <h2 className="text-3xl font-black text-brutal-black leading-tight">
-          {question.question}
+          {question.question || question.text || question.prompt || ''}
         </h2>
       </motion.div>
 
@@ -92,7 +198,7 @@ const AnswerOption = ({ label, option, isSelected, onSelect, index }) => {
         {/* Option Text */}
         <div className="flex-1">
           <p className="text-brutal-black font-bold text-lg">
-            {option}
+            {optionText(option)}
           </p>
         </div>
 
@@ -103,7 +209,7 @@ const AnswerOption = ({ label, option, isSelected, onSelect, index }) => {
             animate={{ scale: 1 }}
             className="w-6 h-6 bg-brutal-green border-2 border-brutal-black rounded-none flex items-center justify-center"
           >
-            <span className="text-sm">✓</span>
+            <Check size={14} strokeWidth={3} />
           </motion.div>
         )}
       </div>
