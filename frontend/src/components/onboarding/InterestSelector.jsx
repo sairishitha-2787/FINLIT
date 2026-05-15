@@ -1,26 +1,24 @@
-// FINLIT Interest Selector - Cosmic Theme
-// Immersive floating cards with glow effects
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  PenLine, Film, Gamepad2, Music, Shirt, Code2,
+  Briefcase, UtensilsCrossed, GraduationCap, Palette, Activity, Check,
+} from 'lucide-react';
 import { getInterests } from '../../services/api';
 
-// Pulsing loading dots
-const CosmicLoader = () => (
+const INTEREST_ICON_MAP = {
+  PenLine, Film, Gamepad2, Music, Shirt, Code2,
+  Briefcase, UtensilsCrossed, GraduationCap, Palette, Activity,
+};
+
+const Loader = () => (
   <div className="flex items-center justify-center py-12 gap-2">
     {[0, 1, 2].map(i => (
       <motion.div
         key={i}
-        className="w-2.5 h-2.5 rounded-full bg-cosmic-glow/60"
-        animate={{
-          scale: [1, 1.4, 1],
-          opacity: [0.4, 1, 0.4],
-        }}
-        transition={{
-          duration: 1.2,
-          repeat: Infinity,
-          delay: i * 0.2,
-        }}
+        style={{ width: 10, height: 10, borderRadius: '50%', background: '#3A8DFF' }}
+        animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.18 }}
       />
     ))}
   </div>
@@ -28,122 +26,90 @@ const CosmicLoader = () => (
 
 const InterestSelector = ({ selectedInterest, onSelect }) => {
   const [interests, setInterests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
 
   useEffect(() => {
-    fetchInterests();
+    (async () => {
+      try {
+        setLoading(true);
+        const r = await getInterests();
+        if (r.success) setInterests(r.interests);
+      } catch { setError('Failed to load interests'); }
+      finally  { setLoading(false); }
+    })();
   }, []);
 
-  const fetchInterests = async () => {
-    try {
-      setLoading(true);
-      const response = await getInterests();
-      if (response.success) {
-        setInterests(response.interests);
-      }
-    } catch (err) {
-      console.error('Error fetching interests:', err);
-      setError('Failed to load interests');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <CosmicLoader />;
-
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-red-400/80 text-sm">{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
+  if (error)   return <p className="text-center py-8 text-sm" style={{ color: '#ef4444' }}>{error}</p>;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-      {interests.map((interest, index) => (
-        <InterestCard
-          key={interest.id}
-          interest={interest}
-          isSelected={selectedInterest === interest.id}
-          onSelect={() => onSelect(interest.id)}
-          index={index}
-        />
-      ))}
-    </div>
-  );
-};
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      {interests.map((interest, index) => {
+        const isSelected = selectedInterest === interest.id;
+        const I = INTEREST_ICON_MAP[interest.icon];
 
-const InterestCard = ({ interest, isSelected, onSelect, index }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: index * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
-      whileHover={{ scale: 1.05, y: -3 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={onSelect}
-      className={`
-        relative p-5 rounded-2xl cursor-pointer transition-all duration-400 overflow-hidden
-        border group
-        ${isSelected
-          ? 'bg-cosmic-purple/20 border-cosmic-purple/50 selected-glow'
-          : 'bg-white/[0.04] border-white/[0.08] hover:border-cosmic-glow/30 hover:bg-white/[0.07]'
-        }
-      `}
-    >
-      {/* Background glow on hover */}
-      <div
-        className={`
-          absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500
-          ${isSelected ? 'opacity-100' : ''}
-        `}
-        style={{
-          background: isSelected
-            ? 'radial-gradient(ellipse at 50% 50%, rgba(108, 60, 224, 0.15) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse at 50% 50%, rgba(167, 139, 250, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
-      <div className="text-center relative z-10">
-        <motion.div
-          className="text-4xl mb-2.5"
-          animate={isSelected ? {
-            scale: [1, 1.15, 1],
-            rotate: [0, 5, -5, 0],
-          } : {}}
-          transition={{ duration: 0.5 }}
-        >
-          {interest.icon}
-        </motion.div>
-        <h3 className={`font-semibold text-sm mb-1 transition-colors duration-300 ${
-          isSelected ? 'text-white' : 'text-white/75'
-        }`}>
-          {interest.name}
-        </h3>
-        <p className={`text-[11px] leading-tight transition-colors duration-300 line-clamp-2 ${
-          isSelected ? 'text-white/45' : 'text-white/25'
-        }`}>
-          {interest.description}
-        </p>
-      </div>
-
-      {/* Selection indicator */}
-      <AnimatePresence>
-        {isSelected && (
+        return (
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="absolute top-2 right-2 w-5 h-5 rounded-full bg-cosmic-purple flex items-center justify-center"
+            key={interest.id}
+            initial={{ opacity: 0, y: 16, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: index * 0.05, type: 'spring', stiffness: 220, damping: 22 }}
+            whileHover={{ scale: 1.04, y: -2 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => onSelect(interest.id)}
+            style={{
+              position: 'relative',
+              padding: '16px',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              overflow: 'hidden',
+              border: isSelected ? '1.5px solid #3A8DFF' : '1px solid rgba(203,213,225,0.6)',
+              background: isSelected ? 'rgba(58,141,255,0.08)' : 'rgba(255,255,255,0.55)',
+              boxShadow: isSelected ? '0 4px 16px rgba(58,141,255,0.18)' : 'none',
+              transition: 'all 0.25s ease',
+            }}
           >
-            <span className="text-white text-[10px]">✓</span>
+            <div className="text-center">
+              {I && (
+                <motion.div
+                  className="flex justify-center mb-2.5"
+                  animate={isSelected ? { scale: [1, 1.15, 1] } : {}}
+                  transition={{ duration: 0.4 }}
+                >
+                  <I size={32} strokeWidth={1.8} style={{ color: isSelected ? '#3A8DFF' : '#64748b' }} />
+                </motion.div>
+              )}
+              <h3 className="font-bold text-sm mb-0.5" style={{ color: isSelected ? '#1e3a8a' : '#374151' }}>
+                {interest.name}
+              </h3>
+              <p className="text-xs leading-tight line-clamp-2" style={{ color: isSelected ? '#3A8DFF' : '#94a3b8' }}>
+                {interest.description}
+              </p>
+            </div>
+
+            <AnimatePresence>
+              {isSelected && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  style={{
+                    position: 'absolute', top: 8, right: 8,
+                    width: 20, height: 20, borderRadius: '50%',
+                    background: '#3A8DFF',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <Check size={10} strokeWidth={3} style={{ color: '#fff' }} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+        );
+      })}
+    </div>
   );
 };
 
