@@ -7,18 +7,19 @@ const XP_ACTIONS = {
   USE_CHAT: 20,
   QUIZ_COMPLETE: 30,
   PERFECT_QUIZ: 50,
-  DAILY_STREAK: 25
+  DAILY_STREAK: 25,
+  BOSS_FIGHT: 150,
 };
 
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 1000, 1750, 2750, 4000, 5500, 7500, 10000];
 
 const BADGES = {
-  FIRST_LESSON: { id: 'first_lesson', name: '🎓 First Lesson', desc: 'Complete your first topic' },
-  PERFECT_QUIZ: { id: 'perfect_quiz', name: '🎯 Perfect Score', desc: 'Get 5/5 on a quiz' },
-  STREAK_3: { id: 'streak_3', name: '🔥 3-Day Streak', desc: 'Learn 3 days in a row' },
-  STREAK_7: { id: 'streak_7', name: '⚡ Week Warrior', desc: '7-day learning streak' },
-  LEVEL_5: { id: 'level_5', name: '⭐ Level 5', desc: 'Reach level 5' },
-  TOPIC_MASTER: { id: 'topic_master', name: '👑 Topic Master', desc: 'Complete 10 topics' }
+  FIRST_LESSON: { id: 'first_lesson', name: 'First Lesson',  icon: 'GraduationCap', desc: 'Complete your first topic' },
+  PERFECT_QUIZ: { id: 'perfect_quiz', name: 'Perfect Score',  icon: 'Target',        desc: 'Get 5/5 on a quiz' },
+  STREAK_3:     { id: 'streak_3',     name: '3-Day Streak',   icon: 'Flame',         desc: 'Learn 3 days in a row' },
+  STREAK_7:     { id: 'streak_7',     name: 'Week Warrior',   icon: 'Zap',           desc: '7-day learning streak' },
+  LEVEL_5:      { id: 'level_5',      name: 'Level 5',        icon: 'Star',          desc: 'Reach level 5' },
+  TOPIC_MASTER: { id: 'topic_master', name: 'Topic Master',   icon: 'Crown',         desc: 'Complete 10 topics' }
 };
 
 // Map DB badge_id back to internal key
@@ -41,6 +42,7 @@ export const useGamification = () => {
   const [level, setLevel] = useState(1);
   const [streak, setStreak] = useState(0);
   const [unlockedKeys, setUnlockedKeys] = useState([]); // stores BADGE KEYS (e.g. 'FIRST_LESSON')
+  const [unlockedDates, setUnlockedDates] = useState({}); // badgeKey → ISO date string
   const [xpPopups, setXpPopups] = useState([]);
   const [levelUpNotification, setLevelUpNotification] = useState(null);
 
@@ -61,11 +63,21 @@ export const useGamification = () => {
   const loadGamification = async () => {
     const [{ data: streakRow }, { data: badgeRows }] = await Promise.all([
       supabase.from('user_streaks').select('*').eq('user_id', user.id).single(),
-      supabase.from('user_badges').select('badge_id').eq('user_id', user.id),
+      supabase.from('user_badges').select('badge_id, created_at').eq('user_id', user.id),
     ]);
 
     if (badgeRows) {
-      setUnlockedKeys(badgeRows.map(r => BADGE_ID_TO_KEY[r.badge_id]).filter(Boolean));
+      const keys = [];
+      const dates = {};
+      badgeRows.forEach(r => {
+        const key = BADGE_ID_TO_KEY[r.badge_id];
+        if (key) {
+          keys.push(key);
+          dates[key] = r.created_at ?? null;
+        }
+      });
+      setUnlockedKeys(keys);
+      setUnlockedDates(dates);
     }
 
     const today = todayStr();
@@ -115,7 +127,7 @@ export const useGamification = () => {
         setLevelUpNotification({ oldLevel: initLevel, newLevel, timestamp: Date.now() });
         setTimeout(() => setLevelUpNotification(null), 5000);
       }
-      showXPPopup(XP_ACTIONS.DAILY_STREAK, '🔥 Daily Streak Bonus!');
+      showXPPopup(XP_ACTIONS.DAILY_STREAK, 'Daily Streak!');
 
       supabase.from('user_streaks').update({
         total_xp: newXp,
@@ -139,16 +151,17 @@ export const useGamification = () => {
     }
   };
 
-  const showXPPopup = (amount, text) => {
+  const showXPPopup = (amount, label) => {
     const id = Date.now() + Math.random();
-    setXpPopups(prev => [...prev, { id, amount, text }]);
-    setTimeout(() => setXpPopups(prev => prev.filter(p => p.id !== id)), 2000);
+    setXpPopups(prev => [...prev, { id, amount, label }]);
+    setTimeout(() => setXpPopups(prev => prev.filter(p => p.id !== id)), 2500);
   };
 
   const unlockBadgeInternal = useCallback((badgeKey) => {
     if (!user || !BADGES[badgeKey]) return;
     setUnlockedKeys(prev => {
       if (prev.includes(badgeKey)) return prev;
+      const now = new Date().toISOString();
       supabase.from('user_badges').insert([{
         user_id: user.id,
         badge_id: BADGES[badgeKey].id,
@@ -156,6 +169,7 @@ export const useGamification = () => {
       }]).then(({ error }) => {
         if (error) console.error('Badge save error:', error.message);
       });
+      setUnlockedDates(d => ({ ...d, [badgeKey]: now }));
       return [...prev, badgeKey];
     });
   }, [user]);
@@ -170,12 +184,12 @@ export const useGamification = () => {
       if (newLevel > prevLevel) {
         ref.current.level = newLevel;
         setLevel(newLevel);
-        showXPPopup(amount, `${label} +${amount} XP • LEVEL UP! 🎉`);
+        showXPPopup(amount, 'Level Up!');
         setLevelUpNotification({ oldLevel: prevLevel, newLevel, timestamp: Date.now() });
         setTimeout(() => setLevelUpNotification(null), 5000);
         if (newLevel >= 5) unlockBadgeInternal('LEVEL_5');
       } else {
-        showXPPopup(amount, label || `+${amount} XP`);
+        showXPPopup(amount, label);
       }
 
       ref.current.xp = newXP;
@@ -212,13 +226,14 @@ export const useGamification = () => {
   }, [unlockBadgeInternal]);
 
   const awardXP = {
-    readExplanation: () => addXP(XP_ACTIONS.READ_EXPLANATION, '📚 Read Explanation'),
-    useChat: () => addXP(XP_ACTIONS.USE_CHAT, '💬 Used Chat'),
+    readExplanation: () => addXP(XP_ACTIONS.READ_EXPLANATION, 'Explanation'),
+    useChat: () => addXP(XP_ACTIONS.USE_CHAT, 'Chat with Finn'),
     completeQuiz: (score, total) => {
       const isPerfect = score === total;
-      addXP(isPerfect ? XP_ACTIONS.PERFECT_QUIZ : XP_ACTIONS.QUIZ_COMPLETE, isPerfect ? '🎯 Perfect Quiz!' : '✅ Quiz Complete');
+      addXP(isPerfect ? XP_ACTIONS.PERFECT_QUIZ : XP_ACTIONS.QUIZ_COMPLETE, isPerfect ? 'Perfect Quiz!' : 'Quiz Complete');
       if (isPerfect) unlockBadge('PERFECT_QUIZ');
-    }
+    },
+    bossFight: () => addXP(XP_ACTIONS.BOSS_FIGHT, 'Boss Defeated!'),
   };
 
   const getXPForNextLevel = () => {
@@ -236,6 +251,7 @@ export const useGamification = () => {
   const getAllBadges = () => Object.entries(BADGES).map(([key, badge]) => ({
     ...badge,
     unlocked: unlockedKeys.includes(key),
+    unlockedAt: unlockedDates[key] ?? null,
   }));
 
   const dismissLevelUp = () => setLevelUpNotification(null);
@@ -248,6 +264,7 @@ export const useGamification = () => {
     xpPopups,
     levelUpNotification,
     awardXP,
+    addXP,
     unlockBadge,
     checkBadgeUnlock,
     getXPForNextLevel,
