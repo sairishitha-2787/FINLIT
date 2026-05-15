@@ -5,67 +5,67 @@ const interestDomains = [
   {
     id: 'writing',
     name: 'Writing & Storytelling',
-    icon: '✍️',
+    icon: 'PenLine',
     description: 'Learn finance through narrative structures and writing concepts'
   },
   {
     id: 'movies',
     name: 'Movies & TV Shows',
-    icon: '🎬',
+    icon: 'Film',
     description: 'Understand money through plots, characters, and productions'
   },
   {
     id: 'gaming',
     name: 'Gaming',
-    icon: '🎮',
+    icon: 'Gamepad2',
     description: 'Level up your finance knowledge with gaming analogies'
   },
   {
     id: 'music',
     name: 'Music',
-    icon: '🎵',
+    icon: 'Music',
     description: 'Compose your financial future with music industry insights'
   },
   {
     id: 'fashion',
     name: 'Fashion',
-    icon: '👗',
+    icon: 'Shirt',
     description: 'Style your finances with fashion industry parallels'
   },
   {
     id: 'technology',
     name: 'Technology',
-    icon: '💻',
+    icon: 'Code2',
     description: 'Debug your finances with tech concepts and startups'
   },
   {
     id: 'business',
     name: 'Business',
-    icon: '💼',
+    icon: 'Briefcase',
     description: 'Master finance through entrepreneurship and business strategy'
   },
   {
     id: 'food',
     name: 'Food',
-    icon: '🍕',
+    icon: 'UtensilsCrossed',
     description: 'Cook up financial success with culinary comparisons'
   },
   {
     id: 'college',
     name: 'College Life',
-    icon: '🎓',
+    icon: 'GraduationCap',
     description: 'Navigate student finances with campus life analogies'
   },
   {
     id: 'art',
     name: 'Art',
-    icon: '🎨',
+    icon: 'Palette',
     description: 'Paint your financial picture with artistic concepts'
   },
   {
     id: 'sports',
     name: 'Sports',
-    icon: '⚽',
+    icon: 'Activity',
     description: 'Score financial wins with sports strategy and team building'
   }
 ];

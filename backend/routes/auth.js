@@ -1,36 +1,38 @@
-const express = require('express');
-const router = express.Router();
+const express  = require('express');
+const router   = express.Router();
 const supabase = require('../config/supabase');
+
+// Basic input validation helpers
+const isValidEmail = (v) => typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+const isValidPassword = (v) => typeof v === 'string' && v.length >= 8;
+const isValidName = (v) => typeof v === 'string' && v.trim().length >= 1 && v.trim().length <= 80;
 
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
-    if (!email || !password || !name) {
-      return res.status(400).json({ success: false, error: 'Email, password, and name are required' });
-    }
-    if (password.length < 8) {
-      return res.status(400).json({ success: false, error: 'Password must be at least 8 characters' });
-    }
+    if (!isValidEmail(email))    return res.status(400).json({ success: false, error: 'Please enter a valid email address' });
+    if (!isValidPassword(password)) return res.status(400).json({ success: false, error: 'Password must be at least 8 characters' });
+    if (!isValidName(name))      return res.status(400).json({ success: false, error: 'Name is required' });
 
     const { data, error } = await supabase.auth.admin.createUser({
-      email,
+      email: email.trim().toLowerCase(),
       password,
       email_confirm: true,
-      user_metadata: { name }
+      user_metadata: { name: name.trim() },
     });
 
     if (error) {
-      const msg = error.message.includes('already') ? 'Email already registered' : error.message;
+      const msg = error.message.includes('already') ? 'Email already registered' : 'Signup failed';
       return res.status(400).json({ success: false, error: msg });
     }
 
-    // Create placeholder profile row (non-blocking) — onboarding fills the rest
+    // Create placeholder profile row (non-blocking)
     supabase.from('user_profiles').insert([{
       user_id: data.user.id,
-      name,
-      difficulty_level: 'beginner'
+      name: name.trim(),
+      difficulty_level: 'beginner',
     }]).then(({ error: e }) => {
       if (e) console.error('Profile pre-create error (non-blocking):', e.message);
     });
@@ -47,13 +49,17 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (!isValidEmail(email) || !password) {
       return res.status(400).json({ success: false, error: 'Email and password are required' });
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
 
     if (error) {
+      // Always return generic message — never reveal whether email exists
       return res.status(401).json({ success: false, error: 'Invalid email or password' });
     }
 
@@ -71,20 +77,20 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/auth/logout
-router.post('/logout', async (req, res) => {
+router.post('/logout', async (_req, res) => {
   try {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    await supabase.auth.signOut();
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error('Logout error:', err);
+    res.status(500).json({ success: false, error: 'Server error during logout' });
   }
 });
 
 // GET /api/auth/user
 router.get('/user', async (req, res) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const token = req.headers.authorization?.replace('Bearer ', '').trim();
     if (!token) {
       return res.status(401).json({ success: false, error: 'No token provided' });
     }
