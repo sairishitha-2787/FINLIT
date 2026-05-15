@@ -1,0 +1,28 @@
+# Environment variables — NEVER COMMIT
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Local DB files
+*.sqlite
+*.db
+
+# Test files
+coverage/
+
+# Temporary
+tmp/
+temp/

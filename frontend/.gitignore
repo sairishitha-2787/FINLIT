@@ -1,0 +1,27 @@
+# Environment variables — NEVER COMMIT
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# Dependencies
+node_modules/
+
+# Build output (CRA)
+build/
+dist/
+
+# Vite (if migrated)
+.vite/
+
+# Logs
+*.log
+
+# Test coverage
+coverage/
+
+# Cache
+.cache/
+.eslintcache
+*.tsbuildinfo

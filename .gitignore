@@ -43,3 +43,15 @@ coverage/
 *.tgz
 .npm
 .eslintcache
+*.tsbuildinfo
+.cache/
+tmp/
+temp/
+
+# Raw asset staging directories (not part of project structure)
+BADGES/
+CHARACTERS/
+ZONES/
+
+# Nested sub-project at repo root
+FINLIT/
