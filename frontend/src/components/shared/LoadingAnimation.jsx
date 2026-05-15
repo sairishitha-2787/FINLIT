@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Brain } from 'lucide-react';
 
 const LoadingAnimation = ({ message = 'Loading...', size = 'md' }) => {
   const sizeClasses = {
@@ -21,11 +22,11 @@ const LoadingAnimation = ({ message = 'Loading...', size = 'md' }) => {
         <div className="absolute inset-0 rounded-full border-4 border-primary/30"></div>
         <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin"></div>
         <motion.div
-          className="absolute inset-0 flex items-center justify-center text-2xl"
+          className="absolute inset-0 flex items-center justify-center"
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         >
-          🧠
+          <Brain size={size === 'sm' ? 16 : size === 'lg' ? 36 : 24} className="text-primary" />
         </motion.div>
       </motion.div>
 

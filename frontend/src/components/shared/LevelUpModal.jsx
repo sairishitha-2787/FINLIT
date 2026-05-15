@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Trophy, ArrowRight } from 'lucide-react';
+import AnimatedIcon from './AnimatedIcon';
 import confetti from 'canvas-confetti';
 
 const LevelUpModal = ({ levelUpNotification, onDismiss }) => {
@@ -25,17 +27,17 @@ const LevelUpModal = ({ levelUpNotification, onDismiss }) => {
   // Unlock messages based on level
   const getLevelUnlock = (level) => {
     const unlocks = {
-      2: 'APPLICATION Quizzes Unlocked! 🧮',
-      3: 'BOSS FIGHT Simulations Unlocked! ⚔️',
-      4: 'Advanced Topics Available! 📈',
-      5: 'Expert Mode Activated! ⭐',
-      6: 'Master Tier Reached! 👑',
-      7: 'Elite Status! 💎',
-      8: 'Legend Mode! 🏆',
-      9: 'Grandmaster! 🌟',
-      10: 'MAXIMUM LEVEL - You\'re a Finance God! 🔥'
+      2: 'APPLICATION Quizzes Unlocked!',
+      3: 'BOSS FIGHT Simulations Unlocked!',
+      4: 'Advanced Topics Available!',
+      5: 'Expert Mode Activated!',
+      6: 'Master Tier Reached!',
+      7: 'Elite Status!',
+      8: 'Legend Mode!',
+      9: 'Grandmaster!',
+      10: 'MAXIMUM LEVEL — You\'re a Finance God!'
     };
-    return unlocks[level] || 'Keep crushing it! 💪';
+    return unlocks[level] || 'Keep crushing it!';
   };
 
   return (
@@ -56,16 +58,9 @@ const LevelUpModal = ({ levelUpNotification, onDismiss }) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Animated Trophy */}
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 1 }}
-            className="text-9xl mb-6"
-          >
-            🏆
-          </motion.div>
+          <div className="mb-6 text-brutal-black flex justify-center">
+            <AnimatedIcon icon={Trophy} size={100} animation="bounce" />
+          </div>
 
           {/* Level Up Text */}
           <motion.h1
@@ -82,7 +77,7 @@ const LevelUpModal = ({ levelUpNotification, onDismiss }) => {
               <p className="text-sm font-black text-brutal-black mb-1">FROM</p>
               <p className="text-5xl font-black text-brutal-blue">LVL {oldLevel}</p>
             </div>
-            <div className="text-6xl font-black text-brutal-black">→</div>
+            <ArrowRight size={48} strokeWidth={3} className="text-brutal-black" />
             <div className="bg-brutal-pink border-4 border-brutal-black rounded-none px-8 py-4">
               <p className="text-sm font-black text-brutal-black mb-1">TO</p>
               <p className="text-5xl font-black text-brutal-blue">LVL {newLevel}</p>
@@ -103,7 +98,7 @@ const LevelUpModal = ({ levelUpNotification, onDismiss }) => {
             onClick={onDismiss}
             className="bg-brutal-blue border-4 border-brutal-black shadow-brutal hover:shadow-brutal-hover px-12 py-4 rounded-none font-black text-2xl text-brutal-white"
           >
-            KEEP GRINDING! →
+            <span className="flex items-center gap-2">KEEP GRINDING! <ArrowRight size={22} strokeWidth={2.5} /></span>
           </motion.button>
         </motion.div>
       </motion.div>
