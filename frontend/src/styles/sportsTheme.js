@@ -31,19 +31,19 @@ export const sportsTheme = {
 
 // ── CHARACTER COLOR SIGNATURES ───────────────────────────────────────────────
 export const CHARACTER_COLORS = {
-  striker: {
+  lyra: {
     primary: '#E8457A',
     glow:    'rgba(232,69,122,0.50)',
     dim:     'rgba(232,69,122,0.12)',
     border:  'rgba(232,69,122,0.30)',
   },
-  playmaker: {
-    primary: '#4A7BF7',
-    glow:    'rgba(74,123,247,0.50)',
-    dim:     'rgba(74,123,247,0.12)',
-    border:  'rgba(74,123,247,0.30)',
+  kael: {
+    primary: '#0F3BBC',
+    glow:    'rgba(15,59,188,0.50)',
+    dim:     'rgba(15,59,188,0.12)',
+    border:  'rgba(15,59,188,0.30)',
   },
-  captain: {
+  ian: {
     primary: '#F5C842',
     glow:    'rgba(245,200,66,0.50)',
     dim:     'rgba(245,200,66,0.12)',
@@ -53,7 +53,7 @@ export const CHARACTER_COLORS = {
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 export const getCharacterColors = (character) =>
-  CHARACTER_COLORS[character?.id] || CHARACTER_COLORS.striker;
+  CHARACTER_COLORS[character?.id] || CHARACTER_COLORS.lyra;
 
 export const getDivision = (level) => Math.max(1, 11 - Math.min(level, 10));
 
