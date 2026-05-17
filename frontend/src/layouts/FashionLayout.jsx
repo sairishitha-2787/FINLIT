@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Map, BarChart2, Award, Menu, X, LogOut, WifiOff, FileText, Settings } from 'lucide-react';
+import { Home, Map, BarChart2, Award, Menu, X, LogOut, WifiOff, FileText, Settings, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../hooks/useGamification';
@@ -10,7 +10,6 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { useFashion } from '../contexts/FashionContext';
 import CharacterSelection from '../components/fashion/CharacterSelection';
 import CharacterSheet from '../components/fashion/CharacterSheet';
-import FashionSettings from '../components/fashion/FashionSettings';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
@@ -110,7 +109,7 @@ function ChibiAvatar({ char, size = 48, onClick }) {
           mixBlendMode: 'screen',
         }}
       />
-      {!loaded && <span style={{ fontSize: size * 0.45 }}>{char.id === 'raven' ? '🖤' : char.id === 'amara' ? '💜' : '🤍'}</span>}
+      {!loaded && <Heart size={size * 0.45} color={char.colors?.primary || '#d4537e'} strokeWidth={1.5} />}
     </motion.div>
   );
 }
@@ -132,15 +131,9 @@ export default function FashionLayout() {
   const { isMobile } = useIsMobile();
   const [sidebarOpen, setSidebarOpen]       = useState(() => window.innerWidth >= 768);
   const [sheetOpen, setSheetOpen]           = useState(false);
-  const [showSettings, setShowSettings]     = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { isOnline } = useOfflineSync(() => {});
-  const { fashionCharacter, fashionCharacterLoaded, updateFashionCharacter, clearFashionCharacter } = useFashion();
-
-  const handleChangeCharacter = () => {
-    setShowSettings(false);
-    clearFashionCharacter();
-  };
+  const { fashionCharacter, fashionCharacterLoaded, updateFashionCharacter } = useFashion();
 
   useEffect(() => { if (isMobile) setSidebarOpen(false); }, [isMobile]);
 
@@ -156,7 +149,7 @@ export default function FashionLayout() {
 
   const showCharSel = fashionCharacterLoaded && !fashionCharacter;
 
-  const outletContext = { xp, level, getLevelProgress, fashionCharacter, onOpenSheet: () => setSheetOpen(true) };
+  const outletContext = { xp, level, streak, getLevelProgress, fashionCharacter, onOpenSheet: () => setSheetOpen(true) };
 
   return (
     <>
@@ -332,20 +325,29 @@ export default function FashionLayout() {
                 )}
 
                 {/* Settings */}
-                <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.97 }}
-                  onClick={() => setShowSettings(true)}
-                  style={{
-                    width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '11px 14px', marginBottom: 3, borderRadius: 12,
-                    fontFamily: F.ui, fontSize: 13.5, fontWeight: 400,
-                    color: C.midRose, background: 'transparent',
-                    border: 'none', borderLeft: '2.5px solid transparent',
-                    cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
-                  }}
-                >
-                  <Settings size={15} strokeWidth={2} style={{ color: C.label, flexShrink: 0 }} />
-                  Settings
-                </motion.button>
+                {(() => {
+                  const settingsActive = location.pathname === '/fashion/settings';
+                  return (
+                    <motion.button whileHover={{ x: 3 }} whileTap={{ scale: 0.97 }}
+                      onClick={() => { navigate('/fashion/settings'); if (isMobile) setSidebarOpen(false); }}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '11px 14px', marginBottom: 3, borderRadius: 12,
+                        fontFamily: F.ui, fontSize: 13.5, fontWeight: settingsActive ? 600 : 400,
+                        color: settingsActive ? C.deepRose : C.midRose,
+                        background: settingsActive ? 'rgba(247,160,184,0.14)' : 'transparent',
+                        border: 'none', borderLeft: `2.5px solid ${settingsActive ? C.pink : 'transparent'}`,
+                        cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
+                      }}
+                    >
+                      <Settings size={15} strokeWidth={2} style={{ color: settingsActive ? C.pink : C.label, flexShrink: 0 }} />
+                      The Dressing Room
+                      {settingsActive && (
+                        <motion.div layoutId="fashion-nav-dot" style={{ marginLeft: 'auto', width: 5, height: 5, borderRadius: '50%', background: C.pink, boxShadow: `0 0 8px ${C.pink}` }} />
+                      )}
+                    </motion.button>
+                  );
+                })()}
               </nav>
 
               <div style={{ flex: 1 }} />
@@ -394,9 +396,13 @@ export default function FashionLayout() {
               <Menu size={16} color={C.deepRose} />
             </button>
 
-            <span style={{ fontFamily: F.logo, fontSize: 20, color: C.deepRose, flex: 1 }}>
-              Fin<span style={{ color: C.pink }}>Lit</span>
-            </span>
+            {(!sidebarOpen || isMobile) ? (
+              <span style={{ fontFamily: F.logo, fontSize: 20, color: C.deepRose, flex: 1 }}>
+                Fin<span style={{ color: C.pink }}>Lit</span>
+              </span>
+            ) : (
+              <div style={{ flex: 1 }} />
+            )}
 
             {/* Chibi in top bar (click → character sheet) */}
             {fashionCharacter && (
@@ -430,14 +436,6 @@ export default function FashionLayout() {
         level={level}
         xp={xp}
         streak={0}
-      />
-
-      {/* ── Settings drawer ─────────────────────────────────────────────── */}
-      <FashionSettings
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        character={fashionCharacter}
-        onChangeCharacter={handleChangeCharacter}
       />
 
       {/* Offline toast */}

@@ -2,6 +2,7 @@
 // Fashion Theme  —  "Bubblegum Glam"
 // Soft, premium, candy-like. Light cream base with pink/purple glassmorphism.
 // ─────────────────────────────────────────────────────────────────────────────
+import { ShoppingBag, Scissors, Crown } from 'lucide-react';
 
 // ── COLORS ───────────────────────────────────────────────────────────────────
 export const fashionColors = {
@@ -59,21 +60,21 @@ export const fashionZones = {
     subtitle:   'foundation',
     background: '#fae9d7',
     accent:     '#f7a0b8',
-    icon:       '👜',
+    icon:       ShoppingBag,
   },
   atelier: {
     name:       'The Atelier',
     subtitle:   'collection',
     background: '#fbb6c4',
     accent:     '#c084fc',
-    icon:       '✂️',
+    icon:       Scissors,
   },
   runway: {
     name:       'The Runway',
     subtitle:   'haute couture',
     background: '#c084fc',
     accent:     '#9d1f4a',
-    icon:       '👑',
+    icon:       Crown,
   },
 };
 

@@ -13,7 +13,6 @@ import { useGamification } from '../hooks/useGamification';
 import CharacterSelection from '../components/gaming/CharacterSelection';
 import XPBar from '../components/gaming/XPBar';
 import GamingSidebar from '../components/gaming/GamingSidebar';
-import GamingSettings from '../components/gaming/GamingSettings';
 import CharacterSheet from '../components/gaming/CharacterSheet';
 
 import { gamingTheme, getElementColors } from '../styles/gamingTheme';
@@ -33,7 +32,6 @@ export default function GamingLayout() {
 
   const { isMobile } = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768);
-  const [showSettings, setShowSettings] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showSheet, setShowSheet]       = useState(false);
 
@@ -54,11 +52,6 @@ export default function GamingLayout() {
 
   const handleLogout = () => setShowLogoutConfirm(true);
   const confirmLogout = async () => { await logout(); navigate('/login', { replace: true }); };
-
-  const handleChangeCharacter = () => {
-    clearCharacter();
-    setShowSettings(false);
-  };
 
   // Pass gamification + layout callbacks to child pages via outlet context.
   const outletContext = {
@@ -109,9 +102,12 @@ export default function GamingLayout() {
           <GamingSidebar
             key="sidebar"
             character={character}
-            onOpenSettings={() => setShowSettings(true)}
+            onOpenSheet={() => setShowSheet(true)}
             isMobile={isMobile}
             onClose={() => setSidebarOpen(false)}
+            xp={xp}
+            levelProgress={levelProgress}
+            onLogout={handleLogout}
           />
         )}
       </AnimatePresence>
@@ -156,14 +152,6 @@ export default function GamingLayout() {
           </div>
         </div>
       </div>
-
-      {/* Settings drawer */}
-      <GamingSettings
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        character={character}
-        onChangeCharacter={handleChangeCharacter}
-      />
 
       {/* Character sheet drawer */}
       <CharacterSheet

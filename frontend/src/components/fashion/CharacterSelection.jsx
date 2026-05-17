@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Check } from 'lucide-react';
+import { Sparkles, Check, Heart } from 'lucide-react';
 import { FASHION_CHARACTERS } from '../../contexts/FashionContext';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
@@ -78,8 +78,8 @@ function CharPortrait({ char, isSelected }) {
         }}
       />
       {!loaded && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>
-          {char.id === 'raven' ? '🖤' : char.id === 'amara' ? '💜' : '🤍'}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Heart size={40} color={char.colors?.primary || '#d4537e'} strokeWidth={1.5} />
         </div>
       )}
     </div>
