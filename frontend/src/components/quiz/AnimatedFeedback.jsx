@@ -59,6 +59,21 @@ const AnimatedFeedback = ({
   const feedbackText = brutalHonestFeedback || explanation || 'Keep pushing forward!';
   const gc = gamingColors || {};
 
+  // ── Sports theme override ────────────────────────────────────────────────────
+  const sm = !!(gamingMode && gc.sports);
+  const xt = {
+    cardBg: sm ? 'rgba(22,22,22,0.95)'            : gamingTheme.cardBg,
+    fontH:  sm ? "'Bebas Neue', cursive"           : gamingTheme.fontHeading,
+    fontL:  sm ? "'Barlow Condensed', sans-serif"  : gamingTheme.fontLabel,
+    fontB:  sm ? "'Inter', sans-serif"             : gamingTheme.fontBody,
+    text1:  sm ? '#fff'                            : gamingTheme.stellarWhite,
+    text2:  sm ? 'rgba(255,255,255,0.72)'          : gamingTheme.seafoam,
+    muted:  sm ? 'rgba(255,255,255,0.4)'           : gamingTheme.mutedBlue,
+    border: sm ? '1px solid rgba(255,255,255,0.1)' : gamingTheme.borderThin,
+    blur:   sm ? '16px'                            : gamingTheme.glassBlur,
+    dark:   sm ? '#000'                            : gamingTheme.bgDark,
+  };
+
   // ── Fashion render ──────────────────────────────────────────────────────────
   if (fashionMode) {
     const rc = isCorrect ? '#7ec9a0' : '#e87070';
@@ -151,10 +166,10 @@ const AnimatedFeedback = ({
             ? <CheckCircle2 size={60} color={resultColor} style={{ margin: '0 auto 16px' }} />
             : <XCircle     size={60} color={resultColor} style={{ margin: '0 auto 16px' }} />
           }
-          <h2 style={{ fontFamily: gamingTheme.fontHeading, fontSize: '24px', fontWeight: 800, color: resultColor, textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px' }}>
+          <h2 style={{ fontFamily: xt.fontH, fontSize: '24px', fontWeight: 800, color: resultColor, textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px' }}>
             {isCorrect ? 'Crushed It!' : 'Not Quite!'}
           </h2>
-          <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '15px', color: gamingTheme.seafoam, margin: 0 }}>
+          <p style={{ fontFamily: xt.fontB, fontSize: '15px', color: xt.text2, margin: 0 }}>
             {isCorrect ? 'You got it right!' : `Correct answer: ${correctAnswer}`}
           </p>
         </motion.div>
@@ -163,32 +178,32 @@ const AnimatedFeedback = ({
         {loading ? (
           <div style={{ padding: '32px', textAlign: 'center' }}><LoadingAnimation message="Loading reaction..." /></div>
         ) : gif ? (
-          <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} style={{ borderRadius: '14px', overflow: 'hidden', border: gamingTheme.borderThin }}>
+          <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} style={{ borderRadius: '14px', overflow: 'hidden', border: xt.border }}>
             <img src={gif.url} alt={gif.title || 'Feedback GIF'} style={{ width: '100%', maxHeight: '280px', objectFit: 'contain', display: 'block' }} />
           </motion.div>
         ) : null}
 
         {/* Feedback card */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} style={{ background: gamingTheme.cardBg, border: gamingTheme.borderThin, borderRadius: '14px', padding: '20px', backdropFilter: `blur(${gamingTheme.glassBlur})` }}>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} style={{ background: xt.cardBg, border: xt.border, borderRadius: '14px', padding: '20px', backdropFilter: `blur(${xt.blur})` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
             <div style={{ width: 3, height: 18, borderRadius: 2, background: gc.primary, flexShrink: 0 }} />
-            <h3 style={{ fontFamily: gamingTheme.fontHeading, fontSize: '11px', fontWeight: 600, color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '2px', margin: 0 }}>Feedback</h3>
+            <h3 style={{ fontFamily: xt.fontH, fontSize: '11px', fontWeight: 600, color: xt.text1, textTransform: 'uppercase', letterSpacing: '2px', margin: 0 }}>Feedback</h3>
           </div>
 
           {!isCorrect && (
-            <div style={{ marginBottom: '14px', padding: '12px 14px', borderRadius: '10px', background: 'rgba(30,42,69,0.7)', border: gamingTheme.borderThin }}>
-              <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: '#F87171', margin: '0 0 6px' }}>Your answer: {userAnswerText}</p>
-              <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: '#4ECDC4', margin: 0 }}>Correct answer: {correctAnswerText}</p>
+            <div style={{ marginBottom: '14px', padding: '12px 14px', borderRadius: '10px', background: xt.cardBg, border: xt.border }}>
+              <p style={{ fontFamily: xt.fontB, fontSize: '13px', color: '#F87171', margin: '0 0 6px' }}>Your answer: {userAnswerText}</p>
+              <p style={{ fontFamily: xt.fontB, fontSize: '13px', color: '#4ECDC4', margin: 0 }}>Correct answer: {correctAnswerText}</p>
             </div>
           )}
 
-          <div style={{ padding: '14px', borderRadius: '10px', background: 'rgba(30,42,69,0.7)', border: gamingTheme.borderThin }}>
-            <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '14px', color: gamingTheme.seafoam, lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>{feedbackText}</p>
+          <div style={{ padding: '14px', borderRadius: '10px', background: xt.cardBg, border: xt.border }}>
+            <p style={{ fontFamily: xt.fontB, fontSize: '14px', color: xt.text2, lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>{feedbackText}</p>
           </div>
 
           {!isCorrect && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} style={{ marginTop: '12px', padding: '12px 14px', borderRadius: '10px', background: `rgba(${hexToRgbStr(gc.primary)},0.08)`, border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.25)` }}>
-              <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '10px', color: gc.primary, letterSpacing: '1px', textAlign: 'center', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <p style={{ fontFamily: xt.fontL, fontSize: '10px', color: gc.primary, letterSpacing: '1px', textAlign: 'center', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <Dumbbell size={13} /> MISTAKES = LEARNING. You're leveling up right now. Keep going!
               </p>
             </motion.div>
@@ -201,7 +216,7 @@ const AnimatedFeedback = ({
           {isLastQuestion && onRetry && (
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onRetry}
-              style={{ background: 'rgba(30,42,69,0.8)', border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.40)`, color: gc.primary, fontFamily: gamingTheme.fontHeading, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 32px', borderRadius: '10px', cursor: 'pointer' }}
+              style={{ background: xt.cardBg, border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.40)`, color: gc.primary, fontFamily: xt.fontH, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 32px', borderRadius: '10px', cursor: 'pointer' }}
             >
               Try Again
             </motion.button>
@@ -210,7 +225,7 @@ const AnimatedFeedback = ({
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             onClick={onNext}
-            style={{ background: `linear-gradient(135deg, ${gc.primary}, ${gc.secondary || gc.primary})`, border: 'none', color: gamingTheme.bgDark, fontFamily: gamingTheme.fontHeading, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 40px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: `0 0 20px ${gc.glow}` }}
+            style={{ background: `linear-gradient(135deg, ${gc.primary}, ${gc.secondary || gc.primary})`, border: 'none', color: xt.dark, fontFamily: xt.fontH, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 40px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: `0 0 20px ${gc.glow}` }}
           >
             {isLastQuestion ? <><Sparkles size={16} /> See Results</> : <>Next Question <ArrowRight size={16} /></>}
           </motion.button>

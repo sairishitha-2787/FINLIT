@@ -78,6 +78,23 @@ const ScenarioQuizEnvironment = ({
   const gm = gamingMode && !!gc.primary;
   const fm = !!fashionMode;
 
+  // ── Sports theme override ────────────────────────────────────────────────────
+  const sm = !!(gm && gc.sports);
+  const xt = {
+    cardBg: sm ? 'rgba(22,22,22,0.95)'            : gamingTheme.cardBg,
+    fontH:  sm ? "'Bebas Neue', cursive"           : gamingTheme.fontHeading,
+    fontL:  sm ? "'Barlow Condensed', sans-serif"  : gamingTheme.fontLabel,
+    fontB:  sm ? "'Inter', sans-serif"             : gamingTheme.fontBody,
+    text1:  sm ? '#fff'                            : gamingTheme.stellarWhite,
+    text2:  sm ? 'rgba(255,255,255,0.72)'          : gamingTheme.seafoam,
+    muted:  sm ? 'rgba(255,255,255,0.4)'           : gamingTheme.mutedBlue,
+    border: sm ? '1px solid rgba(255,255,255,0.1)' : gamingTheme.borderThin,
+    blur:   sm ? '16px'                            : gamingTheme.glassBlur,
+    dark:   sm ? '#000'                            : gamingTheme.bgDark,
+    mint:   sm ? '#4ECDC4'                         : gamingTheme.mint,
+    inner:  sm ? 'rgba(18,18,18,0.7)'              : 'rgba(15,20,40,0.6)',
+  };
+
   const levelAccent = levelCfg.gamingColor ?? gc.primary;
 
   const fashionLevelCfg = FASHION_LEVEL_CONFIG[level] || FASHION_LEVEL_CONFIG[1];
@@ -177,8 +194,8 @@ const ScenarioQuizEnvironment = ({
   // ── Gaming style helpers ──────────────────────────────────────────────────
 
   const gCard = {
-    background: gamingTheme.cardBg,
-    backdropFilter: `blur(${gamingTheme.glassBlur})`,
+    background: xt.cardBg,
+    backdropFilter: `blur(${xt.blur})`,
     border: `1px solid rgba(${hexToRgbStr(levelAccent)},0.35)`,
     borderRadius: '16px',
     overflow: 'hidden',
@@ -186,13 +203,13 @@ const ScenarioQuizEnvironment = ({
 
   const gInput = {
     width: '100%',
-    background: 'rgba(15,20,40,0.7)',
+    background: xt.inner,
     border: `1px solid rgba(${hexToRgbStr(gc.primary || '#4ECDC4')},0.3)`,
     borderRadius: '10px',
     padding: '12px 16px',
-    fontFamily: gamingTheme.fontBody,
+    fontFamily: xt.fontB,
     fontSize: '16px',
-    color: gamingTheme.stellarWhite,
+    color: xt.text1,
     outline: 'none',
     boxSizing: 'border-box',
   };
@@ -200,7 +217,7 @@ const ScenarioQuizEnvironment = ({
   const gPrimaryBtn = (disabled = false) => ({
     width: '100%',
     padding: '14px',
-    fontFamily: gamingTheme.fontHeading,
+    fontFamily: xt.fontH,
     fontSize: '13px',
     fontWeight: 700,
     letterSpacing: '2px',
@@ -212,14 +229,14 @@ const ScenarioQuizEnvironment = ({
     background: disabled
       ? 'rgba(61,78,122,0.4)'
       : `linear-gradient(135deg, ${gc.primary || levelAccent}, ${gc.secondary || levelAccent})`,
-    color: disabled ? gamingTheme.mutedBlue : gamingTheme.bgDark,
+    color: disabled ? xt.muted : xt.dark,
     boxShadow: disabled ? 'none' : `0 4px 20px rgba(${hexToRgbStr(gc.primary || levelAccent)},0.4)`,
   });
 
   const gSecondaryBtn = {
     width: '100%',
     padding: '14px',
-    fontFamily: gamingTheme.fontHeading,
+    fontFamily: xt.fontH,
     fontSize: '13px',
     fontWeight: 600,
     letterSpacing: '1.5px',
@@ -295,11 +312,11 @@ const ScenarioQuizEnvironment = ({
       ) : gm ? (
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', color: gamingTheme.mutedBlue, letterSpacing: '2px' }}>QUESTION {idx + 1} OF {questions.length}</span>
-            <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', color: levelAccent, letterSpacing: '1px' }}>{progress}%</span>
+            <span style={{ fontFamily: xt.fontL, fontSize: '9px', color: xt.muted, letterSpacing: '2px' }}>QUESTION {idx + 1} OF {questions.length}</span>
+            <span style={{ fontFamily: xt.fontL, fontSize: '9px', color: levelAccent, letterSpacing: '1px' }}>{progress}%</span>
           </div>
           <div style={{ height: '6px', borderRadius: '3px', background: 'rgba(61,78,122,0.5)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', borderRadius: '3px', background: `linear-gradient(90deg, ${levelAccent}, ${gamingTheme.mint})`, width: `${progress}%`, transition: 'width 0.5s ease', boxShadow: `0 0 8px ${gc.glow || levelAccent}` }} />
+            <div style={{ height: '100%', borderRadius: '3px', background: `linear-gradient(90deg, ${levelAccent}, ${xt.mint})`, width: `${progress}%`, transition: 'width 0.5s ease', boxShadow: `0 0 8px ${gc.glow || levelAccent}` }} />
           </div>
         </div>
       ) : (
@@ -322,9 +339,9 @@ const ScenarioQuizEnvironment = ({
             <p style={{ fontFamily: FFonts.ui, fontSize: 14, color: FColors.body, lineHeight: 1.6, margin: 0 }}>{scenarioContext}</p>
           </motion.div>
         ) : gm ? (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ background: gamingTheme.cardBg, border: gamingTheme.borderThin, borderRadius: '12px', padding: '16px 20px', marginBottom: '20px', backdropFilter: `blur(${gamingTheme.glassBlur})` }}>
-            <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2.5px', marginBottom: '8px' }}>THE SCENARIO</p>
-            <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '14px', color: gamingTheme.seafoam, lineHeight: 1.6, margin: 0 }}>{scenarioContext}</p>
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ background: xt.cardBg, border: xt.border, borderRadius: '12px', padding: '16px 20px', marginBottom: '20px', backdropFilter: `blur(${xt.blur})` }}>
+            <p style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: '2.5px', marginBottom: '8px' }}>THE SCENARIO</p>
+            <p style={{ fontFamily: xt.fontB, fontSize: '14px', color: xt.text2, lineHeight: 1.6, margin: 0 }}>{scenarioContext}</p>
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="bg-brutal-white border-4 border-brutal-black shadow-brutal mb-6 p-5">
@@ -365,7 +382,7 @@ const ScenarioQuizEnvironment = ({
                 display: 'flex', alignItems: 'center', gap: '10px',
               }}>
                 <LevelIcon size={16} color={levelAccent} />
-                <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', letterSpacing: '2.5px', color: levelAccent, textTransform: 'uppercase' }}>{levelCfg.label}</span>
+                <span style={{ fontFamily: xt.fontL, fontSize: '9px', letterSpacing: '2.5px', color: levelAccent, textTransform: 'uppercase' }}>{levelCfg.label}</span>
               </div>
             ) : (
               <div className={`${levelCfg.bg} px-5 py-3 flex items-center gap-2 border-b-4 border-brutal-black`}>
@@ -381,7 +398,7 @@ const ScenarioQuizEnvironment = ({
               {fm ? (
                 <p style={{ fontFamily: FFonts.h, fontSize: 18, fontWeight: 500, color: FColors.deep, lineHeight: 1.55, marginBottom: 24 }}>{q?.question}</p>
               ) : gm ? (
-                <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '17px', color: gamingTheme.stellarWhite, lineHeight: 1.65, marginBottom: '24px', fontWeight: 500 }}>{q?.question}</p>
+                <p style={{ fontFamily: xt.fontB, fontSize: '17px', color: xt.text1, lineHeight: 1.65, marginBottom: '24px', fontWeight: 500 }}>{q?.question}</p>
               ) : (
                 <p className="text-xl font-black text-brutal-black mb-6 leading-snug">{q?.question}</p>
               )}
@@ -432,9 +449,9 @@ const ScenarioQuizEnvironment = ({
                             width: '100%',
                             textAlign: 'left',
                             padding: '12px 16px',
-                            fontFamily: gamingTheme.fontBody,
+                            fontFamily: xt.fontB,
                             fontSize: '14px',
-                            color: isSelected ? gamingTheme.bgDark : gamingTheme.seafoam,
+                            color: isSelected ? xt.dark : xt.text2,
                             background: isSelected
                               ? `linear-gradient(135deg, ${levelAccent}, ${gc.secondary || levelAccent})`
                               : `rgba(${hexToRgbStr(levelAccent)},0.06)`,
@@ -539,26 +556,26 @@ const ScenarioQuizEnvironment = ({
                   <div>
                     <button
                       onClick={() => setShowHint(h => !h)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: gamingTheme.fontLabel, fontSize: '9px', letterSpacing: '1.5px', color: showHint ? levelAccent : gamingTheme.mutedBlue, background: 'none', border: 'none', cursor: 'pointer', marginBottom: '16px', textTransform: 'uppercase' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: xt.fontL, fontSize: '9px', letterSpacing: '1.5px', color: showHint ? levelAccent : xt.muted, background: 'none', border: 'none', cursor: 'pointer', marginBottom: '16px', textTransform: 'uppercase' }}
                     >
                       <HelpCircle size={13} />
                       {showHint ? 'Hide Formula' : 'Show Formula & Hints'}
                     </button>
 
                     {showHint && (
-                      <div style={{ background: 'rgba(15,20,40,0.6)', border: gamingTheme.borderThin, borderRadius: '10px', padding: '14px 16px', marginBottom: '16px' }}>
-                        <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2px', marginBottom: '8px' }}>FORMULA</p>
-                        <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '14px', color: gamingTheme.stellarWhite, marginBottom: '10px' }}>{q.formula}</p>
+                      <div style={{ background: xt.inner, border: xt.border, borderRadius: '10px', padding: '14px 16px', marginBottom: '16px' }}>
+                        <p style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: '2px', marginBottom: '8px' }}>FORMULA</p>
+                        <p style={{ fontFamily: xt.fontB, fontSize: '14px', color: xt.text1, marginBottom: '10px' }}>{q.formula}</p>
                         {(q.hints || []).map((hint, i) => (
-                          <p key={i} style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam, marginBottom: '4px' }}>{i + 1}. {hint}</p>
+                          <p key={i} style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2, marginBottom: '4px' }}>{i + 1}. {hint}</p>
                         ))}
                       </div>
                     )}
 
                     {stage === 'retry' && lastResult && (
                       <div style={{ background: 'rgba(255,100,100,0.08)', border: '1px solid rgba(255,100,100,0.3)', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px' }}>
-                        <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: '#ff6464', letterSpacing: '2px', marginBottom: '6px' }}>CHECK YOUR WORK</p>
-                        <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam }}>{lastResult.explanation}</p>
+                        <p style={{ fontFamily: xt.fontL, fontSize: '8px', color: '#ff6464', letterSpacing: '2px', marginBottom: '6px' }}>CHECK YOUR WORK</p>
+                        <p style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2 }}>{lastResult.explanation}</p>
                       </div>
                     )}
 
@@ -672,12 +689,12 @@ const ScenarioQuizEnvironment = ({
                 ) : gm ? (
                   <div>
                     {(q.evaluationCriteria || []).length > 0 && (
-                      <div style={{ background: 'rgba(15,20,40,0.6)', border: gamingTheme.borderThin, borderRadius: '10px', padding: '14px 16px', marginBottom: '16px' }}>
-                        <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2px', marginBottom: '10px' }}>YOUR ANSWER SHOULD COVER</p>
+                      <div style={{ background: xt.inner, border: xt.border, borderRadius: '10px', padding: '14px 16px', marginBottom: '16px' }}>
+                        <p style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: '2px', marginBottom: '10px' }}>YOUR ANSWER SHOULD COVER</p>
                         {q.evaluationCriteria.map((c, i) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
                             <ChevronRight size={13} color={levelAccent} style={{ flexShrink: 0, marginTop: '2px' }} />
-                            <span style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam }}>{c}</span>
+                            <span style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2 }}>{c}</span>
                           </div>
                         ))}
                       </div>
@@ -692,7 +709,7 @@ const ScenarioQuizEnvironment = ({
                     />
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                      <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', letterSpacing: '1px', color: wordCount >= (q.minWords || 20) ? levelAccent : gamingTheme.mutedBlue }}>
+                      <span style={{ fontFamily: xt.fontL, fontSize: '9px', letterSpacing: '1px', color: wordCount >= (q.minWords || 20) ? levelAccent : xt.muted }}>
                         {wordCount} words{q.minWords && wordCount < q.minWords ? ` (aim for ${q.minWords}+)` : ''}
                       </span>
                     </div>
@@ -760,8 +777,8 @@ const ScenarioQuizEnvironment = ({
                 ) : gm ? (
                   <div style={{ padding: '40px 0', textAlign: 'center' }}>
                     <div style={{ width: 48, height: 48, borderRadius: '50%', border: `3px solid rgba(${hexToRgbStr(levelAccent)},0.2)`, borderTopColor: levelAccent, animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
-                    <p style={{ fontFamily: gamingTheme.fontHeading, fontSize: '13px', color: gamingTheme.stellarWhite, letterSpacing: '2px', textTransform: 'uppercase' }}>Evaluating Your Answer...</p>
-                    <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '12px', color: gamingTheme.mutedBlue, marginTop: '6px' }}>AI is reviewing your response</p>
+                    <p style={{ fontFamily: xt.fontH, fontSize: '13px', color: xt.text1, letterSpacing: '2px', textTransform: 'uppercase' }}>Evaluating Your Answer...</p>
+                    <p style={{ fontFamily: xt.fontB, fontSize: '12px', color: xt.muted, marginTop: '6px' }}>AI is reviewing your response</p>
                   </div>
                 ) : (
                   <div className="py-10 text-center">
@@ -814,14 +831,14 @@ const ScenarioQuizEnvironment = ({
                       border: `1px solid ${lastResult.correct ? 'rgba(78,205,196,0.4)' : 'rgba(255,100,100,0.4)'}`,
                     }}>
                       {lastResult.correct
-                        ? <CheckCircle size={20} color={gamingTheme.mint} style={{ flexShrink: 0, marginTop: 2 }} />
-                        : <XCircle    size={20} color="#ff6464"           style={{ flexShrink: 0, marginTop: 2 }} />
+                        ? <CheckCircle size={20} color={xt.mint} style={{ flexShrink: 0, marginTop: 2 }} />
+                        : <XCircle    size={20} color="#ff6464"  style={{ flexShrink: 0, marginTop: 2 }} />
                       }
                       <div>
-                        <p style={{ fontFamily: gamingTheme.fontHeading, fontSize: '13px', fontWeight: 700, letterSpacing: '1.5px', color: lastResult.correct ? gamingTheme.mint : '#ff6464', textTransform: 'uppercase', marginBottom: '6px' }}>
+                        <p style={{ fontFamily: xt.fontH, fontSize: '13px', fontWeight: 700, letterSpacing: '1.5px', color: lastResult.correct ? xt.mint : '#ff6464', textTransform: 'uppercase', marginBottom: '6px' }}>
                           {lastResult.correct ? 'Correct!' : 'Not Quite'}
                         </p>
-                        <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam, lineHeight: 1.6 }}>{lastResult.explanation}</p>
+                        <p style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2, lineHeight: 1.6 }}>{lastResult.explanation}</p>
                       </div>
                     </div>
 
@@ -938,21 +955,21 @@ const ScenarioQuizEnvironment = ({
                             fill={n <= openEval.score ? levelAccent : 'transparent'}
                           />
                         ))}
-                        <span style={{ marginLeft: '8px', fontFamily: gamingTheme.fontHeading, fontSize: '14px', fontWeight: 700, color: gamingTheme.stellarWhite }}>{openEval.score}/5</span>
+                        <span style={{ marginLeft: '8px', fontFamily: xt.fontH, fontSize: '14px', fontWeight: 700, color: xt.text1 }}>{openEval.score}/5</span>
                       </div>
-                      <p style={{ fontFamily: gamingTheme.fontHeading, fontSize: '22px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: openEval.passed ? gamingTheme.mint : '#ff6464', marginBottom: '6px' }}>
+                      <p style={{ fontFamily: xt.fontH, fontSize: '22px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: openEval.passed ? xt.mint : '#ff6464', marginBottom: '6px' }}>
                         {openEval.passed ? 'Boss Defeated!' : 'Keep Training!'}
                       </p>
-                      <p style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam, lineHeight: 1.6 }}>{openEval.feedback}</p>
+                      <p style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2, lineHeight: 1.6 }}>{openEval.feedback}</p>
                     </div>
 
                     {openEval.strengths?.length > 0 && (
                       <div style={{ marginBottom: '14px' }}>
-                        <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2px', marginBottom: '10px' }}>WHAT YOU GOT RIGHT</p>
+                        <p style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: '2px', marginBottom: '10px' }}>WHAT YOU GOT RIGHT</p>
                         {openEval.strengths.map((s, i) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
-                            <CheckCircle size={13} color={gamingTheme.mint} style={{ flexShrink: 0, marginTop: '2px' }} />
-                            <span style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam }}>{s}</span>
+                            <CheckCircle size={13} color={xt.mint} style={{ flexShrink: 0, marginTop: '2px' }} />
+                            <span style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2 }}>{s}</span>
                           </div>
                         ))}
                       </div>
@@ -960,11 +977,11 @@ const ScenarioQuizEnvironment = ({
 
                     {openEval.missed?.length > 0 && (
                       <div style={{ marginBottom: '20px' }}>
-                        <p style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2px', marginBottom: '10px' }}>AREAS TO EXPLORE</p>
+                        <p style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: '2px', marginBottom: '10px' }}>AREAS TO EXPLORE</p>
                         {openEval.missed.map((m, i) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
                             <ChevronRight size={13} color='#ff6464' style={{ flexShrink: 0, marginTop: '2px' }} />
-                            <span style={{ fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam }}>{m}</span>
+                            <span style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2 }}>{m}</span>
                           </div>
                         ))}
                       </div>

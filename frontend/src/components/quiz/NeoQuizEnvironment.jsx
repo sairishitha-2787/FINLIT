@@ -154,6 +154,23 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
   const currentLevel = getCurrentLevel();
   const gc = gamingColors || {};
 
+  // ── Sports theme override (when gc.sports is true) ───────────────────────────
+  const sm = !!(gamingMode && gc.sports);
+  const xt = {
+    cardBg: sm ? 'rgba(22,22,22,0.95)'               : gamingTheme.cardBg,
+    fontH:  sm ? "'Bebas Neue', cursive"              : gamingTheme.fontHeading,
+    fontL:  sm ? "'Barlow Condensed', sans-serif"     : gamingTheme.fontLabel,
+    fontB:  sm ? "'Inter', sans-serif"                : gamingTheme.fontBody,
+    text1:  sm ? '#fff'                               : gamingTheme.stellarWhite,
+    text2:  sm ? 'rgba(255,255,255,0.72)'             : gamingTheme.seafoam,
+    muted:  sm ? 'rgba(255,255,255,0.4)'              : gamingTheme.mutedBlue,
+    border: sm ? '1px solid rgba(255,255,255,0.1)'    : gamingTheme.borderThin,
+    blur:   sm ? '16px'                               : gamingTheme.glassBlur,
+    dark:   sm ? '#000'                               : gamingTheme.bgDark,
+    score:  sm ? gc.primary                           : gc.primary,
+    lsz:    sm ? '1.5px'                              : '2px',
+  };
+
   // ── Fashion render ───────────────────────────────────────────────────────────
   if (fashionMode) {
     const lvlNum = currentLevel.level || 1;
@@ -234,10 +251,10 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
 
         {/* Progress tracker */}
         <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '20px' }}>
-          <div style={{ background: gamingTheme.cardBg, border: gamingTheme.borderThin, borderRadius: '14px', padding: '16px 20px', backdropFilter: `blur(${gamingTheme.glassBlur})` }}>
+          <div style={{ background: xt.cardBg, border: xt.border, borderRadius: '14px', padding: '16px 20px', backdropFilter: `blur(${xt.blur})` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <span style={{ fontFamily: gamingTheme.fontHeading, fontSize: '11px', fontWeight: 600, color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '2px' }}>Quiz Progression</span>
-              <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '10px', color: gc.primary, letterSpacing: '1px' }}>Q{currentQuestionIndex + 1} / {totalQuestions}</span>
+              <span style={{ fontFamily: xt.fontH, fontSize: '11px', fontWeight: 600, color: xt.text1, textTransform: 'uppercase', letterSpacing: '2px' }}>Quiz Progression</span>
+              <span style={{ fontFamily: xt.fontL, fontSize: '10px', color: gc.primary, letterSpacing: '1px' }}>Q{currentQuestionIndex + 1} / {totalQuestions}</span>
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               {[1, 2, 3].map((lvl) => {
@@ -247,8 +264,8 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
                 const c = lvlColor(lvl);
                 return (
                   <div key={lvl} style={{ flex: 1, borderRadius: '10px', padding: '12px 8px', textAlign: 'center', background: isActive ? `rgba(${hexToRgbStr(c)},0.18)` : isPassed ? `rgba(${hexToRgbStr(c)},0.08)` : 'rgba(30,42,69,0.5)', border: `1px solid rgba(${hexToRgbStr(c)},${isActive ? '0.55' : isPassed ? '0.25' : '0.12'})`, transition: 'all 0.25s ease', transform: isActive ? 'scale(1.04)' : 'scale(1)', opacity: isPassed ? 0.7 : 1 }}>
-                    <StepIcon size={18} color={isActive || isPassed ? c : gamingTheme.mutedBlue} style={{ margin: '0 auto 6px' }} />
-                    <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', letterSpacing: '1.5px', color: isActive || isPassed ? c : gamingTheme.mutedBlue }}>LVL {lvl}</div>
+                    <StepIcon size={18} color={isActive || isPassed ? c : xt.muted} style={{ margin: '0 auto 6px' }} />
+                    <div style={{ fontFamily: xt.fontL, fontSize: '8px', letterSpacing: xt.lsz, color: isActive || isPassed ? c : xt.muted }}>LVL {lvl}</div>
                   </div>
                 );
               })}
@@ -262,13 +279,13 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
             <div style={{ width: 3, height: 36, borderRadius: 2, background: lvlColor(currentLevel.level), flexShrink: 0 }} />
             <currentLevel.Icon size={22} color={lvlColor(currentLevel.level)} />
             <div>
-              <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2px', textTransform: 'uppercase' }}>Level {currentLevel.level}</div>
-              <div style={{ fontFamily: gamingTheme.fontHeading, fontSize: '14px', fontWeight: 700, color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '1.5px' }}>{currentLevel.levelName}</div>
+              <div style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: xt.lsz, textTransform: 'uppercase' }}>Level {currentLevel.level}</div>
+              <div style={{ fontFamily: xt.fontH, fontSize: '14px', fontWeight: 700, color: xt.text1, textTransform: 'uppercase', letterSpacing: '1.5px' }}>{currentLevel.levelName}</div>
             </div>
           </div>
-          <div style={{ background: 'rgba(30,42,69,0.7)', border: gamingTheme.borderThin, borderRadius: '12px', padding: '14px 20px', flexShrink: 0 }}>
-            <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', color: gamingTheme.mutedBlue, letterSpacing: '2px', marginBottom: '4px' }}>SCORE</div>
-            <div style={{ fontFamily: gamingTheme.fontHeading, fontSize: '20px', fontWeight: 800, color: gc.primary }}>{score}<span style={{ fontSize: '12px', color: gamingTheme.mutedBlue }}>/{currentQuestionIndex + (showFeedback ? 1 : 0)}</span></div>
+          <div style={{ background: xt.cardBg, border: xt.border, borderRadius: '12px', padding: '14px 20px', flexShrink: 0 }}>
+            <div style={{ fontFamily: xt.fontL, fontSize: '8px', color: xt.muted, letterSpacing: xt.lsz, marginBottom: '4px' }}>SCORE</div>
+            <div style={{ fontFamily: xt.fontH, fontSize: '20px', fontWeight: 800, color: gc.primary }}>{score}<span style={{ fontSize: '12px', color: xt.muted }}>/{currentQuestionIndex + (showFeedback ? 1 : 0)}</span></div>
           </div>
         </motion.div>
 
@@ -290,7 +307,7 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
                   whileTap={{ scale: 0.96 }}
                   onClick={handleSubmitAnswer}
                   disabled={!selectedAnswer}
-                  style={{ background: selectedAnswer ? `linear-gradient(135deg, ${gc.primary}, ${gc.secondary || gc.primary})` : 'rgba(61,78,122,0.4)', border: `1px solid ${selectedAnswer ? gc.primary : 'rgba(139,184,233,0.2)'}`, color: selectedAnswer ? gamingTheme.bgDark : gamingTheme.mutedBlue, fontFamily: gamingTheme.fontHeading, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 40px', borderRadius: '10px', cursor: selectedAnswer ? 'pointer' : 'not-allowed', boxShadow: selectedAnswer ? `0 0 20px ${gc.glow}` : 'none', transition: 'all 0.2s ease' }}
+                  style={{ background: selectedAnswer ? `linear-gradient(135deg, ${gc.primary}, ${gc.secondary || gc.primary})` : 'rgba(61,78,122,0.4)', border: `1px solid ${selectedAnswer ? gc.primary : 'rgba(139,184,233,0.2)'}`, color: selectedAnswer ? xt.dark : xt.muted, fontFamily: xt.fontH, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 40px', borderRadius: '10px', cursor: selectedAnswer ? 'pointer' : 'not-allowed', boxShadow: selectedAnswer ? `0 0 20px ${gc.glow}` : 'none', transition: 'all 0.2s ease' }}
                 >
                   Submit Answer
                 </motion.button>

@@ -20,6 +20,22 @@ const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, to
   const answerLabels = ['A', 'B', 'C', 'D'];
   const gc = gamingColors || {};
 
+  // ── Sports theme override ────────────────────────────────────────────────────
+  const sm = !!(gamingMode && gc.sports);
+  const xt = {
+    cardBg: sm ? 'rgba(22,22,22,0.95)'            : gamingTheme.cardBg,
+    fontH:  sm ? "'Bebas Neue', cursive"           : gamingTheme.fontHeading,
+    fontL:  sm ? "'Barlow Condensed', sans-serif"  : gamingTheme.fontLabel,
+    fontB:  sm ? "'Inter', sans-serif"             : gamingTheme.fontBody,
+    text1:  sm ? '#fff'                            : gamingTheme.stellarWhite,
+    text2:  sm ? 'rgba(255,255,255,0.72)'          : gamingTheme.seafoam,
+    muted:  sm ? 'rgba(255,255,255,0.4)'           : gamingTheme.mutedBlue,
+    border: sm ? '1px solid rgba(255,255,255,0.1)' : gamingTheme.borderThin,
+    blur:   sm ? '16px'                            : gamingTheme.glassBlur,
+    dark:   sm ? '#000'                            : gamingTheme.bgDark,
+    shadow: sm ? 'none'                            : gamingTheme.shadowCard,
+  };
+
   // ── Fashion render ──────────────────────────────────────────────────────────
   if (fashionMode) {
     return (
@@ -63,10 +79,10 @@ const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, to
 
   if (gamingMode && gc.primary) {
     return (
-      <div style={{ background: gamingTheme.cardBg, border: gamingTheme.borderThin, borderRadius: '16px', padding: '28px', backdropFilter: `blur(${gamingTheme.glassBlur})`, boxShadow: gamingTheme.shadowCard }}>
+      <div style={{ background: xt.cardBg, border: xt.border, borderRadius: '16px', padding: '28px', backdropFilter: `blur(${xt.blur})`, boxShadow: xt.shadow }}>
         {/* Progress dots */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-          <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', color: gc.primary, letterSpacing: '2px' }}>Q{questionNumber} / {totalQuestions}</span>
+          <span style={{ fontFamily: xt.fontL, fontSize: '9px', color: gc.primary, letterSpacing: '2px' }}>Q{questionNumber} / {totalQuestions}</span>
           <div style={{ display: 'flex', gap: '6px' }}>
             {[...Array(totalQuestions)].map((_, i) => (
               <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i + 1 === questionNumber ? gc.primary : 'rgba(139,184,233,0.25)', boxShadow: i + 1 === questionNumber ? `0 0 6px ${gc.glow}` : 'none', transition: 'all 0.2s' }} />
@@ -76,7 +92,7 @@ const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, to
 
         {/* Question text */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '28px' }}>
-          <h2 style={{ fontFamily: gamingTheme.fontBody, fontSize: '20px', fontWeight: 600, color: gamingTheme.stellarWhite, lineHeight: 1.5, margin: 0 }}>{question.question || question.text || question.prompt || ''}</h2>
+          <h2 style={{ fontFamily: xt.fontB, fontSize: '20px', fontWeight: 600, color: xt.text1, lineHeight: 1.5, margin: 0 }}>{question.question || question.text || question.prompt || ''}</h2>
         </motion.div>
 
         {/* Answer options */}
@@ -96,12 +112,12 @@ const QuizCard = ({ question, questionNumber, selectedAnswer, onSelectAnswer, to
                 style={{ padding: '14px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px', background: isSelected ? `rgba(${hexToRgbStr(gc.primary)},0.15)` : 'rgba(30,42,69,0.55)', border: isSelected ? `1.5px solid ${gc.primary}` : '1px solid rgba(139,184,233,0.18)', boxShadow: isSelected ? `0 0 12px ${gc.glow}` : 'none', transition: 'all 0.18s ease' }}
               >
                 <div style={{ width: 32, height: 32, borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isSelected ? `rgba(${hexToRgbStr(gc.primary)},0.25)` : 'rgba(61,78,122,0.6)', border: `1px solid rgba(${hexToRgbStr(gc.primary)},${isSelected ? '0.6' : '0.2'})` }}>
-                  <span style={{ fontFamily: gamingTheme.fontHeading, fontSize: '11px', fontWeight: 700, color: isSelected ? gc.primary : gamingTheme.mutedBlue }}>{label}</span>
+                  <span style={{ fontFamily: xt.fontH, fontSize: '11px', fontWeight: 700, color: isSelected ? gc.primary : xt.muted }}>{label}</span>
                 </div>
-                <p style={{ flex: 1, fontFamily: gamingTheme.fontBody, fontSize: '15px', color: isSelected ? gamingTheme.stellarWhite : gamingTheme.seafoam, margin: 0, lineHeight: 1.4 }}>{optionText(option)}</p>
+                <p style={{ flex: 1, fontFamily: xt.fontB, fontSize: '15px', color: isSelected ? xt.text1 : xt.text2, margin: 0, lineHeight: 1.4 }}>{optionText(option)}</p>
                 {isSelected && (
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ width: 20, height: 20, borderRadius: '50%', background: gc.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Check size={11} strokeWidth={3} color={gamingTheme.bgDark} />
+                    <Check size={11} strokeWidth={3} color={xt.dark} />
                   </motion.div>
                 )}
               </motion.div>

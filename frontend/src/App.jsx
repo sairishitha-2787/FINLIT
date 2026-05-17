@@ -19,12 +19,14 @@ import GamingDashboard from './pages/gaming/GamingDashboard';
 import GamingMap from './pages/gaming/GamingMap';
 import GamingProgressPage from './pages/gaming/GamingProgressPage';
 import GamingAchievementsPage from './pages/gaming/GamingAchievementsPage';
+import GamingSettings from './pages/gaming/GamingSettings';
 import FashionLayout from './layouts/FashionLayout';
 import FashionDashboard from './pages/fashion/FashionDashboard';
 import FashionMap from './pages/fashion/FashionMap';
 import FashionLearning from './pages/fashion/FashionLearning';
 import FashionProgressPage from './pages/fashion/FashionProgressPage';
 import FashionBadgesPage from './pages/fashion/FashionBadgesPage';
+import FashionSettings from './pages/fashion/FashionSettings';
 import { FashionProvider } from './contexts/FashionContext';
 import SportsLayout from './layouts/SportsLayout';
 import SportsDashboard from './pages/sports/SportsDashboard';
@@ -32,6 +34,9 @@ import SportsMap from './pages/sports/SportsMap';
 import SportsProgressPage from './pages/sports/SportsProgressPage';
 import SportsBadgesPage from './pages/sports/SportsBadgesPage';
 import { SportsProvider } from './contexts/SportsContext';
+import SportsLearning from './pages/sports/SportsLearning';
+import SportsSettings from './pages/sports/SportsSettings';
+import ComingSoon from './pages/ComingSoon';
 
 function App() {
   return (
@@ -96,6 +101,7 @@ function App() {
               <Route path="progress" element={<GamingProgressPage />} />
               <Route path="achievements" element={<GamingAchievementsPage />} />
               <Route path="learn" element={<Learning />} />
+              <Route path="settings" element={<GamingSettings />} />
             </Route>
 
             {/* Fashion domain */}
@@ -114,6 +120,7 @@ function App() {
               <Route path="learn" element={<FashionLearning />} />
               <Route path="progress" element={<FashionProgressPage />} />
               <Route path="achievements" element={<FashionBadgesPage />} />
+              <Route path="settings" element={<FashionSettings />} />
             </Route>
 
             {/* Sports domain */}
@@ -131,8 +138,14 @@ function App() {
               <Route path="playbook" element={<SportsMap />} />
               <Route path="progress" element={<SportsProgressPage />} />
               <Route path="achievements" element={<SportsBadgesPage />} />
-              <Route path="learn" element={<Learning />} />
+              <Route path="learn" element={<SportsLearning />} />
+              <Route path="settings" element={<SportsSettings />} />
             </Route>
+
+            {/* Coming soon domains */}
+            <Route path="/movies" element={<ProtectedRoute><ComingSoon domain="movies" /></ProtectedRoute>} />
+            <Route path="/food"   element={<ProtectedRoute><ComingSoon domain="food"   /></ProtectedRoute>} />
+            <Route path="/music"  element={<ProtectedRoute><ComingSoon domain="music"  /></ProtectedRoute>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
