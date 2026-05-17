@@ -1,6 +1,6 @@
 // FINLIT — Fashion Learning & Quiz Page
 // Bubblegum Glam theme: glassmorphism cards, Playfair Display headings, DM Sans body
-// Stages: loading → explanation (4 sections, prev/next nav) → quiz (5 Qs) → complete
+// Stages: loading → explanation (4 sections, prev/next nav) → quiz (5 Qs) → diagnosis (on fail) → complete
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
@@ -586,15 +586,17 @@ export default function FashionLearning() {
     awardXP?.completeQuiz?.(finalScore, questions.length);
     if (didPass) {
       addTopicProgress({ topic, score: finalScore, totalQuestions: questions.length, difficulty: profile?.difficulty || 'beginner' });
+      if (finalScore === questions.length) {
+        confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
+        setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
+        setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#f7a0b8','#c084fc'] }), 500);
+      } else {
+        confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc'] });
+      }
+      setStage('complete');
+    } else {
+      setStage('diagnosis');
     }
-    if (finalScore === questions.length) {
-      confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
-      setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
-      setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#f7a0b8','#c084fc'] }), 500);
-    } else if (didPass) {
-      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc'] });
-    }
-    setStage('complete');
   };
 
   // Called by NeoQuizEnvironment / ScenarioQuizEnvironment when done
@@ -607,15 +609,17 @@ export default function FashionLearning() {
     awardXP?.completeQuiz?.(score, totalQuestions);
     if (didPass) {
       addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+      if (score === totalQuestions) {
+        confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
+        setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
+        setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#f7a0b8','#c084fc'] }), 500);
+      } else {
+        confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc'] });
+      }
+      setStage('complete');
+    } else {
+      setStage('diagnosis');
     }
-    if (score === totalQuestions) {
-      confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
-      setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
-      setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#f7a0b8','#c084fc'] }), 500);
-    } else if (didPass) {
-      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc'] });
-    }
-    setStage('complete');
   };
 
   const retryQuiz = () => {
@@ -807,6 +811,45 @@ export default function FashionLearning() {
         )}
 
         {/* ══ COMPLETE ═════════════════════════════════════════════════════ */}
+        {/* ══ DIAGNOSIS ═══════════════════════════════════════════════════════ */}
+        {stage === 'diagnosis' && (
+          <motion.div key="diagnosis" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            <GlassCard>
+              <div style={{ padding: '40px 32px', textAlign: 'center' }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: '50%',
+                  background: 'rgba(247,160,184,0.12)', border: '2px solid rgba(247,160,184,0.35)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 22px',
+                }}>
+                  <RotateCcw size={32} color={C.pink} />
+                </div>
+                <div style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.label, marginBottom: 10 }}>
+                  Style Review
+                </div>
+                <h2 style={{ fontFamily: F.heading, fontWeight: 600, fontSize: 28, letterSpacing: '-0.02em', color: C.deepRose, margin: '0 0 8px' }}>
+                  A Touch-Up is Needed
+                </h2>
+                <p style={{ fontFamily: F.italic, fontStyle: 'italic', fontSize: 18, color: C.midRose, margin: '0 0 12px' }}>
+                  {scoreRef.current} out of {quizTotal} — every icon refines their look.
+                </p>
+                <p style={{ fontFamily: F.ui, fontSize: 13, color: C.body, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 32px' }}>
+                  You need 60% to add this look to your wardrobe. Review the lesson to reinforce the key concepts, then give the quiz another try.
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+                  <GradBtn onClick={() => { setStage('explanation'); setSecIdx(0); }}>
+                    <RefreshCw size={15} /> Review the Lesson
+                  </GradBtn>
+                  <GlassBtn onClick={retryQuiz}>
+                    <RotateCcw size={14} /> Try Again
+                  </GlassBtn>
+                </div>
+              </div>
+            </GlassCard>
+          </motion.div>
+        )}
+
+        {/* ══ COMPLETE ══════════════════════════════════════════════════════════ */}
         {stage === 'complete' && (
           <motion.div key="complete" initial={{ opacity: 0, scale: 0.90 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
             <GlassCard>

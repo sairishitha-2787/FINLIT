@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, Map, BarChart2, Award, Sparkles } from 'lucide-react';
+import { BookOpen, Map, BarChart2, Award, Sparkles, Heart, Zap, CheckCircle2 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
+import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 
 // ─── Design tokens (self-contained) ──────────────────────────────────────────
 const C = {
@@ -175,23 +176,39 @@ function ChibiAvatar({ char, size = 64 }) {
         onError={(e) => { e.target.style.display = 'none'; }}
         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', opacity: loaded ? 1 : 0, transition: 'opacity 0.3s', mixBlendMode: 'screen' }}
       />
-      {!loaded && <span style={{ fontSize: size * 0.45 }}>{char.id === 'raven' ? '🖤' : char.id === 'amara' ? '💜' : '🤍'}</span>}
+      {!loaded && <Heart size={size * 0.45} color={char.colors?.primary || '#d4537e'} strokeWidth={1.5} />}
     </div>
   );
 }
 
 export default function FashionDashboard() {
   const navigate = useNavigate();
-  const { xp, level, fashionCharacter, onOpenSheet } = useOutletContext();
-  const { profile, completedTopics } = useUser();
+  const { xp, level, streak, fashionCharacter, onOpenSheet } = useOutletContext();
+  const { profile, completedTopics, progress, loading } = useUser();
 
   const firstName = profile?.name?.split(' ')[0] || 'Darling';
 
+  const allTopics = FASHION_DISTRICTS.flatMap(d => d.topics);
+  const nextTopic = allTopics.find(t => !completedTopics.includes(t));
+  const nextTopicDistrict = nextTopic
+    ? FASHION_DISTRICTS.find(d => d.topics.includes(nextTopic))
+    : null;
+
+  const recentLooks = (() => {
+    if (progress && progress.length > 0) {
+      return [...progress]
+        .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))
+        .slice(0, 5)
+        .map(p => p.topic);
+    }
+    return completedTopics.slice(-5).reverse();
+  })();
+
   const stats = [
-    { label: 'Style Points',    value: xp?.toLocaleString() ?? '0', accent: C.pink   },
-    { label: 'Fashion Tier',    value: `Tier ${level}`,              accent: C.purple  },
-    { label: 'Day Streak',      value: `${0}d`,                      accent: C.gold    },
-    { label: 'Wardrobe Pieces', value: completedTopics.length,       accent: C.midRose },
+    { label: 'Style Points',    value: xp?.toLocaleString() ?? '0',  accent: C.pink   },
+    { label: 'Fashion Tier',    value: `Tier ${level}`,               accent: C.purple  },
+    { label: 'Day Streak',      value: `${streak ?? 0}d`,             accent: C.gold    },
+    { label: 'Wardrobe Pieces', value: completedTopics.length,        accent: C.midRose },
   ];
 
   const actions = [
@@ -200,6 +217,21 @@ export default function FashionDashboard() {
     { label: 'My Progress',       icon: BarChart2, go: '/fashion/progress'     },
     { label: 'Designer Labels',   icon: Award,     go: '/fashion/achievements' },
   ];
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: 16 }}>
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%',
+          border: `3px solid rgba(247,160,184,0.25)`,
+          borderTop: `3px solid ${C.pink}`,
+          animation: 'spin 0.8s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <span style={{ fontFamily: F.ui, fontSize: 11, letterSpacing: '0.16em', color: C.label, textTransform: 'uppercase' }}>Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -270,33 +302,67 @@ export default function FashionDashboard() {
         </div>
       </motion.div>
 
-      {/* ── HERO CTA: Your Style Journey ── */}
+      {/* ── DAILY DRILL: Next Look ── */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
-        <GlassCard padding={32} style={{
+        <GlassCard padding={28} style={{
           background: 'linear-gradient(135deg, rgba(247,160,184,0.22) 0%, rgba(192,132,252,0.16) 50%, rgba(251,182,196,0.14) 100%)',
           borderTop: '1.5px solid rgba(255,255,255,0.72)',
           borderLeft: '1.5px solid rgba(255,255,255,0.72)',
         }}>
-          <SectionLabel style={{ marginBottom: 10 }}>Your Style Journey</SectionLabel>
-          <Heading size={24} style={{ marginBottom: 8 }}>
-            {completedTopics.length === 0 ? 'Your collection awaits' : `${completedTopics.length} looks curated`}
-          </Heading>
-          <ScriptSub style={{ marginBottom: 16 }}>
-            {completedTopics.length === 0
-              ? 'Every fashion icon starts with a single look.'
-              : 'Your financial wardrobe is looking fabulous.'}
-          </ScriptSub>
-          <BodyText style={{ marginBottom: 24 }}>
-            {completedTopics.length === 0
-              ? 'Begin your first collection and build a wardrobe of financial knowledge that never goes out of style.'
-              : 'Stay chic — keep building that wardrobe. The runway awaits.'}
-          </BodyText>
-          <GradientButton onClick={() => navigate('/fashion/learn')}>
-            <BookOpen size={15} />
-            {completedTopics.length === 0 ? 'Start First Look' : 'Continue Styling'}
-          </GradientButton>
+          {completedTopics.length === allTopics.length ? (
+            /* All done state */
+            <div style={{ textAlign: 'center', padding: '8px 0' }}>
+              <CheckCircle2 size={36} color={C.pink} style={{ marginBottom: 12 }} />
+              <Heading size={22} style={{ marginBottom: 6 }}>Wardrobe Complete!</Heading>
+              <ScriptSub>Every look styled. You are truly iconic.</ScriptSub>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+                background: 'rgba(247,160,184,0.18)', border: '1.5px solid rgba(247,160,184,0.35)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Zap size={24} color={C.pink} />
+              </div>
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <SectionLabel style={{ marginBottom: 4 }}>
+                  {completedTopics.length === 0 ? 'First Look' : 'Daily Drill'}
+                </SectionLabel>
+                <Heading size={18} style={{ marginBottom: 2 }}>{nextTopic}</Heading>
+                {nextTopicDistrict && (
+                  <BodyText style={{ fontSize: 12 }}>{nextTopicDistrict.name}</BodyText>
+                )}
+              </div>
+              <GradientButton onClick={() => navigate('/fashion/learn', { state: { topic: nextTopic } })} style={{ flexShrink: 0 }}>
+                <BookOpen size={14} />
+                {completedTopics.length === 0 ? 'Start First Look' : 'Continue'}
+              </GradientButton>
+            </div>
+          )}
         </GlassCard>
       </motion.div>
+
+      {/* ── RECENT LOOKS ── */}
+      {recentLooks.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }}>
+          <SectionLabel style={{ marginBottom: 12 }}>Recent Looks</SectionLabel>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {recentLooks.map((topic) => (
+              <div key={topic} style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 14px', borderRadius: 99,
+                background: 'rgba(255,255,255,0.28)',
+                backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.52)',
+              }}>
+                <Sparkles size={11} color={C.pink} />
+                <span style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 12, color: C.deepRose }}>{topic}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
     </motion.div>
   );
