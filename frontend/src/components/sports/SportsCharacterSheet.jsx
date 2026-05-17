@@ -1,10 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, BookOpen, Target, Flame, TrendingUp, Trophy } from 'lucide-react';
+import { X, Trophy, Zap, Target, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { sportsTheme, getDivision, getDivisionName } from '../../styles/sportsTheme';
 
-const CHAR_EMOJI = { striker: '⚡', playmaker: '🎯', captain: '🏆' };
+const CHAR_ICON = { lyra: Zap, kael: Target, ian: Trophy };
+
+function FullImage({ src, name, color, fallbackIcon: FallbackIcon }) {
+  const [loaded, setLoaded] = useState(false);
+  const [errored, setErrored] = useState(false);
+  return (
+    <div style={{
+      width: '100%', height: '200px',
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      overflow: 'hidden', position: 'relative',
+      background: `linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 100%)`,
+    }}>
+      {!errored && src ? (
+        <img
+          src={src}
+          alt={name}
+          onLoad={() => setLoaded(true)}
+          onError={() => setErrored(true)}
+          style={{
+            height: '100%', width: 'auto',
+            objectFit: 'contain', objectPosition: 'center bottom',
+            opacity: loaded ? 1 : 0,
+            transition: 'opacity 0.4s',
+            filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.7))',
+          }}
+        />
+      ) : null}
+      {(!loaded || errored) && (
+        <FallbackIcon size={64} color={color} strokeWidth={1.2}
+          style={{ position: 'absolute', bottom: 24 }} />
+      )}
+    </div>
+  );
+}
 
 function StatBar({ label, value, max, color }) {
   const pct = Math.min(100, Math.round((value / max) * 100));
@@ -46,10 +79,10 @@ export default function SportsCharacterSheet({
   isOpen, onClose, character, xp, level, streak, completedTopics, badges,
 }) {
   const navigate = useNavigate();
-  const C   = character?.color || '#E8457A';
-  const div = getDivision(level);
-  const divName = getDivisionName(div);
-  const emoji   = CHAR_EMOJI[character?.id] || '⚡';
+  const C        = character?.color || '#E8457A';
+  const div      = getDivision(level);
+  const divName  = getDivisionName(div);
+  const CharIcon = CHAR_ICON[character?.id] || Zap;
 
   const avgScore = 75; // placeholder; could be passed as prop
 
@@ -86,62 +119,73 @@ export default function SportsCharacterSheet({
               overflow: 'hidden',
             }}
           >
-            {/* Header */}
-            <div style={{
-              padding: '20px',
-              borderBottom: sportsTheme.borderFaint,
-              display: 'flex', alignItems: 'center', gap: '12px',
-            }}>
-              {/* Avatar */}
-              <div style={{
-                width: '56px', height: '56px', borderRadius: '12px',
-                background: character?.dim || 'rgba(232,69,122,0.12)',
-                border: `2px solid ${C}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '28px', flexShrink: 0,
-                boxShadow: `0 0 12px ${character?.glow || 'rgba(232,69,122,0.4)'}`,
-              }}>
-                {emoji}
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  fontFamily: sportsTheme.fontSub,
-                  fontSize: '9px', fontWeight: 600,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  color: C, marginBottom: '2px',
-                }}>
-                  {character?.role || 'Archetype'}
-                </div>
-                <div style={{
-                  fontFamily: sportsTheme.fontHeading,
-                  fontSize: '24px', letterSpacing: '1.5px',
-                  color: sportsTheme.textPrimary,
-                }}>
-                  {character?.name || 'Unknown'}
-                </div>
-                <div style={{
-                  fontFamily: sportsTheme.fontBody,
-                  fontSize: '12px',
-                  color: sportsTheme.textMuted,
-                }}>
-                  {divName} · Division {div}
-                </div>
-              </div>
-
+            {/* Full-body image banner */}
+            <div style={{ position: 'relative', background: character?.dim || 'rgba(232,69,122,0.08)' }}>
+              <FullImage
+                src={character?.fullImage}
+                name={character?.name}
+                color={C}
+                fallbackIcon={CharIcon}
+              />
+              {/* Close button overlaid */}
               <button
                 onClick={onClose}
                 style={{
-                  width: '36px', height: '36px', flexShrink: 0,
+                  position: 'absolute', top: 10, right: 10,
+                  width: '32px', height: '32px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: sportsTheme.borderFaint,
+                  background: 'rgba(0,0,0,0.55)',
+                  border: '1px solid rgba(255,255,255,0.15)',
                   borderRadius: '8px', cursor: 'pointer',
                   color: sportsTheme.textMuted,
                 }}
               >
-                <X size={16} strokeWidth={2} />
+                <X size={15} strokeWidth={2} />
               </button>
+              {/* Jersey badge */}
+              {character?.jersey && (
+                <div style={{
+                  position: 'absolute', top: 10, left: 12,
+                  fontFamily: sportsTheme.fontHeading,
+                  fontSize: '13px', letterSpacing: '1px',
+                  color: C,
+                  background: 'rgba(0,0,0,0.55)',
+                  border: `1px solid ${C}`,
+                  borderRadius: '6px',
+                  padding: '2px 8px',
+                }}>
+                  #{character.jersey}
+                </div>
+              )}
+            </div>
+
+            {/* Name + title header */}
+            <div style={{
+              padding: '14px 20px 14px',
+              borderBottom: sportsTheme.borderFaint,
+            }}>
+              <div style={{
+                fontFamily: sportsTheme.fontSub,
+                fontSize: '9px', fontWeight: 600,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                color: C, marginBottom: '2px',
+              }}>
+                {character?.title || character?.role || 'Archetype'}
+              </div>
+              <div style={{
+                fontFamily: sportsTheme.fontHeading,
+                fontSize: '28px', letterSpacing: '1.5px',
+                color: sportsTheme.textPrimary,
+              }}>
+                {character?.name || 'Unknown'}
+              </div>
+              <div style={{
+                fontFamily: sportsTheme.fontBody,
+                fontSize: '12px',
+                color: sportsTheme.textMuted,
+              }}>
+                {divName} · Division {div}
+              </div>
             </div>
 
             {/* Scrollable body */}
@@ -219,10 +263,9 @@ export default function SportsCharacterSheet({
                           border: `1px solid ${C}40`,
                           borderRadius: '8px',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '22px',
                         }}
                       >
-                        {badge.icon || '🏅'}
+                        <Star size={20} color={C} strokeWidth={1.5} />
                       </div>
                     ))}
                   </div>

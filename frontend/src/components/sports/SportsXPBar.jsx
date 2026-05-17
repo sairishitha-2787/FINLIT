@@ -1,7 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, LogOut, User, Flame } from 'lucide-react';
 import { sportsTheme, getDivision, getDivisionName } from '../../styles/sportsTheme';
+
+function ChibiAvatar({ character, C, onClick }) {
+  const [loaded, setLoaded] = useState(false);
+  const [errored, setErrored] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
+        background: character?.dim || 'rgba(232,69,122,0.12)',
+        border: `2px solid ${C}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', padding: 0, overflow: 'hidden',
+        boxShadow: `0 0 8px ${character?.glow || 'rgba(232,69,122,0.4)'}`,
+      }}
+    >
+      {character?.chibiImage && !errored ? (
+        <>
+          <img
+            src={character.chibiImage}
+            alt={character.name}
+            onLoad={() => setLoaded(true)}
+            onError={() => setErrored(true)}
+            style={{
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center top',
+              opacity: loaded ? 1 : 0,
+              transition: 'opacity 0.3s',
+              display: 'block',
+            }}
+          />
+          {!loaded && <User size={16} color={C} strokeWidth={2} style={{ position: 'absolute' }} />}
+        </>
+      ) : (
+        <User size={16} color={C} strokeWidth={2} />
+      )}
+    </button>
+  );
+}
 
 export default function SportsXPBar({
   character,
@@ -46,19 +85,7 @@ export default function SportsXPBar({
       </button>
 
       {/* Character avatar button */}
-      <button
-        onClick={onOpenSheet}
-        style={{
-          width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
-          background: character?.dim || 'rgba(232,69,122,0.12)',
-          border: `2px solid ${C}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: `0 0 8px ${character?.glow || 'rgba(232,69,122,0.4)'}`,
-        }}
-      >
-        <User size={16} color={C} strokeWidth={2} />
-      </button>
+      <ChibiAvatar character={character} C={C} onClick={onOpenSheet} />
 
       {/* Division chip */}
       <div style={{
