@@ -1,9 +1,26 @@
 import React from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Flame, Zap, BookOpen, Trophy, FileText } from 'lucide-react';
+import { ArrowRight, Flame, Zap, BookOpen, Trophy, FileText, CheckCircle2 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { sportsTheme, getDivisionName } from '../../styles/sportsTheme';
+
+const ALL_TOPIC_IDS = ['s0t0','s0t1','s0t2','s0t3','s1t0','s1t1','s1t2','s1t3','s2t0','s2t1','s2t2','s2t3'];
+
+function LoadingSpinner({ C }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 320, gap: 14 }}>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+        style={{ width: 36, height: 36, borderRadius: '50%', border: '3px solid rgba(255,255,255,0.08)', borderTopColor: C }}
+      />
+      <div style={{ fontFamily: sportsTheme.fontSub, fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)' }}>
+        LOADING...
+      </div>
+    </div>
+  );
+}
 
 // ─── Broadcast panel card ─────────────────────────────────────────────────────
 function Panel({ color, children, style = {} }) {
@@ -33,7 +50,7 @@ const COMMENTARY = [
 
 export default function SportsDashboard() {
   const navigate = useNavigate();
-  const { completedTopics } = useUser();
+  const { completedTopics, loading: userLoading } = useUser();
   const {
     sportsCharacter, sportsColor,
     xp, streak, division, levelProgress, getXPForNextLevel,
@@ -44,12 +61,15 @@ export default function SportsDashboard() {
   const xpToNext   = getXPForNextLevel?.() ?? 500;
   const divName    = getDivisionName(division);
   const commentary = COMMENTARY[new Date().getDate() % COMMENTARY.length](streak, completedTopics.length);
+  const allDone    = ALL_TOPIC_IDS.every(id => completedTopics.includes(id));
+
+  if (userLoading) return <LoadingSpinner C={C} />;
 
   const quickActions = [
     { label: 'The Playbook', sub: 'Browse all drills',  path: '/sports/playbook',      Icon: BookOpen  },
     { label: 'Trophy Case',  sub: 'View achievements',  path: '/sports/achievements',   Icon: Trophy    },
     { label: 'Scoreboard',   sub: 'Your stats',         path: '/sports/progress',       Icon: FileText  },
-    { label: 'Character',    sub: sportsCharacter?.name || 'Select archetype', path: null, Icon: Zap, action: onOpenSheet },
+    { label: 'Player Card',  sub: sportsCharacter?.name || 'Select archetype', path: null, Icon: Zap, action: onOpenSheet },
   ];
 
   return (
@@ -77,7 +97,7 @@ export default function SportsDashboard() {
             fontSize: '36px', color: sportsTheme.textPrimary,
             letterSpacing: '3px', margin: 0, lineHeight: 1,
           }}>
-            The Dugout
+            The Tunnel
           </h1>
           {/* Horizontal accent line */}
           <div style={{ flex: 1, height: '1px', background: C, opacity: 0.45, position: 'relative' }}>
@@ -192,50 +212,70 @@ export default function SportsDashboard() {
           DAILY DRILL
         </div>
 
-        <div style={{
-          fontFamily: sportsTheme.fontHeading,
-          fontSize: '28px', letterSpacing: '1.5px',
-          color: sportsTheme.textPrimary, lineHeight: 1, marginBottom: '2px',
-        }}>
-          {completedTopics.length > 0 ? 'Continue Training' : 'Budgeting Basics'}
-        </div>
-
-        <div style={{
-          fontFamily: sportsTheme.fontSub,
-          fontSize: '11px', fontWeight: 600,
-          color: sportsTheme.textMuted,
-          letterSpacing: '0.08em', textTransform: 'uppercase',
-          marginBottom: '10px',
-        }}>
-          {completedTopics.length > 0 ? `CH. ${Math.ceil((completedTopics.length + 1) / 5)} · IN PROGRESS` : 'CH. 1 · PRE-SEASON'}
-        </div>
-
-        <p style={{
-          fontFamily: sportsTheme.fontBody,
-          fontSize: '13px',
-          color: sportsTheme.textSecondary,
-          marginBottom: '16px',
-        }}>
-          {completedTopics.length > 0 ? 'Half time. Keep pushing.' : 'First whistle. The match is about to start.'}
-        </p>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <motion.button
-            whileHover={{ filter: 'brightness(1.12)' }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/sports/playbook')}
-            style={{
-              background: C, color: '#000',
-              padding: '10px 22px', borderRadius: '8px',
+        {allDone ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0' }}>
+            <CheckCircle2 size={32} color={C} strokeWidth={1.5} style={{ flexShrink: 0 }} />
+            <div>
+              <div style={{
+                fontFamily: sportsTheme.fontHeading,
+                fontSize: '24px', letterSpacing: '1.5px',
+                color: sportsTheme.textPrimary, lineHeight: 1, marginBottom: '4px',
+              }}>
+                All Caught Up!
+              </div>
+              <p style={{ fontFamily: sportsTheme.fontBody, fontSize: '13px', color: sportsTheme.textMuted, margin: 0 }}>
+                Every drill completed. Full time. Championship won.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={{
               fontFamily: sportsTheme.fontHeading,
-              fontSize: '18px', letterSpacing: '1.5px',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '8px',
-            }}
-          >
-            RESUME <ArrowRight size={16} strokeWidth={2.5} />
-          </motion.button>
-        </div>
+              fontSize: '28px', letterSpacing: '1.5px',
+              color: sportsTheme.textPrimary, lineHeight: 1, marginBottom: '2px',
+            }}>
+              {completedTopics.length > 0 ? 'Continue Training' : 'Budgeting Basics'}
+            </div>
+
+            <div style={{
+              fontFamily: sportsTheme.fontSub,
+              fontSize: '11px', fontWeight: 600,
+              color: sportsTheme.textMuted,
+              letterSpacing: '0.08em', textTransform: 'uppercase',
+              marginBottom: '10px',
+            }}>
+              {completedTopics.length > 0 ? `CH. ${Math.ceil((completedTopics.length + 1) / 5)} · IN PROGRESS` : 'CH. 1 · PRE-SEASON'}
+            </div>
+
+            <p style={{
+              fontFamily: sportsTheme.fontBody,
+              fontSize: '13px',
+              color: sportsTheme.textSecondary,
+              marginBottom: '16px',
+            }}>
+              {completedTopics.length > 0 ? 'Half time. Keep pushing.' : 'First whistle. The match is about to start.'}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <motion.button
+                whileHover={{ filter: 'brightness(1.12)' }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate('/sports/playbook')}
+                style={{
+                  background: C, color: '#000',
+                  padding: '10px 22px', borderRadius: '8px',
+                  fontFamily: sportsTheme.fontHeading,
+                  fontSize: '18px', letterSpacing: '1.5px',
+                  border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                }}
+              >
+                RESUME <ArrowRight size={16} strokeWidth={2.5} />
+              </motion.button>
+            </div>
+          </>
+        )}
       </Panel>
 
       {/* ── Quick actions grid ── */}
