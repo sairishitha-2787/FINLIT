@@ -279,11 +279,11 @@ const Learning = () => {
     sessionStorage.removeItem(getQuizCacheKey(topic));
     sessionStorage.removeItem(`finlit_quiz_prog_${topic?.replace(/\s+/g, '_')}`);
     sessionStorage.removeItem(`finlit_scenario_prog_${topic?.replace(/\s+/g, '_')}`);
-    addTopicProgress({ topic, score, totalQuestions, difficulty: profile.difficulty });
     setQuizResult({ score, totalQuestions });
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {
+      addTopicProgress({ topic, score, totalQuestions, difficulty: profile.difficulty });
       proceedToComplete();
     }
   };

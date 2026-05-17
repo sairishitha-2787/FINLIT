@@ -45,7 +45,7 @@ export const UserProvider = ({ children }) => {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [progress, setProgress] = useState([]);
-  const [completedTopics, setCompletedTopics] = useState(() => getCompletedTopics());
+  const [completedTopics, setCompletedTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -55,7 +55,8 @@ export const UserProvider = ({ children }) => {
       loadProfile();
     } else {
       setProfile(null);
-      setProgress(getProgress());
+      setProgress([]);
+      setCompletedTopics([]);
       setLoading(false);
     }
   }, [user]);
@@ -79,13 +80,10 @@ export const UserProvider = ({ children }) => {
       setProfile(normalized);
       setProgress(getProgress());
 
-      // Build completedTopics from Supabase (source of truth for cross-device sync)
-      if (progressRows && progressRows.length > 0) {
-        const supabaseTopics = progressRows.map(r => r.topic);
-        const localTopics = getCompletedTopics();
-        const merged = [...new Set([...supabaseTopics, ...localTopics])];
-        setCompletedTopics(merged);
-      }
+      // Supabase is the sole source of truth — never merge with localStorage
+      // (localStorage is not user-scoped, so merging causes cross-account contamination)
+      const supabaseTopics = progressRows ? progressRows.map(r => r.topic) : [];
+      setCompletedTopics(supabaseTopics);
     } catch (err) {
       console.error('Error loading profile:', err);
       setError('Failed to load profile. Please refresh.');
