@@ -12,8 +12,16 @@ const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };
 export default function GamingDashboard() {
   const navigate = useNavigate();
   const { character, defeatedBosses } = useDomain();
-  const { completedTopics } = useUser();
+  const { completedTopics, loading } = useUser();
   const { xp, level, streak, getLevelProgress, getXPForNextLevel, colors: layoutColors, onOpenSheet } = useOutletContext();
+
+  if (loading) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: 14 }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width: 36, height: 36, borderRadius: '50%', border: `3px solid rgba(${hexToRgbStr(layoutColors?.primary || '#9FE0D3')},0.20)`, borderTop: `3px solid ${layoutColors?.primary || '#9FE0D3'}`, animation: 'spin 0.8s linear infinite' }} />
+      <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: 10, letterSpacing: '0.2em', color: gamingTheme.mutedBlue, textTransform: 'uppercase' }}>Loading...</span>
+    </div>
+  );
 
   const colors        = layoutColors || getElementColors(character);
   const levelProgress = getLevelProgress();
