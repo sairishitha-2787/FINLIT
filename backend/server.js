@@ -28,6 +28,7 @@ const quizRoutes     = require('./routes/quiz');
 const { deleteStaleUnonboardedUsers } = require('./services/cleanupService');
 const { reExplain }  = require('./services/adaptiveExplainer');
 const { authLimiter, apiLimiter, aiLimiter } = require('./middleware/rateLimiter');
+const requireAuth    = require('./middleware/requireAuth');
 const errorHandler   = require('./middleware/errorHandler');
 
 const app  = express();
@@ -38,16 +39,27 @@ const isProd = process.env.NODE_ENV === 'production';
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc:  ["'self'", "'unsafe-inline'"],
-      styleSrc:   ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
-      fontSrc:    ["'self'", 'fonts.gstatic.com'],
-      imgSrc:     ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'", process.env.SUPABASE_URL, 'https://api.groq.com'],
+      defaultSrc:      ["'self'"],
+      scriptSrc:       ["'self'"],                          // no unsafe-inline
+      styleSrc:        ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+      fontSrc:         ["'self'", 'fonts.gstatic.com'],
+      imgSrc:          ["'self'", 'data:', 'https://media.giphy.com', 'https://media0.giphy.com', 'https://media1.giphy.com', 'https://media2.giphy.com', 'https://media3.giphy.com', 'https://media4.giphy.com'],
+      connectSrc:      ["'self'", process.env.SUPABASE_URL, 'https://api.groq.com'],
+      frameAncestors:  ["'none'"],                          // clickjacking
+      baseUri:         ["'self'"],
+      formAction:      ["'self'"],
+      objectSrc:       ["'none'"],
     },
   },
   crossOriginEmbedderPolicy: false,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 }));
+
+// Permissions-Policy — disable sensitive browser features we don't use
+app.use((_req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  next();
+});
 
 // ── HTTPS redirect in production ─────────────────────────────────────────────
 if (isProd) {
@@ -68,8 +80,13 @@ const ALLOWED_ORIGINS = [
 
 app.use(cors({
   origin(origin, callback) {
-    // Allow non-browser requests (curl, Postman, mobile) and known origins
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    // In production: reject requests with no origin (prevents server-side abuse)
+    // In development: allow no-origin for curl/Postman convenience
+    if (!origin) {
+      if (isProd) return callback(new Error('CORS: direct server-to-server calls not permitted'));
+      return callback(null, true);
+    }
+    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
@@ -92,6 +109,10 @@ app.use('/api/auth/signup', authLimiter);
 app.use('/api/explain',     aiLimiter);
 app.use('/api/quiz/generate', aiLimiter);
 
+// ── Auth gate on all AI generation routes ────────────────────────────────────
+app.use('/api/explain',    requireAuth);
+app.use('/api/quiz',       requireAuth);
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth',      authRoutes);
 app.use('/api/mentor',    mentorRoutes);
@@ -99,9 +120,9 @@ app.use('/api/recommend', recommendRoutes);
 app.use('/api/chapters',  chapterRoutes);
 app.use('/api/quiz',      quizRoutes);
 
-// Health check
+// Health check — minimal info in production
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString(), service: 'FINLIT Backend' });
+  res.json({ status: 'healthy', timestamp: new Date().toISOString(), ...(isProd ? {} : { service: 'FINLIT Backend' }) });
 });
 
 // Interest domains

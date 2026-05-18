@@ -42,7 +42,7 @@ router.post('/chat', async (req, res) => {
 
       responseText = completion.choices[0]?.message?.content?.trim() || null;
       if (responseText) responseText = postProcess(responseText, context.interest || 'gaming');
-      console.log('[Mentor] Groq response:', responseText?.slice(0, 100));
+      console.log(`[Mentor] Groq response received (${responseText?.length ?? 0} chars)`);
     } catch (aiErr) {
       console.error('[Mentor] Groq error:', aiErr.message);
     }

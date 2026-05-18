@@ -77,9 +77,16 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/auth/logout
-router.post('/logout', async (_req, res) => {
+router.post('/logout', async (req, res) => {
   try {
-    await supabase.auth.signOut();
+    const token = req.headers.authorization?.replace('Bearer ', '').trim();
+    if (token) {
+      // Resolve the user ID so we can revoke all their sessions server-side
+      const { data: { user } } = await supabase.auth.getUser(token);
+      if (user) {
+        await supabase.auth.admin.signOut(user.id, 'global');
+      }
+    }
     res.json({ success: true });
   } catch (err) {
     console.error('Logout error:', err);

@@ -1,5 +1,10 @@
 const rateLimit = require('express-rate-limit');
 
+// NOTE: Default in-memory store resets on restart and doesn't work across
+// multiple instances. For production with pm2 clusters or multi-pod deploys,
+// replace the store with a Redis adapter (e.g. rate-limit-redis) so limits
+// are shared across all processes.
+
 // Auth endpoints — strict (5 per 15 min) to block brute force
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

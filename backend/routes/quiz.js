@@ -55,6 +55,12 @@ router.post('/evaluate-open-ended', async (req, res) => {
   }
 });
 
+// Strip HTML tags and limit string length to prevent stored XSS from AI output
+function sanitize(str, maxLen = 1000) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g, '').slice(0, maxLen);
+}
+
 // ── Groq Evaluator ────────────────────────────────────────────────────────────
 
 async function evaluateOpenEnded({ topic, domain, scenarioContext, question, evaluationCriteria, userAnswer }) {
@@ -115,9 +121,9 @@ Keep feedback warm and motivating. The "missed" array should be empty [] if scor
   return {
     score:     Number(parsed.score)    || 1,
     passed:    Boolean(parsed.passed)  ?? false,
-    feedback:  parsed.feedback         || 'Keep working at it!',
-    strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
-    missed:    Array.isArray(parsed.missed)    ? parsed.missed    : [],
+    feedback:  sanitize(parsed.feedback || 'Keep working at it!'),
+    strengths: Array.isArray(parsed.strengths) ? parsed.strengths.map(s => sanitize(s, 200)) : [],
+    missed:    Array.isArray(parsed.missed)    ? parsed.missed.map(s => sanitize(s, 200))    : [],
   };
 }
 
