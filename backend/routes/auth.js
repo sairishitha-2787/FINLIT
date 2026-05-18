@@ -66,7 +66,7 @@ router.post('/login', async (req, res) => {
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('*')
-      .eq('id', data.user.id)
+      .eq('user_id', data.user.id)
       .single();
 
     res.json({ success: true, user: data.user, session: data.session, profile: profile || null });
@@ -111,7 +111,7 @@ router.get('/user', async (req, res) => {
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single();
 
     res.json({ success: true, user, profile: profile || null });

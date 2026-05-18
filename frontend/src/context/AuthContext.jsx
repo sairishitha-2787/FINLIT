@@ -59,9 +59,26 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setError(null);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      return { success: true, user: data.user };
+      // Route through backend so the server-side authLimiter (5 attempts/15 min) fires
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:3001/api'}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+
+      // Hydrate the local Supabase client with the session returned by the backend
+      if (json.session) {
+        await supabase.auth.setSession({
+          access_token:  json.session.access_token,
+          refresh_token: json.session.refresh_token,
+        });
+      }
+      return { success: true, user: json.user };
     } catch (err) {
       const msg = formatError(err.message);
       setError(msg);
