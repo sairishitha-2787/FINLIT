@@ -6,7 +6,11 @@ import { useUser } from '../../context/UserContext';
 import { sportsTheme, getDivisionName } from '../../styles/sportsTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 
-const ALL_TOPIC_IDS = ['s0t0','s0t1','s0t2','s0t3','s1t0','s1t1','s1t2','s1t3','s2t0','s2t1','s2t2','s2t3'];
+const ALL_TOPIC_NAMES = [
+  'Budgeting Basics','Saving 101','Income Tracking','Emergency Funds',
+  'Investment Basics','Debt Management','Credit Scores','Tax Fundamentals',
+  'Portfolio Building','Retirement Planning','Real Estate','Wealth Building',
+];
 
 function LoadingSpinner({ C }) {
   return (
@@ -76,7 +80,7 @@ export default function SportsDashboard() {
   const xpToNext   = getXPForNextLevel?.() ?? 500;
   const divName    = getDivisionName(division);
   const commentary = COMMENTARY[new Date().getDate() % COMMENTARY.length](streak, completedTopics.length);
-  const allDone    = ALL_TOPIC_IDS.every(id => completedTopics.includes(id));
+  const allDone    = ALL_TOPIC_NAMES.every(name => completedTopics.includes(name));
 
   if (userLoading) return <LoadingSpinner C={C} />;
 

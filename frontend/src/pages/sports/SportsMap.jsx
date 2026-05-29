@@ -63,12 +63,12 @@ const SEASONS = [
 function isTopicUnlocked(seasonIdx, topicIdx, completedTopics, defeatedBosses) {
   if (seasonIdx === 0 && topicIdx === 0) return true;
   if (seasonIdx > 0 && !defeatedBosses.includes(`boss_s${seasonIdx - 1}`)) return false;
-  if (topicIdx > 0) return completedTopics.includes(SEASONS[seasonIdx].topics[topicIdx - 1].id);
+  if (topicIdx > 0) return completedTopics.includes(SEASONS[seasonIdx].topics[topicIdx - 1].name);
   return true;
 }
 
 function isBossUnlocked(seasonIdx, completedTopics) {
-  return SEASONS[seasonIdx].topics.every(t => completedTopics.includes(t.id));
+  return SEASONS[seasonIdx].topics.every(t => completedTopics.includes(t.name));
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -336,8 +336,8 @@ export default function SportsMap() {
 
   // Summary stats
   const totalTopics   = SEASONS.reduce((acc, s) => acc + s.topics.length, 0);
-  const doneTopics    = completedTopics.filter(id =>
-    SEASONS.some(s => s.topics.some(t => t.id === id))
+  const doneTopics    = completedTopics.filter(name =>
+    SEASONS.some(s => s.topics.some(t => t.name === name))
   ).length;
   const doneBosses    = defeatedBosses.filter(id =>
     SEASONS.some(s => s.boss.id === id)
@@ -502,7 +502,7 @@ export default function SportsMap() {
                     fontSize: 13, letterSpacing: '0.5px', color,
                     opacity: 0.7,
                   }}>
-                    {season.topics.filter(t => completedTopics.includes(t.id)).length}/{season.topics.length}
+                    {season.topics.filter(t => completedTopics.includes(t.name)).length}/{season.topics.length}
                   </div>
                 )}
               </motion.div>
@@ -511,8 +511,8 @@ export default function SportsMap() {
               <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                 {season.topics.map((topic, ti) => {
                   const unlocked = isTopicUnlocked(si, ti, completedTopics, defeatedBosses);
-                  const complete  = completedTopics.includes(topic.id);
-                  const prevDone  = ti === 0 || completedTopics.includes(season.topics[ti - 1].id);
+                  const complete  = completedTopics.includes(topic.name);
+                  const prevDone  = ti === 0 || completedTopics.includes(season.topics[ti - 1].name);
 
                   const topicState = !unlocked
                     ? 'locked'
