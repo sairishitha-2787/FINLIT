@@ -6,6 +6,11 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, MessageSquare, Dumbbell, ArrowRight, Sparkles } from 'lucide-react';
 import AnimatedIcon from '../shared/AnimatedIcon';
 import { getCorrectGif, getWrongGif } from '../../services/api';
+
+const FALLBACK_GIFS = {
+  correct: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
+  wrong:   'https://media.giphy.com/media/l2SpZtackEqFmMT3G/giphy.gif',
+};
 import LoadingAnimation from '../shared/LoadingAnimation';
 import { gamingTheme } from '../../styles/gamingTheme';
 
@@ -41,11 +46,13 @@ const AnimatedFeedback = ({
     try {
       setLoading(true);
       const response = isCorrect ? await getCorrectGif() : await getWrongGif();
-      if (response.success) {
+      if (response?.gif?.url) {
         setGif(response.gif);
+      } else {
+        setGif({ url: isCorrect ? FALLBACK_GIFS.correct : FALLBACK_GIFS.wrong });
       }
-    } catch (error) {
-      console.error('Error fetching GIF:', error);
+    } catch {
+      setGif({ url: isCorrect ? FALLBACK_GIFS.correct : FALLBACK_GIFS.wrong });
     } finally {
       setLoading(false);
     }

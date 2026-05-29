@@ -5,8 +5,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, HelpCircle, ChevronRight, Swords, Calculator, BookOpen, Star, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { evaluateOpenEnded } from '../../services/api';
+import { evaluateOpenEnded, getCorrectGif, getWrongGif } from '../../services/api';
 import useGamification from '../../hooks/useGamification';
+
+const FALLBACK_GIFS = {
+  correct: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
+  wrong:   'https://media.giphy.com/media/l2SpZtackEqFmMT3G/giphy.gif',
+};
 import { gamingTheme } from '../../styles/gamingTheme';
 
 function hexToRgbStr(hex = '#000000') {
@@ -67,6 +72,8 @@ const ScenarioQuizEnvironment = ({
     } catch { return 0; }
   });
   const [lastResult, setLastResult]   = useState(null);        // { correct, explanation }
+  const [reactionGif, setReactionGif] = useState(null);
+  const [gifLoading, setGifLoading]   = useState(false);
   const bossFireRef                   = useRef(false);
 
   const q = questions[idx];
@@ -112,6 +119,23 @@ const ScenarioQuizEnvironment = ({
       awardXP.bossFight();
     }
   }, [stage, openEval]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch reaction GIF when feedback is shown
+  useEffect(() => {
+    if (stage !== 'feedback' || !lastResult) return;
+    let cancelled = false;
+    setGifLoading(true);
+    setReactionGif(null);
+    (lastResult.correct ? getCorrectGif() : getWrongGif())
+      .then(res => {
+        if (!cancelled) setReactionGif(res?.gif?.url || (lastResult.correct ? FALLBACK_GIFS.correct : FALLBACK_GIFS.wrong));
+      })
+      .catch(() => {
+        if (!cancelled) setReactionGif(lastResult.correct ? FALLBACK_GIFS.correct : FALLBACK_GIFS.wrong);
+      })
+      .finally(() => { if (!cancelled) setGifLoading(false); });
+    return () => { cancelled = true; };
+  }, [stage, lastResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function fireConfetti() {
     const opts = { particleCount: 80, spread: 60, startVelocity: 45, colors: fm ? ['#f7a0b8','#c084fc','#fde68a','#fff'] : undefined };
@@ -191,6 +215,7 @@ const ScenarioQuizEnvironment = ({
     setShowHint(false);
     setRetry(true);
     setLastResult(null);
+    setReactionGif(null);
     try { sessionStorage.setItem(scenarioProgressKey(topic), JSON.stringify({ idx: nextIdx, score })); } catch {}
   }
 
@@ -800,7 +825,7 @@ const ScenarioQuizEnvironment = ({
                   <div>
                     <div style={{
                       display: 'flex', alignItems: 'flex-start', gap: 12,
-                      padding: 16, borderRadius: 14, marginBottom: 20,
+                      padding: 16, borderRadius: 14, marginBottom: 12,
                       background: lastResult.correct ? 'rgba(247,160,184,0.10)' : 'rgba(255,130,130,0.08)',
                       border: `1px solid ${lastResult.correct ? 'rgba(247,160,184,0.4)' : 'rgba(255,130,130,0.35)'}`,
                     }}>
@@ -815,6 +840,16 @@ const ScenarioQuizEnvironment = ({
                         <p style={{ fontFamily: FFonts.ui, fontSize: 13, color: FColors.body, lineHeight: 1.6 }}>{lastResult.explanation}</p>
                       </div>
                     </div>
+
+                    {/* Reaction GIF */}
+                    {gifLoading ? (
+                      <div style={{ padding: '14px 0', textAlign: 'center', fontFamily: FFonts.ui, fontSize: 12, color: FColors.label }}>Loading reaction...</div>
+                    ) : reactionGif ? (
+                      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                        style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(247,160,184,0.25)', marginBottom: 14 }}>
+                        <img src={reactionGif} alt="Reaction" style={{ width: '100%', maxHeight: 200, objectFit: 'cover', display: 'block' }} />
+                      </motion.div>
+                    ) : null}
 
                     <motion.button
                       whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
@@ -831,7 +866,7 @@ const ScenarioQuizEnvironment = ({
                       display: 'flex', alignItems: 'flex-start', gap: '12px',
                       padding: '16px',
                       borderRadius: '12px',
-                      marginBottom: '20px',
+                      marginBottom: '12px',
                       background: lastResult.correct ? 'rgba(78,205,196,0.1)' : 'rgba(255,100,100,0.1)',
                       border: `1px solid ${lastResult.correct ? 'rgba(78,205,196,0.4)' : 'rgba(255,100,100,0.4)'}`,
                     }}>
@@ -846,6 +881,18 @@ const ScenarioQuizEnvironment = ({
                         <p style={{ fontFamily: xt.fontB, fontSize: '13px', color: xt.text2, lineHeight: 1.6 }}>{lastResult.explanation}</p>
                       </div>
                     </div>
+
+                    {/* Reaction GIF */}
+                    {gifLoading ? (
+                      <div style={{ padding: '16px 0', textAlign: 'center' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', border: `2px solid rgba(${hexToRgbStr(levelAccent)},0.2)`, borderTopColor: levelAccent, animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
+                      </div>
+                    ) : reactionGif ? (
+                      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                        style={{ borderRadius: '12px', overflow: 'hidden', border: xt.border, marginBottom: '16px' }}>
+                        <img src={reactionGif} alt="Reaction" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
+                      </motion.div>
+                    ) : null}
 
                     <motion.button
                       whileHover={{ scale: 1.02 }}
