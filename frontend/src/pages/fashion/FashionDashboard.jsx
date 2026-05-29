@@ -18,6 +18,8 @@ const C_BASE = {
   label:      '#c98a9e',
   gold:       '#fde68a',
 };
+// Module-level alias so sub-components defined outside the main function can use C
+const C = C_BASE; // eslint-disable-line no-unused-vars
 
 const F = {
   logo:    "'Petit Formal Script', cursive",

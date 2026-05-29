@@ -20,8 +20,10 @@ import confetti from 'canvas-confetti';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const F = { heading: "'Playfair Display', serif", italic: "'Playfair Display', serif", ui: "'DM Sans', sans-serif" };
-// Base colors — pink/midRose are overridden per-character at runtime (see charC below)
+// Base colors — pink/midRose are overridden per-character at runtime inside the component
 const C_BASE = { bg: '#faf5ec', pink: '#f7a0b8', purple: '#c084fc', deepRose: '#9d1f4a', midRose: '#d4537e', body: '#b0627a', label: '#c98a9e', gold: '#fde68a' };
+// Module-level alias so sub-components defined outside the main function can reference C
+const C = C_BASE; // eslint-disable-line no-unused-vars
 const DEFAULT_GRAD = 'linear-gradient(135deg, #f7a0b8, #c084fc, #fbb6c4)';
 
 function rgb(hex) {
