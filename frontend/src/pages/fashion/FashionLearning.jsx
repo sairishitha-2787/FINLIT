@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { useGamification } from '../../hooks/useGamification';
+import { useCelebration } from '../../hooks/useCelebration';
 import { getExplanation, getQuiz, generateScenarioQuiz } from '../../services/api';
 import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 import NeoQuizEnvironment from '../../components/quiz/NeoQuizEnvironment';
@@ -445,6 +446,7 @@ export default function FashionLearning() {
   // Dynamic accent colors driven by selected character
   const C = { ...C_BASE, pink: charPrimary || C_BASE.pink, midRose: charSecondary || C_BASE.midRose };
   const GRAD = charGradient || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
+  const { celebrate } = useCelebration('fashion', C.pink);
   const { profile, addTopicProgress, completedTopics } = useUser();
   const { xp, level, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
@@ -604,14 +606,8 @@ export default function FashionLearning() {
         const newCount1 = completedTopics.length + 1;
         if (newCount1 >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount1);
       }
-      if (finalScore === questions.length) {
-        confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
-        setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
-        setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#f7a0b8','#c084fc'] }), 500);
-      } else {
-        confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc'] });
-      }
       setStage('complete');
+      setTimeout(celebrate, 300);
     } else {
       setStage('diagnosis');
     }
@@ -635,14 +631,8 @@ export default function FashionLearning() {
         const newCount = completedTopics.length + 1;
         if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
       }
-      if (score === totalQuestions) {
-        confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
-        setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
-        setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#f7a0b8','#c084fc'] }), 500);
-      } else {
-        confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc'] });
-      }
       setStage('complete');
+      setTimeout(celebrate, 300);
     } else {
       setStage('diagnosis');
     }

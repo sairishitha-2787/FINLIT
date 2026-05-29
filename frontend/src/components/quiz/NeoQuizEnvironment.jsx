@@ -84,43 +84,6 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
       try { sessionStorage.removeItem(progressKey(topic)); } catch {}
       const finalScore = score;
 
-      // Confetti celebration
-      if (finalScore === totalQuestions) {
-        // Perfect score - epic confetti
-        confetti({
-          particleCount: 200,
-          spread: 100,
-          origin: { y: 0.6 },
-          colors: ['#70FFCA', '#FF90E8', '#3352FF']
-        });
-        setTimeout(() => {
-          confetti({
-            particleCount: 100,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 },
-            colors: ['#70FFCA', '#FF90E8', '#3352FF']
-          });
-        }, 250);
-        setTimeout(() => {
-          confetti({
-            particleCount: 100,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 },
-            colors: ['#70FFCA', '#FF90E8', '#3352FF']
-          });
-        }, 400);
-      } else if (finalScore >= 3) {
-        // Good score - normal confetti
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#70FFCA', '#FF90E8', '#3352FF']
-        });
-      }
-
       onComplete(finalScore, totalQuestions);
     } else {
       const nextIdx = currentQuestionIndex + 1;

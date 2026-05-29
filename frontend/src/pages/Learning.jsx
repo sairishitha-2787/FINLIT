@@ -22,6 +22,7 @@ import XPPopup from '../components/shared/XPPopup';
 import FloatingMentor from '../components/mentor/FloatingMentor';
 import LoadingAnimation from '../components/shared/LoadingAnimation';
 import { useGamification } from '../hooks/useGamification';
+import { useCelebration } from '../hooks/useCelebration';
 import {
   isTopicUnlocked,
   checkChapterCompletion,
@@ -122,6 +123,8 @@ const Learning = () => {
 
   const [quizResult, setQuizResult]   = useState(null);
   const [showReflection, setShowReflection] = useState(false);
+
+  const { celebrate } = useCelebration(isGamingMode ? 'gaming' : 'gaming', gc?.primary);
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
@@ -301,8 +304,8 @@ const Learning = () => {
   };
 
   const proceedToComplete = () => {
-    // Award first_lesson badge on every completion — useGamification deduplicates internally
     checkBadgeUnlock('FIRST_LESSON');
+    setTimeout(celebrate, 300);
 
     const collectible = getCollectible(domain, topic);
     if (collectible) {

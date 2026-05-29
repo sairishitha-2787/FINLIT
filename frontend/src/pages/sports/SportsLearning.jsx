@@ -13,6 +13,7 @@ import JargonFlashcard from '../../components/learning/JargonFlashcard';
 import XPPopup from '../../components/shared/XPPopup';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import { useGamification } from '../../hooks/useGamification';
+import { useCelebration } from '../../hooks/useCelebration';
 import { isTopicUnlocked } from '../../services/chapterService';
 import { sportsTheme } from '../../styles/sportsTheme';
 
@@ -124,6 +125,7 @@ export default function SportsLearning() {
   const [adaptiveLoading,  setAdaptiveLoading]  = useState({});
 
   const xpDisplayed = useCountUp(quizResult ? Math.round((quizResult.score / quizResult.totalQuestions) * 100) : 0);
+  const { celebrate } = useCelebration('sports', C);
 
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -246,10 +248,11 @@ export default function SportsLearning() {
       clear(topic);
       setStage('complete');
       setShowReflection(true);
+      setTimeout(celebrate, 300);
     }
   }
 
-  function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); }
+  function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); setTimeout(celebrate, 300); }
 
   if (!topic) return null;
   if (!profile) return null;
