@@ -95,7 +95,7 @@ export default function SportsLearning() {
   const location  = useLocation();
   const navigate  = useNavigate();
   const { profile, completedTopics, addTopicProgress } = useUser();
-  const { xpPopups, awardXP } = useGamification();
+  const { xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
   const outletCtx = useOutletContext();
 
   const C    = outletCtx?.sportsColor  || '#E8457A';
@@ -126,6 +126,7 @@ export default function SportsLearning() {
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!topic) { navigate('/sports/playbook'); return; }
+    if (!profile) return;
 
     const cachedQ = getQuizCache(topic);
     if (cachedQ) {
@@ -135,7 +136,7 @@ export default function SportsLearning() {
       return;
     }
     loadExplanation(0);
-  }, [topic]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [topic, profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Explanation ──────────────────────────────────────────────────────────
   async function loadExplanation(variation = 0, isRegen = false) {
@@ -148,7 +149,7 @@ export default function SportsLearning() {
         setIsRegenerating(true);
       }
       setError(null);
-      const res = await getExplanation(topic, domain, profile.difficulty, variation);
+      const res = await getExplanation(topic, domain, profile?.difficulty || 'beginner', variation);
       if (res.success) {
         setExplanation(res.explanation);
         setExplCache(topic, variation, res.explanation);
@@ -196,7 +197,7 @@ export default function SportsLearning() {
     }
     setStage('loading');
     try {
-      const sRes = await generateScenarioQuiz(topic, domain, profile.difficulty, 0);
+      const sRes = await generateScenarioQuiz(topic, domain, profile?.difficulty || 'beginner', 0);
       if (sRes.success && sRes.questions?.length === 5) {
         const sq = { questions: sRes.questions, scenarioTitle: sRes.scenarioTitle, scenarioContext: sRes.scenarioContext };
         setScenarioQuiz(sq);
@@ -206,7 +207,7 @@ export default function SportsLearning() {
       }
     } catch {}
     try {
-      const qRes = await getQuiz(topic, domain, profile.difficulty);
+      const qRes = await getQuiz(topic, domain, profile?.difficulty || 'beginner');
       if (qRes.success && qRes.questions?.length > 0) {
         setQuiz(qRes.questions);
         setJargonGuide(qRes.jargonGuide || null);
@@ -228,7 +229,11 @@ export default function SportsLearning() {
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {
-      addTopicProgress({ topic, score, totalQuestions, difficulty: profile.difficulty });
+      awardXP.completeQuiz(score, totalQuestions);
+      addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+      checkBadgeUnlock('FIRST_LESSON');
+      const newCount = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
+      if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
       clear(topic);
       setStage('complete');
       setShowReflection(true);
@@ -238,6 +243,7 @@ export default function SportsLearning() {
   function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); }
 
   if (!topic) return null;
+  if (!profile) return null;
 
   const backLabel   = 'THE PLAYBOOK';
   const backPath    = '/sports/playbook';
@@ -247,7 +253,7 @@ export default function SportsLearning() {
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
       <BroadcastBg color={C} />
-      <XPPopup popups={xpPopups} gamingMode gamingColors={gc} />
+      <XPPopup popups={xpPopups} gamingMode gamingColors={gc} badge={badgeNotification} />
 
       <div style={{ position: 'relative', zIndex: 1, padding: '20px 20px 56px', maxWidth: 760, margin: '0 auto' }}>
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Flame, Zap, BookOpen, Trophy, FileText, CheckCircle2 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { sportsTheme, getDivisionName } from '../../styles/sportsTheme';
+import FloatingMentor from '../../components/mentor/FloatingMentor';
 
 const ALL_TOPIC_IDS = ['s0t0','s0t1','s0t2','s0t3','s1t0','s1t1','s1t2','s1t3','s2t0','s2t1','s2t2','s2t3'];
 
@@ -48,9 +49,23 @@ const COMMENTARY = [
   () => `Division 1 is at the top of the table. Start climbing.`,
 ];
 
+function getSportsGreeting(name, streak, topicsCount) {
+  const first = name?.split(' ')[0] || 'Player';
+  const h = new Date().getHours();
+  if (topicsCount === 0) return [`Welcome to the squad, ${first}.`, 'The first whistle awaits.'];
+  if (streak >= 14)     return [`${first}. 14-day unbeaten run.`, 'The whole division is watching.'];
+  if (streak >= 7)      return [`Week warrior, ${first}.`, `${streak} sessions. You don't miss.`];
+  if (streak >= 3)      return [`${first} — ${streak} days straight.`, "That's what champions are made of."];
+  if (h < 6)            return [`Pre-dawn training, ${first}.`, 'Nobody outworks you.'];
+  if (h < 12)           return [`Morning session, ${first}.`, 'First whistle. Set the tone.'];
+  if (h < 17)           return [`Back on the pitch, ${first}.`, 'Afternoon push. Make it count.'];
+  if (h < 21)           return [`Evening drills, ${first}.`, 'Sharpen up before full time.'];
+  return                       [`Night training, ${first}.`, 'Champions never clock out.'];
+}
+
 export default function SportsDashboard() {
   const navigate = useNavigate();
-  const { completedTopics, loading: userLoading } = useUser();
+  const { profile, completedTopics, loading: userLoading } = useUser();
   const {
     sportsCharacter, sportsColor,
     xp, streak, division, levelProgress, getXPForNextLevel,
@@ -80,35 +95,39 @@ export default function SportsDashboard() {
       style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}
     >
       {/* ── Page header ── */}
-      <div>
-        {sportsCharacter && (
-          <div style={{
-            fontFamily: sportsTheme.fontSub,
-            fontSize: '10px', fontWeight: 600,
-            letterSpacing: '0.12em', textTransform: 'uppercase',
-            color: C, marginBottom: '4px',
-          }}>
-            {sportsCharacter.name} · Active
-          </div>
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <h1 style={{
-            fontFamily: sportsTheme.fontHeading,
-            fontSize: '36px', color: sportsTheme.textPrimary,
-            letterSpacing: '3px', margin: 0, lineHeight: 1,
-          }}>
-            The Tunnel
-          </h1>
-          {/* Horizontal accent line */}
-          <div style={{ flex: 1, height: '1px', background: C, opacity: 0.45, position: 'relative' }}>
+      {(() => {
+        const [greetLine, subLine] = getSportsGreeting(profile?.name, streak, completedTopics.length);
+        return (
+          <div>
             <div style={{
-              position: 'absolute', right: 0, top: '-3.5px',
-              width: '8px', height: '8px', borderRadius: '50%',
-              background: C, opacity: 0.8,
-            }} />
+              fontFamily: sportsTheme.fontSub, fontSize: '10px', fontWeight: 600,
+              letterSpacing: '0.12em', textTransform: 'uppercase',
+              color: C, marginBottom: '4px',
+            }}>
+              {sportsCharacter ? `${sportsCharacter.name} · Active` : 'The Tunnel'}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <h1 style={{
+                fontFamily: sportsTheme.fontHeading,
+                fontSize: '28px', color: sportsTheme.textPrimary,
+                letterSpacing: '2px', margin: 0, lineHeight: 1,
+              }}>
+                {greetLine}
+              </h1>
+              <div style={{ flex: 1, height: '1px', background: C, opacity: 0.45, position: 'relative' }}>
+                <div style={{ position: 'absolute', right: 0, top: '-3.5px', width: '8px', height: '8px', borderRadius: '50%', background: C, opacity: 0.8 }} />
+              </div>
+            </div>
+            <div style={{
+              fontFamily: sportsTheme.fontSub, fontSize: '12px',
+              color: 'rgba(255,255,255,0.45)', marginTop: '6px',
+              letterSpacing: '0.05em',
+            }}>
+              {subLine}
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* ── Stat row ── */}
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -343,6 +362,12 @@ export default function SportsDashboard() {
           </div>
         </Panel>
       )}
+
+      <FloatingMentor
+        userInterest="sports"
+        gamingMode={true}
+        gamingColors={{ primary: C, glow: `${C}55` }}
+      />
     </motion.div>
   );
 }

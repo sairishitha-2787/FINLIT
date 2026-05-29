@@ -45,15 +45,22 @@ export const useGamification = () => {
   const [unlockedDates, setUnlockedDates] = useState({}); // badgeKey → ISO date string
   const [xpPopups, setXpPopups] = useState([]);
   const [levelUpNotification, setLevelUpNotification] = useState(null);
+  const [badgeNotification, setBadgeNotification] = useState(null);
 
   // Refs so async callbacks always see latest values without stale closures
   const ref = useRef({ xp: 0, level: 1, streak: 0, longestStreak: 0 });
+  // Ref to track unlocked keys without stale closure in unlockBadgeInternal
+  const unlockedKeysRef = useRef([]);
 
   useEffect(() => {
     ref.current.xp = xp;
     ref.current.level = level;
     ref.current.streak = streak;
   }, [xp, level, streak]);
+
+  useEffect(() => {
+    unlockedKeysRef.current = unlockedKeys;
+  }, [unlockedKeys]);
 
   useEffect(() => {
     if (!user) return;
@@ -63,7 +70,7 @@ export const useGamification = () => {
   const loadGamification = async () => {
     const [{ data: streakRow }, { data: badgeRows }] = await Promise.all([
       supabase.from('user_streaks').select('*').eq('user_id', user.id).single(),
-      supabase.from('user_badges').select('badge_id, created_at').eq('user_id', user.id),
+      supabase.from('user_badges').select('badge_id, earned_at, created_at').eq('user_id', user.id),
     ]);
 
     if (badgeRows) {
@@ -73,10 +80,11 @@ export const useGamification = () => {
         const key = BADGE_ID_TO_KEY[r.badge_id];
         if (key) {
           keys.push(key);
-          dates[key] = r.created_at ?? null;
+          dates[key] = r.earned_at || r.created_at || null;
         }
       });
       setUnlockedKeys(keys);
+      unlockedKeysRef.current = keys;
       setUnlockedDates(dates);
     }
 
@@ -159,20 +167,36 @@ export const useGamification = () => {
 
   const unlockBadgeInternal = useCallback((badgeKey) => {
     if (!user || !BADGES[badgeKey]) return;
+    // Use ref to avoid stale closure — immediately bail if already earned
+    if (unlockedKeysRef.current.includes(badgeKey)) return;
+
+    const badge = BADGES[badgeKey];
+    const now = new Date().toISOString();
+
+    // Update state
     setUnlockedKeys(prev => {
       if (prev.includes(badgeKey)) return prev;
-      const now = new Date().toISOString();
-      supabase.from('user_badges').insert([{
-        user_id: user.id,
-        badge_id: BADGES[badgeKey].id,
-        badge_name: BADGES[badgeKey].name,
-      }]).then(({ error }) => {
-        if (error) console.error('Badge save error:', error.message);
-      });
-      setUnlockedDates(d => ({ ...d, [badgeKey]: now }));
       return [...prev, badgeKey];
     });
-  }, [user]);
+    setUnlockedDates(d => ({ ...d, [badgeKey]: now }));
+
+    // Show in-page badge notification
+    setBadgeNotification(badge);
+    setTimeout(() => setBadgeNotification(null), 4500);
+
+    // Persist to Supabase — include earned_at to match table schema
+    supabase.from('user_badges').insert([{
+      user_id: user.id,
+      badge_id: badge.id,
+      badge_name: badge.name,
+      earned_at: now,
+    }]).then(({ error }) => {
+      if (error && error.code !== '23505') {
+        // 23505 = unique violation (already exists) — safe to ignore
+        console.error('Badge save error:', error.message);
+      }
+    });
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addXP = useCallback((amount, label = '') => {
     if (!user) return;
@@ -217,10 +241,11 @@ export const useGamification = () => {
 
   const checkBadgeUnlock = useCallback((type, value) => {
     switch (type) {
-      case 'LEVEL_5': if (value >= 5) unlockBadgeInternal('LEVEL_5'); break;
-      case 'FIRST_LESSON': unlockBadgeInternal('FIRST_LESSON'); break;
-      case 'STREAK_3': if (value >= 3) unlockBadgeInternal('STREAK_3'); break;
-      case 'STREAK_7': if (value >= 7) unlockBadgeInternal('STREAK_7'); break;
+      case 'LEVEL_5':       if (value >= 5)  unlockBadgeInternal('LEVEL_5');   break;
+      case 'FIRST_LESSON':                   unlockBadgeInternal('FIRST_LESSON'); break;
+      case 'STREAK_3':      if (value >= 3)  unlockBadgeInternal('STREAK_3');  break;
+      case 'STREAK_7':      if (value >= 7)  unlockBadgeInternal('STREAK_7');  break;
+      case 'TOPIC_MASTER':  if (value >= 10) unlockBadgeInternal('TOPIC_MASTER'); break;
       default: break;
     }
   }, [unlockBadgeInternal]);
@@ -255,6 +280,7 @@ export const useGamification = () => {
   }));
 
   const dismissLevelUp = () => setLevelUpNotification(null);
+  const dismissBadgeNotification = () => setBadgeNotification(null);
 
   return {
     xp,
@@ -263,6 +289,7 @@ export const useGamification = () => {
     badges: getAllBadges(),
     xpPopups,
     levelUpNotification,
+    badgeNotification,
     awardXP,
     addXP,
     unlockBadge,
@@ -270,6 +297,7 @@ export const useGamification = () => {
     getXPForNextLevel,
     getLevelProgress,
     dismissLevelUp,
+    dismissBadgeNotification,
   };
 };
 
