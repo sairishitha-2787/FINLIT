@@ -123,7 +123,12 @@ const ScenarioQuizEnvironment = ({
 
   function handleMCSubmit() {
     if (selectedChoice === null) return;
-    const correct = selectedChoice === q.correctIndex;
+    // Templates may use `correct: 'A'`; Groq output uses `correctIndex: 0`.
+    let correctIdx = q.correctIndex;
+    if (correctIdx === undefined && typeof q.correct === 'string') {
+      correctIdx = q.correct.toUpperCase().charCodeAt(0) - 65; // 'A'→0, 'B'→1, etc.
+    }
+    const correct = selectedChoice === correctIdx;
     if (correct) setScore(s => s + 1);
     setLastResult({ correct, explanation: q.explanation });
     setStage('feedback');
@@ -396,11 +401,11 @@ const ScenarioQuizEnvironment = ({
 
               {/* Question text */}
               {fm ? (
-                <p style={{ fontFamily: FFonts.h, fontSize: 18, fontWeight: 500, color: FColors.deep, lineHeight: 1.55, marginBottom: 24 }}>{q?.question}</p>
+                <p style={{ fontFamily: FFonts.h, fontSize: 18, fontWeight: 500, color: FColors.deep, lineHeight: 1.55, marginBottom: 24 }}>{q?.question || q?.scenario}</p>
               ) : gm ? (
-                <p style={{ fontFamily: xt.fontB, fontSize: '17px', color: xt.text1, lineHeight: 1.65, marginBottom: '24px', fontWeight: 500 }}>{q?.question}</p>
+                <p style={{ fontFamily: xt.fontB, fontSize: '17px', color: xt.text1, lineHeight: 1.65, marginBottom: '24px', fontWeight: 500 }}>{q?.question || q?.scenario}</p>
               ) : (
-                <p className="text-xl font-black text-brutal-black mb-6 leading-snug">{q?.question}</p>
+                <p className="text-xl font-black text-brutal-black mb-6 leading-snug">{q?.question || q?.scenario}</p>
               )}
 
               {/* ── MULTIPLE CHOICE ── */}

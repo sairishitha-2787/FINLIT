@@ -9,6 +9,28 @@ const { TOPIC_MAP } = require('../config/topics');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+// ── Template normalizer ───────────────────────────────────────────────────────
+// Templates store `correct: 'A'` but ScenarioQuizEnvironment expects `correctIndex: 0`.
+// This converts letter identifiers to 0-based indices at the source.
+
+function normalizeTemplateQuestion(q) {
+  const out = { ...q };
+
+  // MC: convert `correct: 'A'` → `correctIndex: 0`
+  if (q.type === 'multiple_choice') {
+    if (out.correctIndex === undefined && typeof q.correct === 'string' && q.correct.length === 1) {
+      out.correctIndex = q.correct.toUpperCase().charCodeAt(0) - 65; // 'A'→0, 'B'→1, etc.
+    }
+  }
+
+  // Safety: if question text is missing, fall back to scenario text
+  if (!out.question && out.scenario) {
+    out.question = out.scenario;
+  }
+
+  return out;
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 async function generateScenarioQuiz(topic, domain, difficulty = 'beginner', variant = 0) {
@@ -26,7 +48,7 @@ async function generateScenarioQuiz(topic, domain, difficulty = 'beginner', vari
       topic,
       domain: normDomain,
       difficulty,
-      questions: template.questions,
+      questions: template.questions.map(normalizeTemplateQuestion),
       scenarioTitle: template.scenarioTitle,
       scenarioContext: template.scenarioContext,
     };

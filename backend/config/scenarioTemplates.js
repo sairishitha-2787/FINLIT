@@ -814,7 +814,8 @@ const T = {
           },
           {
             id: 'sm_g0_l2q2', level: 2, levelName: 'APPLICATION', type: 'calculation',
-            scenario: `You discover three "gold leaks" in your monthly budget:\n• Unused game subscriptions: $35/month\n• Premium energy drinks at gaming sessions: $60/month\n• Impulse skin purchases: ~$45/month average\n\nIf you cut ALL three leaks for one year, how much extra could you save?`,
+            scenario: `You discover three "gold leaks" in your monthly budget:\n• Unused game subscriptions: $35/month\n• Premium energy drinks at gaming sessions: $60/month\n• Impulse skin purchases: ~$45/month average`,
+            question: `If you cut ALL three leaks for one year, how much extra gold will you save?\n\nFormula: Annual savings = Monthly total × 12`,
             formula: 'Annual savings = Monthly leak × 12',
             hints: ['Total monthly leaks = 35 + 60 + 45', 'Multiply by 12 for annual total'],
             correctAnswer: 1680,
