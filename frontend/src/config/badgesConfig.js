@@ -1,5 +1,5 @@
 // frontend/src/config/badgesConfig.js
-// FINLIT — Badge config (Gaming + Fashion).
+// FINLIT — Badge config (Gaming + Fashion + Sports).
 // All badges are individually pre-processed PNGs — canvas hook passes them through as-is.
 // Each badge now includes: category, tier, secret, hintWhenLocked
 
@@ -7,6 +7,7 @@ const INDIV = { batchCols: 1, batchRows: 1, cellCol: 0, cellRow: 0, textRatio: 0
 
 const G = (id) => ({ ...INDIV, imagePath: `/BADGES/GAMING/gaming-indiv-${id}.png` });
 const F = (id) => ({ ...INDIV, imagePath: `/BADGES/FASHION/fashion-indiv-${id}.png` });
+const S = (id) => ({ ...INDIV, imagePath: `/BADGES/SPORTS/${id}.png` });
 
 // ── Gaming badges (73 total) ──────────────────────────────────────────────────
 export const GAMING_BADGES_CONFIG = [
@@ -1532,4 +1533,99 @@ export const FASHION_BADGES_CONFIG = [
     secret: true,
     hintWhenLocked: null,
   },
+];
+
+// ── Sports badges (75 total) ──────────────────────────────────────────────────
+// Categories map to AchievementsPage section keys:
+//   progression = Milestones, performance = Performance, season = Season,
+//   mastery = Mastery, streaks = Streaks, special = Special
+export const SPORTS_BADGES_CONFIG = [
+  // Batch 1 — Milestones (10 badges)
+  { id: 'first_whistle',    name: 'First Whistle',    ...S('first_whistle'),    desc: 'Complete your first training session', category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete your first training session' },
+  { id: 'rookie_card',      name: 'Rookie Card',      ...S('rookie_card'),      desc: 'Register as a new player',             category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Register as a new player' },
+  { id: 'opening_match',    name: 'Opening Match',    ...S('opening_match'),    desc: 'Complete 2 training sessions',         category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete 2 training sessions' },
+  { id: 'first_points',     name: 'First Points',     ...S('first_points'),     desc: 'Earn your first XP',                   category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Earn your first XP' },
+  { id: 'division_climber', name: 'Division Climber', ...S('division_climber'), desc: 'Complete 3 training sessions',         category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete 3 training sessions' },
+  { id: 'week_one_warrior', name: 'Week One Warrior', ...S('week_one_warrior'), desc: 'Complete 5 training sessions',         category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete 5 training sessions' },
+  { id: 'season_opener',    name: 'Season Opener',    ...S('season_opener'),    desc: 'Start your second session',            category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Start your second session' },
+  { id: 'training_ground',  name: 'Training Ground',  ...S('training_ground'),  desc: 'Complete 3 sessions and a quiz',       category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete 3 sessions and a quiz' },
+  { id: 'quick_start',      name: 'Quick Start',      ...S('quick_start'),      desc: 'Keep a 2-day learning streak',         category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Keep a 2-day learning streak' },
+  { id: 'team_player',      name: 'Team Player',      ...S('team_player'),      desc: 'Complete 5 training sessions',         category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete 5 training sessions' },
+
+  // Batch 2 — Progress clubs (5 badges)
+  { id: 'practice_makes_perfect', name: 'Practice Makes Perfect', ...S('practice_makes_perfect'), desc: 'Complete 2 training sessions',  category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Complete 2 training sessions' },
+  { id: 'hundred_club',           name: 'Hundred Club',           ...S('hundred_club'),           desc: 'Earn 100 XP',                   category: 'progression', tier: 'rare',   secret: false, hintWhenLocked: 'Earn 100 XP' },
+  { id: 'five_hundred_club',      name: 'Five Hundred Club',      ...S('five_hundred_club'),      desc: 'Earn 500 XP',                   category: 'progression', tier: 'rare',   secret: false, hintWhenLocked: 'Earn 500 XP' },
+  { id: 'thousand_club',          name: 'Thousand Club',          ...S('thousand_club'),          desc: 'Earn 1000 XP',                  category: 'progression', tier: 'epic',   secret: false, hintWhenLocked: 'Earn 1000 XP' },
+  { id: 'welcome_to_the_league',  name: 'Welcome to the League',  ...S('welcome_to_the_league'),  desc: 'Join the Sports division',      category: 'progression', tier: 'common', secret: false, hintWhenLocked: 'Join the Sports division' },
+
+  // Batch 3 — Performance (15 badges)
+  { id: 'clean_sheet',          name: 'Clean Sheet',          ...S('clean_sheet'),          desc: 'Score 100% on a quiz',                      category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Score 100% on a quiz' },
+  { id: 'hat_trick',            name: 'Hat Trick',            ...S('hat_trick'),            desc: 'Score 70%+ with 3 sessions completed',       category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Score 70%+ with 3 sessions completed' },
+  { id: 'perfect_form',         name: 'Perfect Form',         ...S('perfect_form'),         desc: 'Score 100% with 10+ sessions completed',     category: 'performance', tier: 'legendary', secret: false, hintWhenLocked: 'Score 100% with 10+ sessions completed' },
+  { id: 'speed_demon',          name: 'Speed Demon',          ...S('speed_demon'),          desc: 'Score 90%+ on a quiz',                       category: 'performance', tier: 'epic',      secret: false, hintWhenLocked: 'Score 90%+ on a quiz' },
+  { id: 'comeback_king',        name: 'Comeback King',        ...S('comeback_king'),        desc: 'Score 85%+ on a quiz',                       category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Score 85%+ on a quiz' },
+  { id: 'consistency_champion', name: 'Consistency Champion', ...S('consistency_champion'), desc: 'Maintain 80%+ average with 10+ sessions',    category: 'performance', tier: 'epic',      secret: false, hintWhenLocked: 'Maintain 80%+ average with 10+ sessions' },
+  { id: 'no_mistakes',          name: 'No Mistakes',          ...S('no_mistakes'),          desc: 'Score 95%+ on a quiz',                       category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Score 95%+ on a quiz' },
+  { id: 'record_breaker',       name: 'Record Breaker',       ...S('record_breaker'),       desc: 'Score 95%+ with 5+ sessions completed',      category: 'performance', tier: 'epic',      secret: false, hintWhenLocked: 'Score 95%+ with 5+ sessions' },
+  { id: 'sharpshooter',         name: 'Sharpshooter',         ...S('sharpshooter'),         desc: 'Maintain 80%+ average with 3+ sessions',     category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Maintain 80%+ average with 3+ sessions' },
+  { id: 'clutch_player',        name: 'Clutch Player',        ...S('clutch_player'),        desc: 'Score 90%+ with 3+ sessions completed',      category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Score 90%+ with 3+ sessions' },
+  { id: 'perfectionist',        name: 'Perfectionist',        ...S('perfectionist'),        desc: 'Score 100% with 5+ sessions completed',      category: 'performance', tier: 'epic',      secret: false, hintWhenLocked: 'Score 100% with 5+ sessions' },
+  { id: 'quick_learner',        name: 'Quick Learner',        ...S('quick_learner'),        desc: 'Complete 3 sessions',                        category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Complete 3 sessions' },
+  { id: 'ace_student',          name: 'Ace Student',          ...S('ace_student'),          desc: 'Score 85%+ with 5+ sessions completed',      category: 'performance', tier: 'epic',      secret: false, hintWhenLocked: 'Score 85%+ with 5+ sessions' },
+  { id: 'iron_will',            name: 'Iron Will',            ...S('iron_will'),            desc: 'Complete 10 training sessions',              category: 'performance', tier: 'rare',      secret: false, hintWhenLocked: 'Complete 10 training sessions' },
+  { id: 'flawless_victory',     name: 'Flawless Victory',     ...S('flawless_victory'),     desc: 'Score 100% with 15+ sessions completed',     category: 'performance', tier: 'legendary', secret: false, hintWhenLocked: 'Score 100% with 15+ sessions' },
+
+  // Batch 4 — Season (12 badges)
+  { id: 'pre_season_victor',       name: 'Pre-Season Victor',       ...S('pre_season_victor'),       desc: 'Defeat the Pre-Season Challenge',            category: 'season', tier: 'rare',      secret: false, hintWhenLocked: 'Defeat the Pre-Season Challenge' },
+  { id: 'pre_season_complete',     name: 'Pre-Season Complete',     ...S('pre_season_complete'),     desc: 'Win pre-season with 4+ sessions done',       category: 'season', tier: 'rare',      secret: false, hintWhenLocked: 'Win pre-season with 4+ sessions done' },
+  { id: 'pre_season_perfect',      name: 'Pre-Season Perfect',      ...S('pre_season_perfect'),      desc: 'Win pre-season with 90%+ average score',     category: 'season', tier: 'epic',      secret: false, hintWhenLocked: 'Win pre-season with 90%+ average' },
+  { id: 'mid_season_champion',     name: 'Mid-Season Champion',     ...S('mid_season_champion'),     desc: 'Defeat the Mid-Season Match',                category: 'season', tier: 'epic',      secret: false, hintWhenLocked: 'Defeat the Mid-Season Match' },
+  { id: 'regular_season_complete', name: 'Regular Season Complete', ...S('regular_season_complete'), desc: 'Complete 8 training sessions',               category: 'season', tier: 'rare',      secret: false, hintWhenLocked: 'Complete 8 training sessions' },
+  { id: 'regular_season_perfect',  name: 'Regular Season Perfect',  ...S('regular_season_perfect'),  desc: '8+ sessions with 90%+ average score',        category: 'season', tier: 'epic',      secret: false, hintWhenLocked: '8+ sessions with 90%+ average' },
+  { id: 'league_champion',         name: 'League Champion',         ...S('league_champion'),         desc: 'Win both pre-season and mid-season',         category: 'season', tier: 'epic',      secret: false, hintWhenLocked: 'Win both pre-season and mid-season' },
+  { id: 'championship_complete',   name: 'Championship Complete',   ...S('championship_complete'),   desc: 'Defeat the Championship Final',              category: 'season', tier: 'epic',      secret: false, hintWhenLocked: 'Defeat the Championship Final' },
+  { id: 'championship_perfect',    name: 'Championship Perfect',    ...S('championship_perfect'),    desc: 'Win the final with 90%+ average score',      category: 'season', tier: 'legendary', secret: false, hintWhenLocked: 'Win the final with 90%+ average' },
+  { id: 'the_treble',              name: 'The Treble',              ...S('the_treble'),              desc: 'Win all three championships',                category: 'season', tier: 'legendary', secret: false, hintWhenLocked: 'Win all three championships' },
+  { id: 'unbeaten_season',         name: 'Unbeaten Season',         ...S('unbeaten_season'),         desc: 'Win all three with 90%+ average score',      category: 'season', tier: 'legendary', secret: false, hintWhenLocked: 'Win all three with 90%+ average' },
+  { id: 'triple_crown',            name: 'Triple Crown',            ...S('triple_crown'),            desc: 'Win all three with 100% average score',      category: 'season', tier: 'legendary', secret: false, hintWhenLocked: 'Win all three with 100% average' },
+
+  // Batch 5 — Mastery (15 badges)
+  { id: 'budget_master',      name: 'Budget Master',      ...S('budget_master'),      desc: 'Begin your budgeting journey',            category: 'mastery', tier: 'common', secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'savings_expert',     name: 'Savings Expert',     ...S('savings_expert'),     desc: 'Start building savings habits',           category: 'mastery', tier: 'common', secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'income_tracker',     name: 'Income Tracker',     ...S('income_tracker'),     desc: 'Complete 3 training sessions',            category: 'mastery', tier: 'common', secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'emergency_ready',    name: 'Emergency Ready',    ...S('emergency_ready'),    desc: 'Learn emergency fund basics',             category: 'mastery', tier: 'common', secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'investment_pro',     name: 'Investment Pro',     ...S('investment_pro'),     desc: 'Reach 5 sessions completed',              category: 'mastery', tier: 'rare',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'debt_free',          name: 'Debt Free',          ...S('debt_free'),          desc: 'Master 5 sessions of financial training', category: 'mastery', tier: 'rare',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'credit_savvy',       name: 'Credit Savvy',       ...S('credit_savvy'),       desc: 'Build a strong credit knowledge base',    category: 'mastery', tier: 'rare',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'tax_ready',          name: 'Tax Ready',          ...S('tax_ready'),          desc: 'Complete 6 training sessions',            category: 'mastery', tier: 'rare',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'portfolio_builder',  name: 'Portfolio Builder',  ...S('portfolio_builder'),  desc: 'Complete 7 training sessions',            category: 'mastery', tier: 'rare',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'retirement_planner', name: 'Retirement Planner', ...S('retirement_planner'), desc: 'Plan for the long game — 7 sessions',     category: 'mastery', tier: 'rare',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'real_estate_ready',  name: 'Real Estate Ready',  ...S('real_estate_ready'),  desc: 'Reach 9 sessions completed',              category: 'mastery', tier: 'epic',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'wealth_builder',     name: 'Wealth Builder',     ...S('wealth_builder'),     desc: 'Complete 12 training sessions',           category: 'mastery', tier: 'epic',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'topic_completionist',name: 'Topic Completionist',...S('topic_completionist'), desc: 'Complete 12 training sessions',           category: 'mastery', tier: 'epic',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'perfect_training',   name: 'Perfect Training',   ...S('perfect_training'),   desc: '8+ sessions with 85%+ average score',     category: 'mastery', tier: 'epic',   secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+  { id: 'knowledge_base',     name: 'Knowledge Base',     ...S('knowledge_base'),     desc: '12+ sessions with 80%+ average score',    category: 'mastery', tier: 'legendary', secret: false, hintWhenLocked: 'Keep pushing your skills further...' },
+
+  // Batch 6 — Streaks & Special (9 badges)
+  { id: 'captains_armband', name: "Captain's Armband", ...S('captains_armband'), desc: 'Reach a 10-day learning streak',        category: 'streaks',  tier: 'epic',      secret: false, hintWhenLocked: 'Keep showing up every day...' },
+  { id: 'marathon_runner',  name: 'Marathon Runner',  ...S('marathon_runner'),  desc: 'Complete 25 training sessions',         category: 'special',  tier: 'epic',      secret: false, hintWhenLocked: "There's more to discover..." },
+  { id: 'iron_streak',      name: 'Iron Streak',      ...S('iron_streak'),      desc: 'Reach a 14-day learning streak',        category: 'streaks',  tier: 'legendary', secret: false, hintWhenLocked: 'Keep showing up every day...' },
+  { id: 'mvp',              name: 'MVP',              ...S('mvp'),              desc: 'Defeat the Championship Final',         category: 'season',   tier: 'epic',      secret: false, hintWhenLocked: 'Defeat the Championship Final' },
+  { id: 'golden_boot',      name: 'Golden Boot',      ...S('golden_boot'),      desc: 'Complete 10 training sessions',         category: 'performance', tier: 'epic',   secret: false, hintWhenLocked: 'Complete 10 training sessions' },
+  { id: 'division_10',      name: 'Division 10',      ...S('division_10'),      desc: 'Reach level 5',                         category: 'special',  tier: 'epic',      secret: false, hintWhenLocked: 'Reach level 5' },
+  { id: 'top_tier',         name: 'Top Tier',         ...S('top_tier'),         desc: 'Reach level 8',                         category: 'special',  tier: 'legendary', secret: false, hintWhenLocked: 'Reach level 8' },
+  { id: 'master_class',     name: 'Master Class',     ...S('master_class'),     desc: '12+ sessions with 90%+ average score',  category: 'special',  tier: 'legendary', secret: false, hintWhenLocked: '12+ sessions with 90%+ average' },
+  { id: 'legendary_status', name: 'Legendary Status', ...S('legendary_status'), desc: 'Earn 5000 XP',                          category: 'special',  tier: 'legendary', secret: false, hintWhenLocked: 'Earn 5000 XP' },
+
+  // Batch 7 — Special & Streaks (9 badges)
+  { id: 'early_bird',          name: 'Early Bird',          ...S('early_bird'),          desc: 'Reach a 3-day learning streak',           category: 'streaks',  tier: 'rare', secret: false, hintWhenLocked: 'Keep showing up every day...' },
+  { id: 'night_owl',           name: 'Night Owl',           ...S('night_owl'),           desc: 'Reach a 5-day streak',                    category: 'streaks',  tier: 'rare', secret: false, hintWhenLocked: 'Keep showing up every day...' },
+  { id: 'weekend_warrior',     name: 'Weekend Warrior',     ...S('weekend_warrior'),     desc: 'Keep a 5-day streak alive',               category: 'streaks',  tier: 'rare', secret: false, hintWhenLocked: 'Keep showing up every day...' },
+  { id: 'comeback_trail',      name: 'Comeback Trail',      ...S('comeback_trail'),      desc: 'Return and complete 5 sessions',          category: 'special',  tier: 'rare', secret: false, hintWhenLocked: "There's more to discover..." },
+  { id: 'badge_collector',     name: 'Badge Collector',     ...S('badge_collector'),     desc: '8+ sessions with 75%+ average score',     category: 'special',  tier: 'epic', secret: false, hintWhenLocked: "There's more to discover..." },
+  { id: 'speed_runner',        name: 'Speed Runner',        ...S('speed_runner'),        desc: '5+ sessions with 85%+ average score',     category: 'performance', tier: 'epic', secret: false, hintWhenLocked: "There's more to discover..." },
+  { id: 'trophy_hunter',       name: 'Trophy Hunter',       ...S('trophy_hunter'),       desc: 'Complete 6 training sessions',            category: 'special',  tier: 'rare', secret: false, hintWhenLocked: "There's more to discover..." },
+  { id: 'hall_of_fame',        name: 'Hall of Fame',        ...S('hall_of_fame'),        desc: 'Win all 3 championships with 90%+ score', category: 'special',  tier: 'legendary', secret: false, hintWhenLocked: "There's more to discover..." },
+  { id: 'the_complete_athlete',name: 'The Complete Athlete',...S('the_complete_athlete'), desc: '12+ sessions, 7-day streak, 85%+ score',  category: 'special',  tier: 'legendary', secret: false, hintWhenLocked: "There's more to discover..." },
 ];

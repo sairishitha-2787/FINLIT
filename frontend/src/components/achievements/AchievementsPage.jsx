@@ -24,8 +24,8 @@ import { hexW } from './hexUtils';
 // ── Tier sort weight (higher = better) ───────────────────────────────────────
 const TIER_WEIGHT = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 
-// ── Section definitions ───────────────────────────────────────────────────────
-const SECTIONS = [
+// ── Default section definitions (gaming / fashion) ───────────────────────────
+const DEFAULT_SECTIONS = [
   { key: 'progression',  label: 'Progression',           icon: <Map size={15} /> },
   { key: 'boss_battles', label: 'Boss Battles',           icon: <Swords size={15} /> },
   { key: 'mastery',      label: 'Mastery',                icon: <Target size={15} /> },
@@ -33,6 +33,18 @@ const SECTIONS = [
   { key: 'special',      label: 'Special Achievements',   icon: <Trophy size={15} /> },
   { key: 'elite',        label: 'Elite',                  icon: <Crown size={15} /> },
   { key: 'secret',       label: 'Surprises',              icon: <Sparkles size={15} /> },
+];
+
+// ── Sports section definitions ────────────────────────────────────────────────
+export const SPORTS_SECTIONS = [
+  { key: 'progression', label: 'Milestones',   icon: <Trophy size={15} /> },
+  { key: 'performance', label: 'Performance',  icon: <Target size={15} /> },
+  { key: 'season',      label: 'Season',       icon: <Swords size={15} /> },
+  { key: 'mastery',     label: 'Mastery',      icon: <Map size={15} /> },
+  { key: 'streaks',     label: 'Streaks',      icon: <Flame size={15} /> },
+  { key: 'special',     label: 'Special',      icon: <Sparkles size={15} /> },
+  { key: 'elite',       label: 'Elite',        icon: <Crown size={15} /> },
+  { key: 'secret',      label: 'Surprises',    icon: <Sparkles size={15} /> },
 ];
 
 // ── Date formatter ─────────────────────────────────────────────────────────────
@@ -56,6 +68,8 @@ function withIsNew(badges) {
 // ── Toast notification ────────────────────────────────────────────────────────
 function BadgeToast({ newlyEarned, domain, theme, onDismiss }) {
   const isGaming = domain === 'gaming';
+  const isSports = domain === 'sports';
+  const isDark   = isGaming || isSports;
   const isSecret = newlyEarned?.secret;
 
   useEffect(() => {
@@ -67,10 +81,10 @@ function BadgeToast({ newlyEarned, domain, theme, onDismiss }) {
 
   if (!newlyEarned) return null;
 
-  const toastStyle = isGaming
+  const toastStyle = isDark
     ? {
-        background: 'rgba(30,42,69,0.97)',
-        border: `1px solid ${isSecret ? '#F59E0B' : 'rgba(159,224,211,0.60)'}`,
+        background: isSports ? 'rgba(15,15,15,0.97)' : 'rgba(30,42,69,0.97)',
+        border: `1px solid ${isSecret ? '#F59E0B' : isGaming ? 'rgba(159,224,211,0.60)' : 'rgba(255,255,255,0.22)'}`,
         borderRadius: 16,
         padding: '18px 24px',
         boxShadow: '0 12px 48px rgba(0,0,0,0.60)',
@@ -91,15 +105,25 @@ function BadgeToast({ newlyEarned, domain, theme, onDismiss }) {
         maxWidth: 340,
       };
 
-  const headerText = isGaming ? 'ACHIEVEMENT UNLOCKED' : 'DESIGNER LABEL EARNED';
-  const headerFont = isGaming
-    ? '"Orbitron", sans-serif'
-    : "'Playfair Display', serif";
-  const headerColor = isGaming
-    ? (isSecret ? '#F59E0B' : '#9FE0D3')
+  const headerText = isSports
+    ? 'TROPHY UNLOCKED'
+    : isGaming
+      ? 'ACHIEVEMENT UNLOCKED'
+      : 'DESIGNER LABEL EARNED';
+  const headerFont = isSports
+    ? "'Barlow Condensed', sans-serif"
+    : isGaming
+      ? '"Orbitron", sans-serif'
+      : "'Playfair Display', serif";
+  const headerColor = isDark
+    ? (isSecret ? '#F59E0B' : isGaming ? '#9FE0D3' : '#fff')
     : (isSecret ? '#fde68a' : '#9d1f4a');
-  const nameColor = isGaming ? '#F0FFFA' : '#9d1f4a';
-  const nameFont = isGaming ? '"Jura", sans-serif' : "'DM Sans', sans-serif";
+  const nameColor = isDark ? '#fff' : '#9d1f4a';
+  const nameFont = isSports
+    ? (theme?.fontHeading || "'Bebas Neue', cursive")
+    : isGaming
+      ? '"Jura", sans-serif'
+      : "'DM Sans', sans-serif";
 
   return ReactDOM.createPortal(
     <motion.div
@@ -163,6 +187,7 @@ export default function AchievementsPage({
   earnedLabel,
   newlyEarned,
   glowColor,
+  sections: sectionsProp,
 }) {
   const { isMobile, isTablet } = useIsMobile();
   const [filter, setFilter] = useState('all');   // 'all' | 'earned' | 'locked'
@@ -170,6 +195,9 @@ export default function AchievementsPage({
   const [toastVisible, setToastVisible] = useState(false);
   const [currentToast, setCurrentToast] = useState(null);
   const isGaming = domain === 'gaming';
+  const isSports = domain === 'sports';
+  const isDark   = isGaming || isSports;
+  const SECTIONS = sectionsProp || DEFAULT_SECTIONS;
 
   // Responsive columns
   const columns = isMobile ? 3 : isTablet ? 4 : 6;
@@ -278,8 +306,15 @@ export default function AchievementsPage({
   // Earned label with {N} replaced
   const earnedLabelText = earnedLabel.replace('{N}', totalEarned);
 
+  // ── Resolved glow for pills/accents (sports uses character color via glowColor) ─
+  const accentColor = isSports
+    ? (glowColor || '#E8457A')
+    : isGaming
+      ? (theme.mint || '#9FE0D3')
+      : (theme.deepRose || '#9d1f4a');
+
   // ── Styles ──────────────────────────────────────────────────────────────────
-  const pageBg = isGaming ? theme.bgDark || '#1E2A45' : theme.bg || '#faf5ec';
+  const pageBg = isDark ? (theme.bgDark || '#1E2A45') : (theme.bg || '#faf5ec');
 
   const filterPillBase = {
     padding: '7px 16px',
@@ -295,6 +330,19 @@ export default function AchievementsPage({
 
   const getFilterStyle = (key) => {
     const active = filter === key;
+    if (isSports) {
+      return {
+        ...filterPillBase,
+        background: active ? `${accentColor}22` : 'transparent',
+        borderColor: active ? accentColor : 'rgba(255,255,255,0.18)',
+        color: active ? accentColor : 'rgba(255,255,255,0.45)',
+        fontFamily: theme.fontSub || "'Barlow Condensed', sans-serif",
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+      };
+    }
     if (isGaming) {
       return {
         ...filterPillBase,
@@ -319,10 +367,14 @@ export default function AchievementsPage({
   const selectStyle = {
     padding: '7px 12px',
     borderRadius: 8,
-    border: `1px solid ${isGaming ? 'rgba(139,184,233,0.30)' : 'rgba(247,160,184,0.30)'}`,
-    background: isGaming ? 'rgba(30,42,69,0.80)' : 'rgba(255,255,255,0.50)',
-    color: isGaming ? (theme.stellarWhite || '#F0FFFA') : (theme.deepRose || '#9d1f4a'),
-    fontFamily: isGaming ? (theme.fontBody || '"Jura", sans-serif') : (theme.fontUI || "'DM Sans', sans-serif"),
+    border: `1px solid ${isDark ? 'rgba(255,255,255,0.18)' : 'rgba(247,160,184,0.30)'}`,
+    background: isDark ? 'rgba(20,20,20,0.80)' : 'rgba(255,255,255,0.50)',
+    color: isDark ? '#fff' : (theme.deepRose || '#9d1f4a'),
+    fontFamily: isSports
+      ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+      : isGaming
+        ? (theme.fontBody || '"Jura", sans-serif')
+        : (theme.fontUI || "'DM Sans', sans-serif"),
     fontSize: 12,
     cursor: 'pointer',
     outline: 'none',
@@ -334,22 +386,26 @@ export default function AchievementsPage({
   };
 
   const sectionLabelStyle = {
-    fontFamily: isGaming ? (theme.fontLabel || '"Michroma", sans-serif') : (theme.fontUI || "'DM Sans', sans-serif"),
+    fontFamily: isSports
+      ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+      : isGaming
+        ? (theme.fontLabel || '"Michroma", sans-serif')
+        : (theme.fontUI || "'DM Sans', sans-serif"),
     fontSize: 10,
-    letterSpacing: isGaming ? '3px' : '0.18em',
-    color: isGaming ? (theme.mutedBlue || '#8BB8E9') : (theme.label || '#c98a9e'),
+    letterSpacing: isDark ? '3px' : '0.18em',
+    color: isDark ? 'rgba(255,255,255,0.40)' : (theme.label || '#c98a9e'),
     textTransform: 'uppercase',
     marginBottom: 4,
-    fontWeight: 500,
+    fontWeight: isSports ? 700 : 500,
   };
 
   const headingStyle = {
-    fontFamily: isGaming ? (theme.fontHeading || '"Orbitron", sans-serif') : (theme.fontHeading || "'Playfair Display', serif"),
+    fontFamily: theme.fontHeading || (isGaming ? '"Orbitron", sans-serif' : "'Playfair Display', serif"),
     fontSize: isMobile ? 22 : 28,
-    fontWeight: isGaming ? 800 : 600,
-    color: isGaming ? (theme.stellarWhite || '#F0FFFA') : (theme.deepRose || '#9d1f4a'),
-    textTransform: isGaming ? 'uppercase' : 'none',
-    letterSpacing: isGaming ? '2px' : '-0.02em',
+    fontWeight: isGaming ? 800 : 700,
+    color: isDark ? '#ffffff' : (theme.deepRose || '#9d1f4a'),
+    textTransform: isDark ? 'uppercase' : 'none',
+    letterSpacing: isSports ? '3px' : isGaming ? '2px' : '-0.02em',
     margin: 0,
     marginBottom: 4,
   };
@@ -360,12 +416,16 @@ export default function AchievementsPage({
     gap: 8,
     padding: '8px 18px',
     borderRadius: 999,
-    background: isGaming ? 'rgba(159,224,211,0.10)' : 'rgba(247,160,184,0.10)',
-    border: `1px solid ${isGaming ? 'rgba(159,224,211,0.30)' : 'rgba(247,160,184,0.30)'}`,
-    fontFamily: isGaming ? (theme.fontLabel || '"Michroma", sans-serif') : (theme.fontUI || "'DM Sans', sans-serif"),
+    background: isDark ? `${accentColor}14` : 'rgba(247,160,184,0.10)',
+    border: `1px solid ${isDark ? `${accentColor}40` : 'rgba(247,160,184,0.30)'}`,
+    fontFamily: isSports
+      ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+      : isGaming
+        ? (theme.fontLabel || '"Michroma", sans-serif')
+        : (theme.fontUI || "'DM Sans', sans-serif"),
     fontSize: 12,
-    color: isGaming ? (theme.mint || '#9FE0D3') : (theme.deepRose || '#9d1f4a'),
-    fontWeight: 600,
+    fontWeight: 700,
+    color: accentColor,
   };
 
   // Empty state messages
@@ -379,9 +439,13 @@ export default function AchievementsPage({
       <div style={{
         textAlign: 'center',
         padding: '48px 24px',
-        fontFamily: isGaming ? (theme.fontBody || '"Jura", sans-serif') : (theme.fontUI || "'DM Sans', sans-serif"),
+        fontFamily: isSports
+          ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+          : isGaming
+            ? (theme.fontBody || '"Jura", sans-serif')
+            : (theme.fontUI || "'DM Sans', sans-serif"),
         fontSize: 14,
-        color: isGaming ? (theme.mutedBlue || '#8BB8E9') : (theme.body || '#b0627a'),
+        color: isDark ? 'rgba(255,255,255,0.40)' : (theme.body || '#b0627a'),
       }}>
         {msg}
       </div>
@@ -392,7 +456,7 @@ export default function AchievementsPage({
   const renderFlatGrid = () => {
     if (flatSorted.length === 0) return renderEmptyState();
     const badgeSize = 100;
-    const bw = hexW(badgeSize);
+    const bw = isSports ? badgeSize : hexW(badgeSize);
 
     return (
       <div style={{
@@ -466,6 +530,17 @@ export default function AchievementsPage({
       <div style={{ marginBottom: 20 }}>
         <div style={sectionLabelStyle}>{sectionLabel}</div>
         <h1 style={headingStyle}>{heading}</h1>
+        {isSports && (
+          <div style={{
+            fontFamily: theme.fontSub || "'Barlow Condensed', sans-serif",
+            fontSize: 12, fontWeight: 600,
+            letterSpacing: '0.08em', textTransform: 'uppercase',
+            color: theme.textMuted || 'rgba(255,255,255,0.40)',
+            marginTop: 2,
+          }}>
+            Track your trophies across all seasons
+          </div>
+        )}
         {isGaming && (
           <div style={{
             fontFamily: theme.fontBody || '"Jura", sans-serif',
@@ -476,7 +551,7 @@ export default function AchievementsPage({
             Track your progress across all zones
           </div>
         )}
-        {!isGaming && (
+        {!isGaming && !isSports && (
           <div style={{
             fontFamily: theme.fontScript || "'Sacramento', cursive",
             fontSize: 17,
@@ -491,7 +566,7 @@ export default function AchievementsPage({
       {/* Earned count pill */}
       <div style={{ marginBottom: 24 }}>
         <div style={pillStyle}>
-          <Trophy size={13} color={isGaming ? (theme.mint || '#9FE0D3') : (theme.midRose || '#d4537e')} />
+          <Trophy size={13} color={accentColor} />
           {earnedLabelText}
         </div>
       </div>
@@ -537,7 +612,7 @@ export default function AchievementsPage({
             transform: 'translateY(-50%)',
             pointerEvents: 'none',
             fontSize: 10,
-            color: isGaming ? (theme.mutedBlue || '#8BB8E9') : (theme.body || '#b0627a'),
+            color: isDark ? 'rgba(255,255,255,0.40)' : (theme.body || '#b0627a'),
           }}>
             ▾
           </span>

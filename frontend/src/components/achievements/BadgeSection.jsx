@@ -40,26 +40,37 @@ export default function BadgeSection({
   if (!badges || badges.length === 0) return null;
 
   const isGaming = domain === 'gaming';
+  const isSports = domain === 'sports';
+  const isDark   = isGaming || isSports;
   const allEarned = earnedCount === badges.length && badges.length > 0;
 
   const sorted = sortBadges(badges);
 
+  // The accent color (glowColor for sports, theme mint for gaming, theme rose for fashion)
+  const accentColor = isSports
+    ? (glowColor || '#E8457A')
+    : isGaming
+      ? (theme.mint || '#9FE0D3')
+      : (theme.midRose || '#d4537e');
+
   // Theme-specific styles
-  const headerBg = isGaming
-    ? 'rgba(61,78,122,0.30)'
-    : 'rgba(255,255,255,0.18)';
-  const headerBorder = isGaming
-    ? '1px solid rgba(139,184,233,0.20)'
+  const headerBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.18)';
+  const headerBorder = isDark
+    ? '1px solid rgba(255,255,255,0.08)'
     : '1px solid rgba(247,160,184,0.20)';
-  const titleColor = isGaming ? theme.stellarWhite || '#F0FFFA' : theme.deepRose || '#9d1f4a';
-  const titleFont = isGaming ? theme.fontHeading || '"Orbitron", sans-serif' : theme.fontHeading || "'Playfair Display', serif";
-  const countColor = isGaming ? theme.mutedBlue || '#8BB8E9' : theme.body || '#b0627a';
-  const countFont = isGaming ? theme.fontLabel || '"Michroma", sans-serif' : theme.fontUI || "'DM Sans', sans-serif";
-  const chevronColor = isGaming ? theme.mint || '#9FE0D3' : theme.midRose || '#d4537e';
-  const iconColor = isGaming ? theme.mint || '#9FE0D3' : theme.midRose || '#d4537e';
-  const contentBg = isGaming
-    ? 'rgba(30,42,69,0.20)'
-    : 'rgba(255,255,255,0.08)';
+  const titleColor = isDark ? '#ffffff' : (theme.deepRose || '#9d1f4a');
+  const titleFont = isSports
+    ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+    : theme.fontHeading || (isGaming ? '"Orbitron", sans-serif' : "'Playfair Display', serif");
+  const countColor = isDark ? 'rgba(255,255,255,0.40)' : (theme.body || '#b0627a');
+  const countFont = isSports
+    ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+    : isGaming
+      ? (theme.fontLabel || '"Michroma", sans-serif')
+      : (theme.fontUI || "'DM Sans', sans-serif");
+  const chevronColor = accentColor;
+  const iconColor = accentColor;
+  const contentBg = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.08)';
 
   const badgeSize = 100;
   const badgeW = hexW(badgeSize);
@@ -110,11 +121,11 @@ export default function BadgeSection({
         <span
           style={{
             fontFamily: titleFont,
-            fontSize: isGaming ? 11 : 13,
-            fontWeight: isGaming ? 700 : 600,
+            fontSize: isSports ? 13 : isGaming ? 11 : 13,
+            fontWeight: isDark ? 700 : 600,
             color: titleColor,
-            letterSpacing: isGaming ? '1.5px' : '0.2px',
-            textTransform: isGaming ? 'uppercase' : 'none',
+            letterSpacing: isSports ? '0.08em' : isGaming ? '1.5px' : '0.2px',
+            textTransform: isDark ? 'uppercase' : 'none',
             flex: 1,
           }}
         >
@@ -126,7 +137,7 @@ export default function BadgeSection({
           style={{
             fontFamily: countFont,
             fontSize: 11,
-            color: allEarned ? (isGaming ? theme.mint || '#9FE0D3' : theme.midRose || '#d4537e') : countColor,
+            color: allEarned ? accentColor : countColor,
             letterSpacing: '0.5px',
             display: 'flex',
             alignItems: 'center',

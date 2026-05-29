@@ -11,6 +11,7 @@ import { hexW, hexPathD } from './hexUtils';
 
 const HEX_CLIP_SHARP = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
 
+
 function formatDate(iso) {
   if (!iso) return '';
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -21,6 +22,8 @@ function TooltipPortal({ badge, domain, rect, glowColor }) {
   if (!rect) return null;
 
   const isGaming = domain === 'gaming';
+  const isSports = domain === 'sports';
+  const isDark   = isGaming || isSports;
   const TOOLTIP_W = 190;
   const TOOLTIP_PAD = 10;
 
@@ -29,10 +32,10 @@ function TooltipPortal({ badge, domain, rect, glowColor }) {
   if (left < 8) left = 8;
   if (left + TOOLTIP_W > window.innerWidth - 8) left = window.innerWidth - 8 - TOOLTIP_W;
 
-  const tooltipStyle = isGaming
+  const tooltipStyle = isDark
     ? {
-        background: 'rgba(20,30,55,0.97)',
-        border: '1px solid rgba(139,184,233,0.35)',
+        background: isSports ? 'rgba(15,15,15,0.97)' : 'rgba(20,30,55,0.97)',
+        border: `1px solid ${isSports ? 'rgba(255,255,255,0.18)' : 'rgba(139,184,233,0.35)'}`,
         borderRadius: 10,
         padding: '10px 14px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.55)',
@@ -49,13 +52,17 @@ function TooltipPortal({ badge, domain, rect, glowColor }) {
         WebkitBackdropFilter: 'blur(24px)',
       };
 
-  const nameStyle = isGaming
-    ? { fontFamily: '"Orbitron", sans-serif', fontSize: 11, fontWeight: 700, color: '#F0FFFA', letterSpacing: '0.5px', marginBottom: 4 }
-    : { fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 600, color: '#9d1f4a', marginBottom: 4 };
+  const nameStyle = isSports
+    ? { fontFamily: "'Bebas Neue', cursive", fontSize: 14, fontWeight: 400, color: '#fff', letterSpacing: '1px', marginBottom: 4 }
+    : isGaming
+      ? { fontFamily: '"Orbitron", sans-serif', fontSize: 11, fontWeight: 700, color: '#F0FFFA', letterSpacing: '0.5px', marginBottom: 4 }
+      : { fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 600, color: '#9d1f4a', marginBottom: 4 };
 
-  const subStyle = isGaming
-    ? { fontFamily: '"Jura", sans-serif', fontSize: 10, color: '#8BB8E9', marginTop: 3 }
-    : { fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#b0627a', marginTop: 3 };
+  const subStyle = isSports
+    ? { fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 600, color: glowColor || '#E8457A', marginTop: 3 }
+    : isGaming
+      ? { fontFamily: '"Jura", sans-serif', fontSize: 10, color: '#8BB8E9', marginTop: 3 }
+      : { fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#b0627a', marginTop: 3 };
 
   return ReactDOM.createPortal(
     <div
@@ -92,15 +99,17 @@ export default function BadgeCard({ badge, domain = 'gaming', size = 100, glowCo
   const containerRef = useRef(null);
 
   const isGaming = domain === 'gaming';
+  const isSports = domain === 'sports';
+  const isDark   = isGaming || isSports;
   const w = hexW(size);
   const h = size;
 
-  const clipPath = isGaming
+  // Sports and gaming use sharp hex; fashion uses rounded hex path.
+  const clipPath = (isGaming || isSports)
     ? HEX_CLIP_SHARP
     : `path('${hexPathD(w, h, 10)}')`;
 
-  // Subtle drop-shadow using character/theme color — only for unlocked badges
-  const resolvedGlow = glowColor || (isGaming ? '#9FE0D3' : '#f7a0b8');
+  const resolvedGlow = glowColor || (isSports ? '#E8457A' : isGaming ? '#9FE0D3' : '#f7a0b8');
   const glowFilter = badge.isUnlocked
     ? `drop-shadow(0 0 8px ${resolvedGlow}99) drop-shadow(0 0 3px ${resolvedGlow}66)`
     : 'none';
@@ -129,35 +138,33 @@ export default function BadgeCard({ badge, domain = 'gaming', size = 100, glowCo
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         style={{ position: 'relative', width: w, height: h, flexShrink: 0 }}
       >
-        {/* Badge image with hex clip + glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0, left: 0,
-            width: w, height: h,
-            clipPath,
-            WebkitClipPath: clipPath,
+        {/* Glow wrapper must be outside the clip-path element so drop-shadow isn't clipped */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0,
+          width: w, height: h,
+          filter: glowFilter,
+        }}>
+          <div style={{
+            width: '100%', height: '100%',
+            clipPath, WebkitClipPath: clipPath,
             overflow: 'hidden',
-            filter: glowFilter,
-          }}
-        >
-          <img
-            src={badge.imagePath}
-            alt={badge.name}
-            draggable={false}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-              filter: badge.isUnlocked ? 'none' : 'grayscale(1)',
-              opacity: badge.isUnlocked ? 1 : 0.45,
-              userSelect: 'none',
-            }}
-          />
+          }}>
+            <img
+              src={badge.imagePath}
+              alt={badge.name}
+              draggable={false}
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+                filter: badge.isUnlocked ? 'none' : 'grayscale(1)',
+                opacity: badge.isUnlocked ? 1 : (isDark ? 0.40 : 0.45),
+                userSelect: 'none',
+              }}
+            />
+          </div>
         </div>
 
-        {/* Lock icon for locked badges */}
         {!badge.isUnlocked && (
           <div style={{
             position: 'absolute', top: '50%', left: '50%',
@@ -165,25 +172,20 @@ export default function BadgeCard({ badge, domain = 'gaming', size = 100, glowCo
             zIndex: 3, pointerEvents: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Lock size={14} color={isGaming ? 'rgba(139,184,233,0.8)' : 'rgba(157,31,74,0.6)'} />
+            <Lock size={14} color={isDark ? 'rgba(255,255,255,0.55)' : 'rgba(157,31,74,0.6)'} />
           </div>
         )}
 
-        {/* NEW pill for recently earned badges */}
         {isNew && (
           <div style={{
             position: 'absolute',
-            top: Math.round(h * 0.06),
-            right: Math.round(w * 0.02),
+            top: Math.round(h * 0.06), right: Math.round(w * 0.02),
             zIndex: 4,
-            background: isGaming ? '#9FE0D3' : '#d4537e',
-            color: isGaming ? '#1E2A45' : '#fff',
-            fontFamily: isGaming ? '"Michroma", sans-serif' : "'DM Sans', sans-serif",
+            background: isSports ? (glowColor || '#E8457A') : isGaming ? '#9FE0D3' : '#d4537e',
+            color: isDark ? '#000' : '#fff',
+            fontFamily: isSports ? "'Barlow Condensed', sans-serif" : isDark ? '"Michroma", sans-serif' : "'DM Sans', sans-serif",
             fontSize: 9, fontWeight: 800, letterSpacing: '0.8px',
             padding: '3px 7px', borderRadius: 999, lineHeight: 1.2,
-            boxShadow: isGaming
-              ? '0 2px 8px rgba(159,224,211,0.50)'
-              : '0 2px 8px rgba(212,83,126,0.40)',
             pointerEvents: 'none',
           }}>
             NEW
