@@ -20,8 +20,9 @@ import confetti from 'canvas-confetti';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const F = { heading: "'Playfair Display', serif", italic: "'Playfair Display', serif", ui: "'DM Sans', sans-serif" };
-const C = { bg: '#faf5ec', pink: '#f7a0b8', purple: '#c084fc', deepRose: '#9d1f4a', midRose: '#d4537e', body: '#b0627a', label: '#c98a9e', gold: '#fde68a' };
-const GRAD = 'linear-gradient(135deg, #f7a0b8, #c084fc, #fbb6c4)';
+// Base colors — pink/midRose are overridden per-character at runtime (see charC below)
+const C_BASE = { bg: '#faf5ec', pink: '#f7a0b8', purple: '#c084fc', deepRose: '#9d1f4a', midRose: '#d4537e', body: '#b0627a', label: '#c98a9e', gold: '#fde68a' };
+const DEFAULT_GRAD = 'linear-gradient(135deg, #f7a0b8, #c084fc, #fbb6c4)';
 
 function rgb(hex) {
   const h = hex.replace('#', '');
@@ -190,7 +191,8 @@ function GlassCard({ children, style = {} }) {
   );
 }
 
-function GradBtn({ children, onClick, disabled, fullWidth, style = {} }) {
+function GradBtn({ children, onClick, disabled, fullWidth, gradient, style = {} }) {
+  const bg = gradient || DEFAULT_GRAD;
   return (
     <motion.button
       whileHover={!disabled ? { y: -1, boxShadow: '0 10px 28px rgba(192,132,252,0.38)' } : {}}
@@ -199,8 +201,8 @@ function GradBtn({ children, onClick, disabled, fullWidth, style = {} }) {
       style={{
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
         padding: '14px 28px', borderRadius: 16, border: 'none',
-        background: disabled ? 'rgba(200,160,175,0.25)' : GRAD,
-        color: disabled ? C.label : '#fff',
+        background: disabled ? 'rgba(200,160,175,0.25)' : bg,
+        color: disabled ? C_BASE.label : '#fff',
         fontFamily: F.ui, fontWeight: 600, fontSize: 14,
         cursor: disabled ? 'not-allowed' : 'pointer',
         width: fullWidth ? '100%' : 'auto',
@@ -436,7 +438,11 @@ export default function FashionLearning() {
   const location  = useLocation();
   const navigate  = useNavigate();
   const ctx = useOutletContext() || {};
-  const { fashionCharacter } = ctx;
+  const { fashionCharacter, fashionColor: charPrimary, fashionSecondary: charSecondary, fashionGlow: charGlow, fashionGradient: charGradient } = ctx;
+
+  // Dynamic accent colors driven by selected character
+  const C = { ...C_BASE, pink: charPrimary || C_BASE.pink, midRose: charSecondary || C_BASE.midRose };
+  const GRAD = charGradient || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
   const { profile, addTopicProgress, completedTopics } = useUser();
   const { xp, level, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
@@ -839,11 +845,11 @@ export default function FashionLearning() {
               </GlassBtn>
 
               {isLastSection ? (
-                <GradBtn onClick={startQuiz} style={{ flex: 1, maxWidth: 260 }}>
+                <GradBtn gradient={GRAD} onClick={startQuiz} style={{ flex: 1, maxWidth: 260 }}>
                   Take the Quiz <ChevronRight size={15} />
                 </GradBtn>
               ) : (
-                <GradBtn onClick={() => setSecIdx(i => i + 1)} style={{ flex: 1, maxWidth: 260 }}>
+                <GradBtn gradient={GRAD} onClick={() => setSecIdx(i => i + 1)} style={{ flex: 1, maxWidth: 260 }}>
                   Next Section <ChevronRight size={15} />
                 </GradBtn>
               )}
@@ -901,7 +907,7 @@ export default function FashionLearning() {
                   You need 60% to add this look to your wardrobe. Review the lesson to reinforce the key concepts, then give the quiz another try.
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
-                  <GradBtn onClick={() => { setStage('explanation'); setSecIdx(0); }}>
+                  <GradBtn gradient={GRAD} onClick={() => { setStage('explanation'); setSecIdx(0); }}>
                     <RefreshCw size={15} /> Review the Lesson
                   </GradBtn>
                   <GlassBtn onClick={retryQuiz}>
@@ -978,7 +984,7 @@ export default function FashionLearning() {
                 {/* Action buttons */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'stretch' }}>
                   {passed && nextTopic && (
-                    <GradBtn onClick={() => navigate('/fashion/learn', { state: { topic: nextTopic } })} style={{ width: '100%' }}>
+                    <GradBtn gradient={GRAD} onClick={() => navigate('/fashion/learn', { state: { topic: nextTopic } })} style={{ width: '100%' }}>
                       Next Look: {nextTopic} <ChevronRight size={15} />
                     </GradBtn>
                   )}
@@ -1012,7 +1018,7 @@ export default function FashionLearning() {
                 <p style={{ fontFamily: F.italic, fontStyle: 'italic', fontSize: 18, color: C.midRose, marginBottom: 20 }}>
                   Something went wrong, darling.
                 </p>
-                <GradBtn onClick={() => loadExpl(0)}>Try Again</GradBtn>
+                <GradBtn gradient={GRAD} onClick={() => loadExpl(0)}>Try Again</GradBtn>
               </div>
             </GlassCard>
           </motion.div>

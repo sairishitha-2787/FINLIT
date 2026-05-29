@@ -7,7 +7,7 @@ import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 
 // ─── Design tokens (self-contained) ──────────────────────────────────────────
-const C = {
+const C_BASE = {
   bg:         '#faf5ec',
   pink:       '#f7a0b8',
   brightPink: '#fbb6c4',
@@ -106,7 +106,8 @@ function IridescentIcon({ size = 20 }) {
 }
 
 // ─── Primary gradient button ───────────────────────────────────────────────────
-function GradientButton({ children, onClick, style = {} }) {
+function GradientButton({ children, onClick, gradient, style = {} }) {
+  const bg = gradient || 'linear-gradient(135deg, #f7a0b8, #c084fc, #fbb6c4)';
   return (
     <motion.button
       whileHover={{ y: -1, boxShadow: '0 10px 28px rgba(192,132,252,0.45)' }}
@@ -116,7 +117,7 @@ function GradientButton({ children, onClick, style = {} }) {
         position: 'relative', overflow: 'hidden',
         display: 'inline-flex', alignItems: 'center', gap: 8,
         padding: '14px 28px', borderRadius: 16, border: 'none',
-        background: 'linear-gradient(135deg, #f7a0b8, #c084fc, #fbb6c4)',
+        background: bg,
         color: '#fff',
         fontFamily: F.ui, fontWeight: 600, fontSize: 13,
         cursor: 'pointer',
@@ -184,8 +185,12 @@ function ChibiAvatar({ char, size = 64 }) {
 
 export default function FashionDashboard() {
   const navigate = useNavigate();
-  const { xp, level, streak, fashionCharacter, onOpenSheet } = useOutletContext();
+  const { xp, level, streak, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, onOpenSheet } = useOutletContext();
   const { profile, completedTopics, progress, loading } = useUser();
+
+  // Dynamic accent colors driven by selected character
+  const C    = { ...C_BASE, pink: fashionColor || C_BASE.pink, midRose: fashionSecondary || C_BASE.midRose };
+  const GRAD = fashionGradient || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
 
   const firstName = profile?.name?.split(' ')[0] || 'Darling';
 
@@ -351,7 +356,7 @@ export default function FashionDashboard() {
                   <BodyText style={{ fontSize: 12 }}>{nextTopicDistrict.name}</BodyText>
                 )}
               </div>
-              <GradientButton onClick={() => navigate('/fashion/learn', { state: { topic: nextTopic } })} style={{ flexShrink: 0 }}>
+              <GradientButton onClick={() => navigate('/fashion/learn', { state: { topic: nextTopic } })} gradient={GRAD} style={{ flexShrink: 0 }}>
                 <BookOpen size={14} />
                 {completedTopics.length === 0 ? 'Start First Look' : 'Continue'}
               </GradientButton>

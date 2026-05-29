@@ -149,7 +149,13 @@ export default function FashionLayout() {
 
   const showCharSel = fashionCharacterLoaded && !fashionCharacter;
 
-  const outletContext = { xp, level, streak, getLevelProgress, fashionCharacter, onOpenSheet: () => setSheetOpen(true) };
+  // Derive per-character accent colors — fall back to default rose theme if no character yet
+  const fashionColor     = fashionCharacter?.colors?.primary   || '#f7a0b8';
+  const fashionSecondary = fashionCharacter?.colors?.secondary || '#c084fc';
+  const fashionGlow      = fashionCharacter?.colors?.glow      || 'rgba(247,160,184,0.35)';
+  const fashionGradient  = fashionCharacter?.colors?.gradient  || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
+
+  const outletContext = { xp, level, streak, getLevelProgress, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, onOpenSheet: () => setSheetOpen(true) };
 
   return (
     <>

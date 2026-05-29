@@ -25,17 +25,20 @@ const fashionTheme = {
   glassBlur:   '24px',
 };
 
-const spinnerStyle = {
-  width: 36, height: 36, borderRadius: '50%',
-  border: '3px solid rgba(247,160,184,0.20)',
-  borderTop: '3px solid #f7a0b8',
-  animation: 'spin 0.8s linear infinite',
-};
+// spinnerStyle is built dynamically using glowColor — defined inside component
 
 export default function FashionBadgesPage() {
-  const { defeatedBosses } = useFashion();
+  const { defeatedBosses, fashionCharacter } = useFashion();
   const { completedTopics, profile, loading } = useUser();
   const { earnedMap, newlyEarned } = useBadgeTracker();
+
+  const glowColor   = fashionCharacter?.colors?.primary || '#f7a0b8';
+  const spinnerStyle = {
+    width: 36, height: 36, borderRadius: '50%',
+    border: `3px solid ${glowColor}33`,
+    borderTop: `3px solid ${glowColor}`,
+    animation: 'spin 0.8s linear infinite',
+  };
 
   // Allow dev override: if user is lan or ray, mark all as unlocked
   const userName = profile?.name?.trim().toLowerCase() ?? '';
@@ -71,7 +74,7 @@ export default function FashionBadgesPage() {
       heading="Designer Labels"
       earnedLabel="{N} earned"
       newlyEarned={allUnlocked ? null : newlyEarned}
-      glowColor="#f7a0b8"
+      glowColor={glowColor}
     />
   );
 }
