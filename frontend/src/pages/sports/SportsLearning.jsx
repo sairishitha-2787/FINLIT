@@ -13,9 +13,23 @@ import JargonFlashcard from '../../components/learning/JargonFlashcard';
 import XPPopup from '../../components/shared/XPPopup';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import { useGamification } from '../../hooks/useGamification';
-import { useCelebration } from '../../hooks/useCelebration';
+import confetti from 'canvas-confetti';
 import { isTopicUnlocked } from '../../services/chapterService';
 import { sportsTheme } from '../../styles/sportsTheme';
+
+// ── Sports celebration ────────────────────────────────────────────────────────
+function fireSportsCelebration(accent) {
+  const a = accent || '#E8457A';
+  confetti({ particleCount: 180, spread: 100, origin: { x: 0.5, y: 0.55 },
+    colors: [a, '#fbbf24', '#fff', '#4ade80'], gravity: 0.6, scalar: 1.3, ticks: 320 });
+  setTimeout(() => {
+    confetti({ particleCount: 70, angle: 60,  spread: 52, origin: { x: 0, y: 0.65 }, colors: [a, '#fbbf24'] });
+    confetti({ particleCount: 70, angle: 120, spread: 52, origin: { x: 1, y: 0.65 }, colors: [a, '#fff'] });
+  }, 100);
+  setTimeout(() =>
+    confetti({ particleCount: 90, spread: 120, origin: { x: 0.5, y: 0 },
+      colors: [a, '#fbbf24', '#fff'], gravity: 0.45, scalar: 0.7, ticks: 400 }), 380);
+}
 
 // ── Cache helpers ─────────────────────────────────────────────────────────────
 const storageKey  = (t) => `finlit_progress_${t?.replace(/\s+/g, '_')}`;
@@ -125,7 +139,6 @@ export default function SportsLearning() {
   const [adaptiveLoading,  setAdaptiveLoading]  = useState({});
 
   const xpDisplayed = useCountUp(quizResult ? Math.round((quizResult.score / quizResult.totalQuestions) * 100) : 0);
-  const { celebrate } = useCelebration('sports', C);
 
   // ── Init ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -248,11 +261,11 @@ export default function SportsLearning() {
       clear(topic);
       setStage('complete');
       setShowReflection(true);
-      setTimeout(celebrate, 300);
+      setTimeout(() => fireSportsCelebration(C), 300);
     }
   }
 
-  function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); setTimeout(celebrate, 300); }
+  function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); setTimeout(() => fireSportsCelebration(C), 300); }
 
   if (!topic) return null;
   if (!profile) return null;

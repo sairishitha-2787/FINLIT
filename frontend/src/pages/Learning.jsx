@@ -22,7 +22,7 @@ import XPPopup from '../components/shared/XPPopup';
 import FloatingMentor from '../components/mentor/FloatingMentor';
 import LoadingAnimation from '../components/shared/LoadingAnimation';
 import { useGamification } from '../hooks/useGamification';
-import { useCelebration } from '../hooks/useCelebration';
+import confetti from 'canvas-confetti';
 import {
   isTopicUnlocked,
   checkChapterCompletion,
@@ -87,6 +87,19 @@ function hexToRgbStr(hex) {
   return `${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)}`;
 }
 
+// ── Gaming celebration ────────────────────────────────────────────────────────
+function fireGamingCelebration(accent) {
+  const a = accent || '#9FE0D3';
+  confetti({ particleCount: 200, spread: 110, origin: { x: 0.5, y: 0.5 },
+    colors: [a, '#c084fc', '#fbbf24', '#f472b6'], gravity: 0.45, scalar: 1.4, ticks: 450 });
+  setTimeout(() =>
+    confetti({ particleCount: 120, spread: 360, startVelocity: 28, origin: { x: 0.5, y: 0.5 },
+      colors: [a, '#c084fc'], gravity: 0.3, scalar: 1.0, ticks: 300 }), 180);
+  setTimeout(() =>
+    confetti({ particleCount: 80, spread: 90, origin: { x: 0.5, y: 0 },
+      colors: [a, '#fbbf24', '#f472b6'], gravity: 0.6, scalar: 0.85 }), 400);
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const Learning = () => {
@@ -123,8 +136,6 @@ const Learning = () => {
 
   const [quizResult, setQuizResult]   = useState(null);
   const [showReflection, setShowReflection] = useState(false);
-
-  const { celebrate } = useCelebration('gaming', gamingColors?.primary);
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
@@ -305,7 +316,7 @@ const Learning = () => {
 
   const proceedToComplete = () => {
     checkBadgeUnlock('FIRST_LESSON');
-    setTimeout(celebrate, 300);
+    setTimeout(() => fireGamingCelebration(gamingColors?.primary), 300);
 
     const collectible = getCollectible(domain, topic);
     if (collectible) {

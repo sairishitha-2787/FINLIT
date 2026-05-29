@@ -12,12 +12,11 @@ import {
 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { useGamification } from '../../hooks/useGamification';
-import { useCelebration } from '../../hooks/useCelebration';
+import confetti from 'canvas-confetti';
 import { getExplanation, getQuiz, generateScenarioQuiz } from '../../services/api';
 import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 import NeoQuizEnvironment from '../../components/quiz/NeoQuizEnvironment';
 import ScenarioQuizEnvironment from '../../components/quiz/ScenarioQuizEnvironment';
-import confetti from 'canvas-confetti';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const F = { heading: "'Playfair Display', serif", italic: "'Playfair Display', serif", ui: "'DM Sans', sans-serif" };
@@ -30,6 +29,20 @@ const DEFAULT_GRAD = 'linear-gradient(135deg, #f7a0b8, #c084fc, #fbb6c4)';
 function rgb(hex) {
   const h = hex.replace('#', '');
   return `${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)}`;
+}
+
+// ── Fashion celebration ───────────────────────────────────────────────────────
+function fireFashionCelebration(accent) {
+  const a = accent || '#f7a0b8';
+  confetti({ particleCount: 120, spread: 70, origin: { x: 0.5, y: 0 },
+    colors: [a, '#c084fc', '#fde68a', '#faf5ec', '#fbb6c4'],
+    gravity: 0.55, scalar: 1.1, drift: 1.2, ticks: 280 });
+  setTimeout(() =>
+    confetti({ particleCount: 60, spread: 55, origin: { x: 0.2, y: 0.1 },
+      colors: [a, '#fde68a'], gravity: 0.65, scalar: 0.85, drift: -1 }), 220);
+  setTimeout(() =>
+    confetti({ particleCount: 60, spread: 55, origin: { x: 0.8, y: 0.1 },
+      colors: [a, '#c084fc'], gravity: 0.65, scalar: 0.85, drift: 1 }), 380);
 }
 
 // ── Cache helpers ─────────────────────────────────────────────────────────────
@@ -446,7 +459,6 @@ export default function FashionLearning() {
   // Dynamic accent colors driven by selected character
   const C = { ...C_BASE, pink: charPrimary || C_BASE.pink, midRose: charSecondary || C_BASE.midRose };
   const GRAD = charGradient || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
-  const { celebrate } = useCelebration('fashion', C.pink);
   const { profile, addTopicProgress, completedTopics } = useUser();
   const { xp, level, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
@@ -607,7 +619,7 @@ export default function FashionLearning() {
         if (newCount1 >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount1);
       }
       setStage('complete');
-      setTimeout(celebrate, 300);
+      setTimeout(() => fireFashionCelebration(C.pink), 300);
     } else {
       setStage('diagnosis');
     }
@@ -632,7 +644,7 @@ export default function FashionLearning() {
         if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
       }
       setStage('complete');
-      setTimeout(celebrate, 300);
+      setTimeout(() => fireFashionCelebration(C.pink), 300);
     } else {
       setStage('diagnosis');
     }
