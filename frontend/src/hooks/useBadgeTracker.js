@@ -42,11 +42,13 @@ export function useBadgeTracker() {
         }
 
         if (!cancelled) {
-          const map = {};
+          const dbMap = {};
           (data || []).forEach((row) => {
-            map[row.badge_id] = row.earned_at || row.created_at || null;
+            dbMap[row.badge_id] = row.earned_at || row.created_at || null;
           });
-          setEarnedMap(map);
+          // Merge: DB values win for their keys, but keep any optimistic entries
+          // that were set while the load was in flight (e.g. badge just earned).
+          setEarnedMap(prev => ({ ...prev, ...dbMap }));
           setLoading(false);
         }
       } catch (err) {
@@ -77,11 +79,18 @@ export function useBadgeTracker() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          const { badge_id, earned_at } = payload.new;
+          const { badge_id, badge_name, earned_at } = payload.new;
           setEarnedMap((prev) => {
             if (prev[badge_id]) return prev;
             return { ...prev, [badge_id]: earned_at };
           });
+          // Also fire the toast notification so AchievementsPage shows it
+          setNewlyEarned((prev) => {
+            if (prev?.id === badge_id) return prev;
+            return { id: badge_id, name: badge_name || badge_id, tier: 'common', category: 'special', secret: false, earnedAt: earned_at };
+          });
+          // Auto-clear after 5s
+          setTimeout(() => setNewlyEarned(null), 5000);
         }
       )
       .subscribe();
