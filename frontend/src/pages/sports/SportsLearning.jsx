@@ -125,6 +125,14 @@ export default function SportsLearning() {
   const domain = 'sports';
 
   const [stage,            setStage]            = useState('loading');
+
+  // Fire celebration when stage transitions to 'complete'
+  useEffect(() => {
+    if (stage === 'complete') {
+      const t = setTimeout(() => fireSportsCelebration(C), 400);
+      return () => clearTimeout(t);
+    }
+  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
   const [explanation,      setExplanation]      = useState(null);
   const [quiz,             setQuiz]             = useState(null);
   const [scenarioQuiz,     setScenarioQuiz]     = useState(null);
@@ -261,11 +269,10 @@ export default function SportsLearning() {
       clear(topic);
       setStage('complete');
       setShowReflection(true);
-      setTimeout(() => fireSportsCelebration(C), 300);
     }
   }
 
-  function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); setTimeout(() => fireSportsCelebration(C), 300); }
+  function handleDiagnosisContinue() { clear(topic); setStage('complete'); setShowReflection(true); }
 
   if (!topic) return null;
   if (!profile) return null;

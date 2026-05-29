@@ -471,6 +471,14 @@ export default function FashionLearning() {
 
   // ── Stage: loading | explanation | quiz | complete | error ────────────────
   const [stage,    setStage]    = useState('loading');
+
+  // Fire celebration when stage transitions to 'complete'
+  useEffect(() => {
+    if (stage === 'complete') {
+      const t = setTimeout(() => fireFashionCelebration(C.pink), 400);
+      return () => clearTimeout(t);
+    }
+  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
   const [expl,     setExpl]     = useState(null);
   const [error,    setError]    = useState(null);
   const [variation,setVariation]= useState(0);
@@ -619,7 +627,7 @@ export default function FashionLearning() {
         if (newCount1 >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount1);
       }
       setStage('complete');
-      setTimeout(() => fireFashionCelebration(C.pink), 300);
+
     } else {
       setStage('diagnosis');
     }
@@ -644,7 +652,7 @@ export default function FashionLearning() {
         if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
       }
       setStage('complete');
-      setTimeout(() => fireFashionCelebration(C.pink), 300);
+
     } else {
       setStage('diagnosis');
     }

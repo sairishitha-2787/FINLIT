@@ -118,6 +118,14 @@ const Learning = () => {
 
   // stage: loading | locked | pacing | explanation | quiz | diagnosis | complete
   const [stage, setStage]                   = useState('loading');
+
+  // Fire celebration when stage transitions to 'complete'
+  useEffect(() => {
+    if (stage === 'complete') {
+      const t = setTimeout(() => fireGamingCelebration(gamingColors?.primary), 400);
+      return () => clearTimeout(t);
+    }
+  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
   const [explanation, setExplanation]       = useState(null);
   const [quiz, setQuiz]                     = useState(null);
   const [scenarioQuiz, setScenarioQuiz]     = useState(null);
@@ -316,7 +324,6 @@ const Learning = () => {
 
   const proceedToComplete = () => {
     checkBadgeUnlock('FIRST_LESSON');
-    setTimeout(() => fireGamingCelebration(gamingColors?.primary), 300);
 
     const collectible = getCollectible(domain, topic);
     if (collectible) {
