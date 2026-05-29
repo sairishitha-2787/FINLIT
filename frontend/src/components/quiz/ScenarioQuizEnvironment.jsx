@@ -846,8 +846,8 @@ const ScenarioQuizEnvironment = ({
                       <div style={{ padding: '14px 0', textAlign: 'center', fontFamily: FFonts.ui, fontSize: 12, color: FColors.label }}>Loading reaction...</div>
                     ) : reactionGif ? (
                       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                        style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(247,160,184,0.25)', marginBottom: 14 }}>
-                        <img src={reactionGif} alt="Reaction" style={{ width: '100%', maxHeight: 200, objectFit: 'cover', display: 'block' }} />
+                        style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(247,160,184,0.25)', marginBottom: 14, background: 'rgba(255,255,255,0.06)' }}>
+                        <img src={reactionGif} alt="Reaction" style={{ width: '100%', maxHeight: 320, objectFit: 'contain', display: 'block' }} />
                       </motion.div>
                     ) : null}
 
@@ -889,8 +889,8 @@ const ScenarioQuizEnvironment = ({
                       </div>
                     ) : reactionGif ? (
                       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                        style={{ borderRadius: '12px', overflow: 'hidden', border: xt.border, marginBottom: '16px' }}>
-                        <img src={reactionGif} alt="Reaction" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
+                        style={{ borderRadius: '12px', overflow: 'hidden', border: xt.border, marginBottom: '16px', background: 'rgba(0,0,0,0.25)' }}>
+                        <img src={reactionGif} alt="Reaction" style={{ width: '100%', maxHeight: 320, objectFit: 'contain', display: 'block' }} />
                       </motion.div>
                     ) : null}
 
