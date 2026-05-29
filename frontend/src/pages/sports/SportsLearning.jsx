@@ -302,23 +302,18 @@ export default function SportsLearning() {
               }}>
                 {topic?.toUpperCase()}
               </div>
-            </div>
-
-            {/* XP pill */}
-            <div style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0,
-            }}>
-              <div style={{
-                fontFamily: sportsTheme.fontSub, fontWeight: 700,
-                fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase',
-                color: sportsTheme.textMuted, marginBottom: 3,
-              }}>LV {level}</div>
-              <div style={{
-                padding: '4px 10px', borderRadius: 8,
-                background: `${C}18`, border: `1px solid ${C}40`,
-                fontFamily: sportsTheme.fontHeading, fontSize: 14, letterSpacing: '1px', color: C,
-              }}>
-                {xp} XP
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                <span style={{
+                  fontFamily: sportsTheme.fontSub, fontWeight: 700,
+                  fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase',
+                  color: sportsTheme.textMuted,
+                }}>LV {level}</span>
+                <span style={{
+                  padding: '2px 8px', borderRadius: 6,
+                  background: `${C}18`, border: `1px solid ${C}40`,
+                  fontFamily: sportsTheme.fontSub, fontWeight: 700,
+                  fontSize: 10, letterSpacing: '1px', color: C,
+                }}>{xp} XP</span>
               </div>
             </div>
           </motion.div>

@@ -699,16 +699,14 @@ export default function FashionLearning() {
             <h1 style={{ fontFamily: F.heading, fontWeight: 600, fontSize: 20, letterSpacing: '-0.01em', color: C.deepRose, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {topic}
             </h1>
-          </div>
-
-          {/* XP pill */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: 2 }}>
-            <div style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.label }}>Lv {level}</div>
-            <div style={{
-              padding: '3px 10px', borderRadius: 8,
-              background: 'rgba(247,160,184,0.15)', border: '1px solid rgba(247,160,184,0.40)',
-              fontFamily: F.ui, fontWeight: 700, fontSize: 12, color: C.deepRose,
-            }}>{xp} XP</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+              <span style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.label }}>Lv {level}</span>
+              <span style={{
+                padding: '2px 8px', borderRadius: 6,
+                background: 'rgba(247,160,184,0.15)', border: '1px solid rgba(247,160,184,0.38)',
+                fontFamily: F.ui, fontWeight: 700, fontSize: 10, color: C.deepRose,
+              }}>{xp} XP</span>
+            </div>
           </div>
 
           {stage === 'explanation' && (

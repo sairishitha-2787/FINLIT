@@ -405,17 +405,15 @@ const Learning = () => {
               }}>
                 {topic}
               </h1>
-            </div>
-
-            {/* XP pill */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: 2 }}>
-              <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', letterSpacing: '2px', color: gamingTheme.mutedBlue, textTransform: 'uppercase' }}>LV {level}</div>
-              <div style={{
-                padding: '3px 10px', borderRadius: 7,
-                background: `rgba(${hexToRgbStr(gc.primary)},0.14)`,
-                border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.38)`,
-                fontFamily: gamingTheme.fontHeading, fontSize: 13, letterSpacing: '1px', color: gc.primary,
-              }}>{xp} XP</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                <span style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', letterSpacing: '2px', color: gamingTheme.mutedBlue, textTransform: 'uppercase' }}>LV {level}</span>
+                <span style={{
+                  padding: '2px 8px', borderRadius: 6,
+                  background: `rgba(${hexToRgbStr(gc.primary)},0.14)`,
+                  border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.35)`,
+                  fontFamily: gamingTheme.fontLabel, fontSize: 10, letterSpacing: '1px', color: gc.primary,
+                }}>{xp} XP</span>
+              </div>
             </div>
 
             {chapterInfo && (
