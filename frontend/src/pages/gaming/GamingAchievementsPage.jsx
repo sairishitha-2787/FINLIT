@@ -36,11 +36,10 @@ export default function GamingAchievementsPage() {
   const domainComplete = (completedTopics || []).length >= 13;
 
   // Merge config with live earned data
-  const today = new Date().toISOString();
   const badges = GAMING_BADGES_CONFIG.map((cfg) => ({
     ...cfg,
     isUnlocked: allUnlocked || !!earnedMap[cfg.id],
-    dateEarned: earnedMap[cfg.id] || (allUnlocked ? today : null),
+    dateEarned: earnedMap[cfg.id] || null,
   }));
 
   // Use the character's element color for badge glows

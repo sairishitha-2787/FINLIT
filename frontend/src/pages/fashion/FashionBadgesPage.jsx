@@ -55,11 +55,10 @@ export default function FashionBadgesPage() {
   );
 
   // Merge config with live earned data
-  const today = new Date().toISOString();
   const badges = FASHION_BADGES_CONFIG.map((cfg) => ({
     ...cfg,
     isUnlocked: allUnlocked || !!earnedMap[cfg.id],
-    dateEarned: earnedMap[cfg.id] || (allUnlocked ? today : null),
+    dateEarned: earnedMap[cfg.id] || null,
   }));
 
   return (
