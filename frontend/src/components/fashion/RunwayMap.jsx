@@ -166,7 +166,14 @@ export default function RunwayMap({ completedTopics = [], defeatedBosses = [], o
   return (
     <div style={{ padding: isMobile ? '16px 12px 60px' : '28px 32px 80px' }}>
       {FASHION_DISTRICTS.map((district, districtIdx) => {
-        const theme        = DISTRICT_THEMES[district.id];
+        // Override district theme colors with character's color so all highlights match
+        const baseTheme    = DISTRICT_THEMES[district.id];
+        const theme        = charColor ? {
+          ...baseTheme,
+          color: charColor,
+          glow:  `rgba(${rgb(charColor)},0.30)`,
+          bg:    `rgba(${rgb(charColor)},0.09)`,
+        } : baseTheme;
         const unlocked     = isDistrictUnlocked(districtIdx, defeatedBosses);
         const bossAvail    = isBossAvailable(district, completedTopics);
         const bossDefeated = defeatedBosses.includes(district.bossId);
