@@ -11,7 +11,7 @@ const C = { deepRose: '#9d1f4a', midRose: '#d4537e', label: '#c98a9e' };
 
 export default function FashionMap() {
   const navigate = useNavigate();
-  const { fashionCharacter } = useOutletContext();
+  const { fashionCharacter, fashionColor } = useOutletContext();
   const { completedTopics } = useUser();
   const { defeatedBosses } = useFashion();
 
@@ -75,6 +75,7 @@ export default function FashionMap() {
         defeatedBosses={defeatedBosses}
         onTopicClick={handleTopicClick}
         onBossClick={handleBossClick}
+        characterColor={fashionColor}
       />
 
       <AnimatePresence>

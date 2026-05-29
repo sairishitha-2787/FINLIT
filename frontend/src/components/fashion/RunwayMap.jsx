@@ -92,13 +92,14 @@ const getTopicStatus = (topicName, districtTopics, completedTopics, districtUnlo
   return districtTopics.slice(0, idx).every(t => completedTopics.includes(t)) ? 'current' : 'locked';
 };
 
-function PathDot({ completed, current, theme }) {
+function PathDot({ completed, current, theme, charColor }) {
+  const cur    = charColor || C.deepRose;
   const size   = completed ? 14 : current ? 13 : 10;
-  const bg     = completed ? theme.color : current ? C.deepRose : 'rgba(200,160,175,0.30)';
-  const border = completed ? theme.color : current ? C.deepRose : 'rgba(200,160,175,0.40)';
+  const bg     = completed ? theme.color : current ? cur : 'rgba(200,160,175,0.30)';
+  const border = completed ? theme.color : current ? cur : 'rgba(200,160,175,0.40)';
   const shadow = completed
     ? `0 0 10px ${theme.color}, 0 0 22px ${theme.glow}`
-    : current ? '0 0 8px rgba(157,31,74,0.55)' : 'none';
+    : current ? `0 0 8px ${cur}99` : 'none';
 
   return (
     <motion.div
@@ -158,8 +159,9 @@ function ZoneImage({ src, theme, unlocked }) {
   );
 }
 
-export default function RunwayMap({ completedTopics = [], defeatedBosses = [], onTopicClick, onBossClick }) {
+export default function RunwayMap({ completedTopics = [], defeatedBosses = [], onTopicClick, onBossClick, characterColor }) {
   const { isMobile } = useIsMobile();
+  const charColor = characterColor || C.deepRose;
 
   return (
     <div style={{ padding: isMobile ? '16px 12px 60px' : '28px 32px 80px' }}>
@@ -288,7 +290,7 @@ export default function RunwayMap({ completedTopics = [], defeatedBosses = [], o
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         position: 'relative', zIndex: 2, flexShrink: 0,
                       }}>
-                        <PathDot completed={status === 'completed'} current={status === 'current'} theme={theme} />
+                        <PathDot completed={status === 'completed'} current={status === 'current'} theme={theme} charColor={charColor} />
                       </div>
                     );
                   })}
@@ -344,16 +346,16 @@ export default function RunwayMap({ completedTopics = [], defeatedBosses = [], o
                           background: isLocked
                             ? 'rgba(255,255,255,0.08)'
                             : isCurrent
-                              ? `linear-gradient(90deg, rgba(${rgb(theme.color)},0.14) 0%, rgba(255,255,255,0.20) 100%)`
+                              ? `linear-gradient(90deg, rgba(${rgb(charColor)},0.16) 0%, rgba(255,255,255,0.20) 100%)`
                               : 'rgba(255,255,255,0.28)',
                           backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
                           border: isCurrent
-                            ? `1px solid rgba(${rgb(theme.color)},0.55)`
+                            ? `1px solid rgba(${rgb(charColor)},0.60)`
                             : isCompleted
                               ? `1px solid rgba(${rgb(theme.color)},0.25)`
                               : '1px solid rgba(200,160,175,0.18)',
                           borderTop: '1px solid rgba(255,255,255,0.55)',
-                          boxShadow: isCurrent ? `0 0 16px rgba(${rgb(theme.color)},0.18)` : 'none',
+                          boxShadow: isCurrent ? `0 0 18px rgba(${rgb(charColor)},0.22)` : 'none',
                           opacity: isLocked ? 0.50 : 1,
                           transition: 'border 0.2s, box-shadow 0.2s, background 0.2s',
                           boxSizing: 'border-box',
@@ -369,7 +371,7 @@ export default function RunwayMap({ completedTopics = [], defeatedBosses = [], o
                             fontFamily: F.ui, fontWeight: 500, fontSize: 9,
                             letterSpacing: '0.16em', textTransform: 'uppercase',
                             display: 'flex', alignItems: 'center', gap: 4,
-                            color: isCompleted ? theme.color : isCurrent ? C.midRose : 'rgba(200,160,175,0.60)',
+                            color: isCompleted ? theme.color : isCurrent ? charColor : 'rgba(200,160,175,0.60)',
                             marginTop: 3,
                           }}>
                             {isCompleted
@@ -383,7 +385,7 @@ export default function RunwayMap({ completedTopics = [], defeatedBosses = [], o
 
                         {isCurrent && (
                           <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 0.9, repeat: Infinity }}>
-                            <Sparkles size={14} color={theme.color} />
+                            <Sparkles size={14} color={charColor} />
                           </motion.div>
                         )}
                         {isCompleted && (
