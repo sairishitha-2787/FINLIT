@@ -98,8 +98,9 @@ const Learning = () => {
   const isGamingMode  = !!(outletCtx?.colors);
   const gamingColors  = outletCtx?.colors;
 
-  const topic  = location.state?.topic;
-  const domain = profile?.primaryInterest || 'general';
+  const topic     = location.state?.topic;
+  const nextTopic = location.state?.nextTopic || null;
+  const domain    = profile?.primaryInterest || 'general';
 
   // stage: loading | locked | pacing | explanation | quiz | diagnosis | complete
   const [stage, setStage]                   = useState('loading');
@@ -566,19 +567,39 @@ const Learning = () => {
                   You mastered <strong style={{ color: gc.primary }}>{topic}</strong>!
                 </p>
                 {!showReflection && (
-                  <motion.button
-                    whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    onClick={handleBackToDashboard}
-                    style={{
-                      padding: '14px 36px', borderRadius: '12px',
-                      fontFamily: gamingTheme.fontHeading, fontSize: '13px', fontWeight: 700,
-                      letterSpacing: '1.5px', textTransform: 'uppercase',
-                      color: gamingTheme.bgDark,
-                      background: `linear-gradient(135deg, ${gc.primary}, ${gc.secondary})`,
-                      border: 'none', cursor: 'pointer', boxShadow: `0 4px 24px ${gc.glow}`,
-                      display: 'inline-flex', alignItems: 'center', gap: '8px',
-                    }}
-                  >Return to Island Map <ArrowRight size={16} /></motion.button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+                    {nextTopic && (
+                      <motion.button
+                        whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                        onClick={() => navigate('/gaming/learn', { state: { topic: nextTopic } })}
+                        style={{
+                          padding: '16px 44px', borderRadius: '12px',
+                          fontFamily: gamingTheme.fontHeading, fontSize: '15px', fontWeight: 700,
+                          letterSpacing: '2px', textTransform: 'uppercase',
+                          color: gamingTheme.bgDark,
+                          background: `linear-gradient(135deg, ${gc.primary}, ${gc.secondary})`,
+                          border: 'none', cursor: 'pointer', boxShadow: `0 6px 28px ${gc.glow}`,
+                          display: 'inline-flex', alignItems: 'center', gap: '8px',
+                        }}
+                      >Next: {nextTopic} <ArrowRight size={16} /></motion.button>
+                    )}
+                    <motion.button
+                      whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                      onClick={handleBackToDashboard}
+                      style={{
+                        padding: '12px 32px', borderRadius: '12px',
+                        fontFamily: gamingTheme.fontHeading, fontSize: '12px', fontWeight: 700,
+                        letterSpacing: '1.5px', textTransform: 'uppercase',
+                        color: nextTopic ? gc.primary : gamingTheme.bgDark,
+                        background: nextTopic
+                          ? `rgba(${hexToRgbStr(gc.primary)},0.1)`
+                          : `linear-gradient(135deg, ${gc.primary}, ${gc.secondary})`,
+                        border: nextTopic ? `1px solid rgba(${hexToRgbStr(gc.primary)},0.35)` : 'none',
+                        cursor: 'pointer', boxShadow: nextTopic ? 'none' : `0 4px 24px ${gc.glow}`,
+                        display: 'inline-flex', alignItems: 'center', gap: '8px',
+                      }}
+                    >Island Map <ArrowRight size={14} /></motion.button>
+                  </div>
                 )}
               </motion.div>
               {showReflection && <PostQuizReflection onDone={() => setShowReflection(false)} gamingMode={true} gamingColors={gc} />}

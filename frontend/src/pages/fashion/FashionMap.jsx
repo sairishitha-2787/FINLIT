@@ -17,9 +17,17 @@ export default function FashionMap() {
 
   const [activeBossDistrict, setActiveBossDistrict] = useState(null);
 
+  const FASHION_TOPICS_FLAT = [
+    'Budgeting Basics', 'Saving Money', 'Emergency Funds', 'Simple Interest',
+    'Compound Interest', 'Credit Scores', 'Investing Basics', 'Stocks & Bonds', 'Debt Management',
+    'Retirement Accounts', 'Tax Fundamentals', 'Portfolio Diversification', 'Advanced Planning',
+  ];
+
   const handleTopicClick = useCallback((topic) => {
-    navigate('/fashion/learn', { state: { topic } });
-  }, [navigate]);
+    const idx  = FASHION_TOPICS_FLAT.indexOf(topic);
+    const next = idx >= 0 && idx < FASHION_TOPICS_FLAT.length - 1 ? FASHION_TOPICS_FLAT[idx + 1] : null;
+    navigate('/fashion/learn', { state: { topic, nextTopic: next } });
+  }, [navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleBossClick = useCallback((district) => {
     setActiveBossDistrict(district);

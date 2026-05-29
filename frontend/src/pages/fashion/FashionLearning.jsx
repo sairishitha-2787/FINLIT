@@ -440,8 +440,9 @@ export default function FashionLearning() {
   const { profile, addTopicProgress, completedTopics } = useUser();
   const { awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
-  const topic     = location.state?.topic;
-  const topicMeta = topic ? getTopicMeta(topic) : null;
+  const topic      = location.state?.topic;
+  const nextTopic  = location.state?.nextTopic || null;
+  const topicMeta  = topic ? getTopicMeta(topic) : null;
   const distLabel = topicMeta
     ? `${topicMeta.district.name.toUpperCase()} · LOOK ${topicMeta.lookNumber}`
     : '';
@@ -949,20 +950,27 @@ export default function FashionLearning() {
                 </div>
 
                 {/* Action buttons */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
-                  <GradBtn onClick={() => navigate('/fashion/map')}>
-                    <MapIcon size={15} /> Back to Runway Map
-                  </GradBtn>
-                  {!passed && (
-                    <GlassBtn onClick={retryQuiz}>
-                      <RotateCcw size={14} /> Retry Quiz
-                    </GlassBtn>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'stretch' }}>
+                  {passed && nextTopic && (
+                    <GradBtn onClick={() => navigate('/fashion/learn', { state: { topic: nextTopic } })} style={{ width: '100%' }}>
+                      Next Look: {nextTopic} <ChevronRight size={15} />
+                    </GradBtn>
                   )}
-                  {passed && (
-                    <GlassBtn onClick={() => { setStage('explanation'); setSecIdx(0); }}>
-                      Review Lesson
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+                    <GlassBtn onClick={() => navigate('/fashion/map')}>
+                      <MapIcon size={15} /> {passed && nextTopic ? 'Runway Map' : 'Back to Runway Map'}
                     </GlassBtn>
-                  )}
+                    {!passed && (
+                      <GlassBtn onClick={retryQuiz}>
+                        <RotateCcw size={14} /> Retry Quiz
+                      </GlassBtn>
+                    )}
+                    {passed && (
+                      <GlassBtn onClick={() => { setStage('explanation'); setSecIdx(0); }}>
+                        Review Lesson
+                      </GlassBtn>
+                    )}
+                  </div>
                 </div>
               </div>
             </GlassCard>

@@ -103,8 +103,10 @@ export default function SportsLearning() {
   // Map sports colors into the shape that gamingMode quiz components expect
   const gc   = { primary: C, secondary: C, glow: G, sports: true };
 
-  const topic  = location.state?.topic;
-  const topicId = location.state?.topicId;
+  const topic      = location.state?.topic;
+  const topicId    = location.state?.topicId;
+  const nextTopic  = location.state?.nextTopic  || null;
+  const nextTopicId = location.state?.nextTopicId || null;
   const domain = 'sports';
 
   const [stage,            setStage]            = useState('loading');
@@ -499,35 +501,54 @@ export default function SportsLearning() {
                   </>
                 )}
 
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <motion.button
-                    whileHover={{ filter: 'brightness(1.1)' }} whileTap={{ scale: 0.97 }}
-                    onClick={() => navigate(backPath)}
-                    style={{
-                      flex: 2, padding: '14px', borderRadius: 9, background: C, border: 'none',
-                      fontFamily: sportsTheme.fontHeading, fontSize: 18, letterSpacing: '2px',
-                      color: '#000', cursor: 'pointer',
-                      boxShadow: `0 4px 20px ${G}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    }}
-                  >
-                    RETURN TO PLAYBOOK <ChevronRight size={16} />
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ x: 2 }} whileTap={{ scale: 0.97 }}
-                    onClick={() => { setStage('explanation'); setQuizResult(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    style={{
-                      flex: 1, padding: '14px', borderRadius: 9,
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      fontFamily: sportsTheme.fontSub, fontWeight: 700,
-                      fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase',
-                      color: sportsTheme.textMuted, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    }}
-                  >
-                    <RotateCcw size={13} /> Review
-                  </motion.button>
+                <div style={{ display: 'flex', gap: 10, flexDirection: 'column' }}>
+                  {nextTopic && (
+                    <motion.button
+                      whileHover={{ filter: 'brightness(1.12)', y: -2 }} whileTap={{ scale: 0.97 }}
+                      onClick={() => navigate('/sports/learn', { state: { topic: nextTopic, topicId: nextTopicId } })}
+                      style={{
+                        width: '100%', padding: '16px', borderRadius: 9, background: C, border: 'none',
+                        fontFamily: sportsTheme.fontHeading, fontSize: 20, letterSpacing: '2px',
+                        color: '#000', cursor: 'pointer',
+                        boxShadow: `0 6px 28px ${G}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      }}
+                    >
+                      NEXT: {nextTopic.toUpperCase()} <ChevronRight size={18} />
+                    </motion.button>
+                  )}
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <motion.button
+                      whileHover={{ filter: 'brightness(1.1)' }} whileTap={{ scale: 0.97 }}
+                      onClick={() => navigate(backPath)}
+                      style={{
+                        flex: 2, padding: '14px', borderRadius: 9,
+                        background: nextTopic ? 'rgba(255,255,255,0.06)' : C,
+                        border: nextTopic ? '1px solid rgba(255,255,255,0.14)' : 'none',
+                        fontFamily: sportsTheme.fontHeading, fontSize: 16, letterSpacing: '2px',
+                        color: nextTopic ? sportsTheme.textMuted : '#000', cursor: 'pointer',
+                        boxShadow: nextTopic ? 'none' : `0 4px 20px ${G}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      }}
+                    >
+                      PLAYBOOK <ChevronRight size={14} />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ x: 2 }} whileTap={{ scale: 0.97 }}
+                      onClick={() => { setStage('explanation'); setQuizResult(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      style={{
+                        flex: 1, padding: '14px', borderRadius: 9,
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.12)',
+                        fontFamily: sportsTheme.fontSub, fontWeight: 700,
+                        fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase',
+                        color: sportsTheme.textMuted, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      }}
+                    >
+                      <RotateCcw size={13} /> Review
+                    </motion.button>
+                  </div>
                 </div>
               </div>
 

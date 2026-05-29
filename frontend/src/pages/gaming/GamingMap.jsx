@@ -17,9 +17,17 @@ export default function GamingMap() {
 
   const colors = layoutColors || getElementColors(character);
 
+  const GAMING_TOPICS_FLAT = [
+    'Budgeting Basics', 'Saving Money', 'Emergency Funds', 'Simple Interest',
+    'Compound Interest', 'Credit Scores', 'Investing Basics', 'Stocks & Bonds',
+    'Retirement Accounts', 'Tax Fundamentals', 'Debt Management', 'Portfolio Diversification',
+  ];
+
   const handleTopicClick = useCallback((topic) => {
-    navigate('/gaming/learn', { state: { topic } });
-  }, [navigate]);
+    const idx  = GAMING_TOPICS_FLAT.indexOf(topic);
+    const next = idx >= 0 && idx < GAMING_TOPICS_FLAT.length - 1 ? GAMING_TOPICS_FLAT[idx + 1] : null;
+    navigate('/gaming/learn', { state: { topic, nextTopic: next } });
+  }, [navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleBossClick = useCallback((island) => {
     setBossModal(island);

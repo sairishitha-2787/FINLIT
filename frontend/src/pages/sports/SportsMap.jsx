@@ -344,7 +344,13 @@ export default function SportsMap() {
   ).length;
 
   function handleTopicClick(topic) {
-    navigate('/sports/learn', { state: { topic: topic.name, topicId: topic.id } });
+    const flat = SEASONS.flatMap(s => s.topics);
+    const idx  = flat.findIndex(t => t.id === topic.id);
+    const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null;
+    navigate('/sports/learn', { state: {
+      topic: topic.name, topicId: topic.id,
+      nextTopic: next?.name || null, nextTopicId: next?.id || null,
+    }});
   }
 
   function handleBossVictory() {
