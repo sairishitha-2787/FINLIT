@@ -7,12 +7,12 @@ import { CheckCircle, XCircle, HelpCircle, ChevronRight, Swords, Calculator, Boo
 import confetti from 'canvas-confetti';
 import { evaluateOpenEnded, getCorrectGif, getWrongGif } from '../../services/api';
 import useGamification from '../../hooks/useGamification';
+import { gamingTheme } from '../../styles/gamingTheme';
 
 const FALLBACK_GIFS = {
   correct: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
   wrong:   'https://media.giphy.com/media/l2SpZtackEqFmMT3G/giphy.gif',
 };
-import { gamingTheme } from '../../styles/gamingTheme';
 
 function hexToRgbStr(hex = '#000000') {
   const h = hex.replace('#', '');

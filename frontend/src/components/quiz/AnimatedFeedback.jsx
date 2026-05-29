@@ -6,13 +6,13 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, MessageSquare, Dumbbell, ArrowRight, Sparkles } from 'lucide-react';
 import AnimatedIcon from '../shared/AnimatedIcon';
 import { getCorrectGif, getWrongGif } from '../../services/api';
+import LoadingAnimation from '../shared/LoadingAnimation';
+import { gamingTheme } from '../../styles/gamingTheme';
 
 const FALLBACK_GIFS = {
   correct: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
   wrong:   'https://media.giphy.com/media/l2SpZtackEqFmMT3G/giphy.gif',
 };
-import LoadingAnimation from '../shared/LoadingAnimation';
-import { gamingTheme } from '../../styles/gamingTheme';
 
 function hexToRgbStr(hex = '#000000') {
   const h = hex.replace('#', '');
