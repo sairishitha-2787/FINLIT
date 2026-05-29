@@ -198,10 +198,10 @@ app.post('/api/quiz', async (req, res, next) => {
   }
 });
 
-// GIF endpoints
-app.get('/api/gifs/correct',     async (_req, res, next) => { try { res.json(await getCorrectGif());     } catch (e) { next(e); } });
-app.get('/api/gifs/wrong',       async (_req, res, next) => { try { res.json(await getWrongGif());       } catch (e) { next(e); } });
-app.get('/api/gifs/celebration', async (_req, res, next) => { try { res.json(await getCelebrationGif()); } catch (e) { next(e); } });
+// GIF endpoints — optional ?domain=gaming|fashion|sports
+app.get('/api/gifs/correct',     async (req, res, next) => { try { res.json(await getCorrectGif(req.query.domain));     } catch (e) { next(e); } });
+app.get('/api/gifs/wrong',       async (req, res, next) => { try { res.json(await getWrongGif(req.query.domain));       } catch (e) { next(e); } });
+app.get('/api/gifs/celebration', async (_req, res, next) => { try { res.json(await getCelebrationGif());                } catch (e) { next(e); } });
 
 // 404
 app.use((_req, res) => {

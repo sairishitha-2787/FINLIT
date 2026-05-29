@@ -95,24 +95,24 @@ export const getQuiz = async (topic, interest, difficulty = 'beginner') => {
   }
 };
 
-// Get GIF for correct answer
-export const getCorrectGif = async () => {
+// Get GIF for correct answer — pass domain for themed results
+export const getCorrectGif = async (domain = '') => {
   try {
-    const response = await api.get('/gifs/correct');
+    const params = domain ? { domain } : {};
+    const response = await api.get('/gifs/correct', { params });
     return response.data;
   } catch (error) {
-    console.error('Error getting correct GIF:', error);
     throw error;
   }
 };
 
-// Get GIF for wrong answer
-export const getWrongGif = async () => {
+// Get GIF for wrong answer — pass domain for themed results
+export const getWrongGif = async (domain = '') => {
   try {
-    const response = await api.get('/gifs/wrong');
+    const params = domain ? { domain } : {};
+    const response = await api.get('/gifs/wrong', { params });
     return response.data;
   } catch (error) {
-    console.error('Error getting wrong GIF:', error);
     throw error;
   }
 };

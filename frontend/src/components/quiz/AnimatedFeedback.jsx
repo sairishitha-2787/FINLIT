@@ -38,14 +38,17 @@ const AnimatedFeedback = ({
   const [gif, setGif] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const gc = gamingColors || {};
+  const domain = fashionMode ? 'fashion' : (gamingMode && gc.sports) ? 'sports' : gamingMode ? 'gaming' : '';
+
   useEffect(() => {
     fetchGif();
-  }, [isCorrect]);
+  }, [isCorrect]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchGif = async () => {
     try {
       setLoading(true);
-      const response = isCorrect ? await getCorrectGif() : await getWrongGif();
+      const response = isCorrect ? await getCorrectGif(domain) : await getWrongGif(domain);
       if (response?.gif?.url) {
         setGif(response.gif);
       } else {

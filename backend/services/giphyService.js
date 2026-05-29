@@ -1,179 +1,86 @@
 // FINLIT - Giphy Service
-// Fetches animated GIFs for quiz feedback
+// Domain-themed GIF queries with finance fallback
 
 const axios = require('axios');
 
-const GIPHY_API_KEY = process.env.GIPHY_API_KEY;
+const GIPHY_API_KEY  = process.env.GIPHY_API_KEY;
 const GIPHY_BASE_URL = 'https://api.giphy.com/v1/gifs';
 
-// Fallback GIFs in case API fails
-const fallbackGifs = {
+// Domain-specific query lists, ordered: preferred → finance fallback
+const QUERIES = {
+  gaming: {
+    correct:   ['video game victory', 'cyberpunk celebration', 'gaming win', 'neon celebration', 'money celebration'],
+    incorrect: ['video game retry', 'gaming fail funny', 'try again gamer', 'keep trying', 'financial motivation'],
+  },
+  fashion: {
+    correct:   ['runway celebration', 'fashion victory', 'style icon fabulous', 'fashion show success', 'money celebration'],
+    incorrect: ['fashion lesson', 'style advice', 'fashion retry', 'keep going fabulous', 'financial growth'],
+  },
+  sports: {
+    correct:   ['sports celebration victory', 'athlete winning', 'champion celebration', 'sports victory', 'money celebration'],
+    incorrect: ['sports motivation comeback', 'athlete training', 'keep pushing sports', 'sports resilience', 'financial resilience'],
+  },
+  // generic fallback if domain unrecognised
+  default: {
+    correct:   ['money celebration', 'winning money', 'success celebration', 'cash rain', 'dollar bills'],
+    incorrect: ['keep going', 'try again', 'empty wallet', 'broke funny', 'financial comeback'],
+  },
+};
+
+const FALLBACK_GIFS = {
   correct: {
-    url: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
-    preview: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/200w.gif',
-    title: 'Money Rain'
+    url:   'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
+    title: 'Money Rain',
   },
   wrong: {
-    url: 'https://media.giphy.com/media/l2SpZtackEqFmMT3G/giphy.gif',
-    preview: 'https://media.giphy.com/media/l2SpZtackEqFmMT3G/200w.gif',
-    title: 'Keep Trying'
-  }
+    url:   'https://media.giphy.com/media/l2SpZtackEqFmMT3G/giphy.gif',
+    title: 'Keep Trying',
+  },
 };
 
-// Get random GIF for correct answer
-async function getCorrectGif() {
-  try {
-    const searchTerms = [
-      'money celebration',
-      'cash rain',
-      'winning money',
-      'success money',
-      'dollar bills',
-      'making it rain money',
-      'rich success'
-    ];
-
-    const randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
-
-    const response = await axios.get(`${GIPHY_BASE_URL}/search`, {
-      params: {
-        api_key: GIPHY_API_KEY,
-        q: randomTerm,
-        limit: 10,
-        rating: 'g',
-        lang: 'en'
-      }
-    });
-
-    if (response.data.data && response.data.data.length > 0) {
-      // Pick a random GIF from results
-      const randomIndex = Math.floor(Math.random() * response.data.data.length);
-      const gif = response.data.data[randomIndex];
-
-      return {
-        success: true,
-        gif: {
-          url: gif.images.original.url,
-          preview: gif.images.preview_gif.url,
-          title: gif.title,
-          width: gif.images.original.width,
-          height: gif.images.original.height
-        }
-      };
-    }
-
-    // Return fallback if no results
-    return {
-      success: true,
-      gif: fallbackGifs.correct
-    };
-
-  } catch (error) {
-    console.error('Giphy correct GIF error:', error.message);
-    return {
-      success: true,
-      gif: fallbackGifs.correct
-    };
-  }
+async function searchGiphy(query) {
+  const response = await axios.get(`${GIPHY_BASE_URL}/search`, {
+    params: { api_key: GIPHY_API_KEY, q: query, limit: 10, rating: 'g', lang: 'en' },
+  });
+  const items = response.data?.data;
+  if (!items?.length) return null;
+  const pick = items[Math.floor(Math.random() * items.length)];
+  return {
+    url:     pick.images.original.url,
+    preview: pick.images.preview_gif?.url,
+    title:   pick.title,
+    width:   pick.images.original.width,
+    height:  pick.images.original.height,
+  };
 }
 
-// Get random GIF for wrong answer
-async function getWrongGif() {
-  try {
-    const searchTerms = [
-      'money falling',
-      'broke no money',
-      'empty wallet',
-      'sad money',
-      'poor empty pockets',
-      'coins falling'
-    ];
+async function fetchDomainGif(domain, type) {
+  const domainKey = QUERIES[domain] ? domain : 'default';
+  const queries   = QUERIES[domainKey][type]; // e.g. ['video game victory', ...]
 
-    const randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
-
-    const response = await axios.get(`${GIPHY_BASE_URL}/search`, {
-      params: {
-        api_key: GIPHY_API_KEY,
-        q: randomTerm,
-        limit: 10,
-        rating: 'g',
-        lang: 'en'
-      }
-    });
-
-    if (response.data.data && response.data.data.length > 0) {
-      const randomIndex = Math.floor(Math.random() * response.data.data.length);
-      const gif = response.data.data[randomIndex];
-
-      return {
-        success: true,
-        gif: {
-          url: gif.images.original.url,
-          preview: gif.images.preview_gif.url,
-          title: gif.title,
-          width: gif.images.original.width,
-          height: gif.images.original.height
-        }
-      };
+  for (const query of queries) {
+    try {
+      const gif = await searchGiphy(query);
+      if (gif) return { success: true, gif };
+    } catch (_) {
+      // try next query
     }
-
-    return {
-      success: true,
-      gif: fallbackGifs.wrong
-    };
-
-  } catch (error) {
-    console.error('Giphy wrong GIF error:', error.message);
-    return {
-      success: true,
-      gif: fallbackGifs.wrong
-    };
   }
+
+  // All queries failed — return hardcoded fallback
+  return { success: true, gif: type === 'correct' ? FALLBACK_GIFS.correct : FALLBACK_GIFS.wrong };
 }
 
-// Get celebration GIF for quiz completion
+async function getCorrectGif(domain = 'default') {
+  return fetchDomainGif(domain, 'correct');
+}
+
+async function getWrongGif(domain = 'default') {
+  return fetchDomainGif(domain, 'incorrect');
+}
+
 async function getCelebrationGif() {
-  try {
-    const response = await axios.get(`${GIPHY_BASE_URL}/search`, {
-      params: {
-        api_key: GIPHY_API_KEY,
-        q: 'celebration success',
-        limit: 10,
-        rating: 'g',
-        lang: 'en'
-      }
-    });
-
-    if (response.data.data && response.data.data.length > 0) {
-      const randomIndex = Math.floor(Math.random() * response.data.data.length);
-      const gif = response.data.data[randomIndex];
-
-      return {
-        success: true,
-        gif: {
-          url: gif.images.original.url,
-          preview: gif.images.preview_gif.url,
-          title: gif.title
-        }
-      };
-    }
-
-    return {
-      success: true,
-      gif: fallbackGifs.correct
-    };
-
-  } catch (error) {
-    console.error('Giphy celebration GIF error:', error.message);
-    return {
-      success: true,
-      gif: fallbackGifs.correct
-    };
-  }
+  return fetchDomainGif('default', 'correct');
 }
 
-module.exports = {
-  getCorrectGif,
-  getWrongGif,
-  getCelebrationGif
-};
+module.exports = { getCorrectGif, getWrongGif, getCelebrationGif };

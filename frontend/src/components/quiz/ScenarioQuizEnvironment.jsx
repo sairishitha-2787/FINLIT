@@ -120,13 +120,16 @@ const ScenarioQuizEnvironment = ({
     }
   }, [stage, openEval]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Derive domain string for themed GIF queries
+  const gifDomain = fm ? 'fashion' : (gm && gc.sports) ? 'sports' : gm ? 'gaming' : '';
+
   // Fetch reaction GIF when feedback is shown
   useEffect(() => {
     if (stage !== 'feedback' || !lastResult) return;
     let cancelled = false;
     setGifLoading(true);
     setReactionGif(null);
-    (lastResult.correct ? getCorrectGif() : getWrongGif())
+    (lastResult.correct ? getCorrectGif(gifDomain) : getWrongGif(gifDomain))
       .then(res => {
         if (!cancelled) setReactionGif(res?.gif?.url || (lastResult.correct ? FALLBACK_GIFS.correct : FALLBACK_GIFS.wrong));
       })
