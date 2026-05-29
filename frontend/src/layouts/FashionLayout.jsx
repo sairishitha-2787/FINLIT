@@ -127,7 +127,7 @@ export default function FashionLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
-  const { xp, level, getLevelProgress } = useGamification();
+  const { xp, level, streak, getLevelProgress } = useGamification();
   const { isMobile } = useIsMobile();
   const [sidebarOpen, setSidebarOpen]       = useState(() => window.innerWidth >= 768);
   const [sheetOpen, setSheetOpen]           = useState(false);

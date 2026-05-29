@@ -437,8 +437,8 @@ export default function FashionLearning() {
   const navigate  = useNavigate();
   const ctx = useOutletContext() || {};
   const { fashionCharacter } = ctx;
-  const { profile, addTopicProgress } = useUser();
-  const { awardXP } = useGamification();
+  const { profile, addTopicProgress, completedTopics } = useUser();
+  const { awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
   const topic     = location.state?.topic;
   const topicMeta = topic ? getTopicMeta(topic) : null;
@@ -586,6 +586,9 @@ export default function FashionLearning() {
     awardXP?.completeQuiz?.(finalScore, questions.length);
     if (didPass) {
       addTopicProgress({ topic, score: finalScore, totalQuestions: questions.length, difficulty: profile?.difficulty || 'beginner' });
+      checkBadgeUnlock('FIRST_LESSON');
+      const newCount1 = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
+      if (newCount1 >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount1);
       if (finalScore === questions.length) {
         confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
         setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
@@ -606,9 +609,14 @@ export default function FashionLearning() {
     const didPass = score >= Math.ceil(totalQuestions * 0.6);
     setPassed(didPass);
     clearQz(topic);
+    try { sessionStorage.removeItem(`finlit_scenario_prog_${(topic || '').replace(/\s+/g,'_')}`); } catch {}
+    try { sessionStorage.removeItem(`finlit_quiz_prog_${(topic || '').replace(/\s+/g,'_')}`); } catch {}
     awardXP?.completeQuiz?.(score, totalQuestions);
     if (didPass) {
       addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+      checkBadgeUnlock('FIRST_LESSON');
+      const newCount = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
+      if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
       if (score === totalQuestions) {
         confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
         setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
@@ -624,6 +632,8 @@ export default function FashionLearning() {
 
   const retryQuiz = () => {
     clearQz(topic);
+    try { sessionStorage.removeItem(`finlit_scenario_prog_${(topic || '').replace(/\s+/g,'_')}`); } catch {}
+    try { sessionStorage.removeItem(`finlit_quiz_prog_${(topic || '').replace(/\s+/g,'_')}`); } catch {}
     setScenarioQuiz(null);
     startQuiz();
   };
@@ -691,6 +701,33 @@ export default function FashionLearning() {
 
         <ChibiThumb char={fashionCharacter} />
       </div>
+
+      {/* ── Badge unlock notification ── */}
+      <AnimatePresence>
+        {badgeNotification && (
+          <motion.div
+            key="badge-notif"
+            initial={{ opacity: 0, x: 60, scale: 0.85 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 60, scale: 0.85 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+            style={{ position: 'fixed', top: 80, right: 24, zIndex: 9000, pointerEvents: 'none' }}
+          >
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 18px', borderRadius: 999,
+              background: 'rgba(255,255,255,0.96)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(247,160,184,0.65)',
+              boxShadow: '0 8px 24px rgba(247,160,184,0.32)',
+              fontFamily: F.ui, fontWeight: 600, fontSize: 13, color: C.deepRose,
+            }}>
+              <Star size={14} color={C.pink} fill={C.pink} />
+              <span>BADGE UNLOCKED · {badgeNotification.name}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Error toast ── */}
       <AnimatePresence>

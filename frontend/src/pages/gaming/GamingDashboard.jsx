@@ -6,13 +6,14 @@ import { Zap, Star, Flame, BookOpen, Skull, FileText, Map, BarChart2, Snowflake,
 import { useDomain } from '../../contexts/DomainContext';
 import { useUser } from '../../context/UserContext';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
+import FloatingMentor from '../../components/mentor/FloatingMentor';
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };
 
 export default function GamingDashboard() {
   const navigate = useNavigate();
   const { character, defeatedBosses } = useDomain();
-  const { completedTopics, loading } = useUser();
+  const { profile, completedTopics, loading } = useUser();
   const { xp, level, streak, getLevelProgress, getXPForNextLevel, colors: layoutColors, onOpenSheet } = useOutletContext();
 
   if (loading) return (
@@ -52,18 +53,27 @@ export default function GamingDashboard() {
       style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '28px' }}
     >
       {/* Header */}
-      <div>
-        <div style={{
-          fontFamily: gamingTheme.fontLabel, fontSize: '10px',
-          letterSpacing: '3px', color: gamingTheme.mutedBlue,
-          textTransform: 'uppercase', marginBottom: '4px',
-        }}>Home</div>
-        <h1 style={{
-          fontFamily: gamingTheme.fontHeading, fontSize: '28px', fontWeight: 800,
-          color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '2px',
-          textShadow: `0 0 20px ${colors.glow}`, margin: 0,
-        }}>Base Camp</h1>
-      </div>
+      {(() => {
+        const [line1, line2] = getGamingGreeting(profile?.name, streak, completedTopics.length);
+        return (
+          <div>
+            <div style={{
+              fontFamily: gamingTheme.fontLabel, fontSize: '10px',
+              letterSpacing: '3px', color: gamingTheme.mutedBlue,
+              textTransform: 'uppercase', marginBottom: '4px',
+            }}>Base Camp</div>
+            <h1 style={{
+              fontFamily: gamingTheme.fontHeading, fontSize: '26px', fontWeight: 800,
+              color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '2px',
+              textShadow: `0 0 20px ${colors.glow}`, margin: '0 0 4px',
+            }}>{line1}</h1>
+            <div style={{
+              fontFamily: gamingTheme.fontBody, fontSize: '13px',
+              color: colors.primary, letterSpacing: '0.5px',
+            }}>{line2}</div>
+          </div>
+        );
+      })()}
 
       {/* Hero row */}
       <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
@@ -184,6 +194,12 @@ export default function GamingDashboard() {
           ))}
         </div>
       </div>
+
+      <FloatingMentor
+        userInterest="gaming"
+        gamingMode={true}
+        gamingColors={colors}
+      />
     </motion.div>
   );
 }
@@ -235,4 +251,18 @@ function CharacterPortrait({ src, alt, ElemIcon, colors }) {
 function hexToRgbStr(hex) {
   const h = hex.replace('#', '');
   return `${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)}`;
+}
+
+function getGamingGreeting(name, streak, topicsCount) {
+  const first = name?.split(' ')[0] || 'Guardian';
+  const h = new Date().getHours();
+  if (topicsCount === 0) return [`Welcome to FINLIT, ${first}.`, 'Your quest begins now.'];
+  if (streak >= 14)     return [`${streak}-DAY WIN STREAK`, `${first}, you're untouchable.`];
+  if (streak >= 7)      return [`WEEK WARRIOR, ${first}!`, `${streak} days. The island bows.`];
+  if (streak >= 3)      return [`ON A ${streak}-DAY STREAK`, `Keep the momentum, ${first}.`];
+  if (h < 6)            return [`NIGHT OWL MODE`, `${first}, still grinding at this hour.`];
+  if (h < 12)           return [`GOOD MORNING, ${first}`, 'The island is yours to conquer.'];
+  if (h < 17)           return [`BACK IN ACTION, ${first}`, 'Afternoon grind. Lock in.'];
+  if (h < 21)           return [`EVENING RAID, ${first}`, 'One more zone before lights out.'];
+  return                       [`NIGHT SESSION, ${first}`, 'Champions never stop.'];
 }

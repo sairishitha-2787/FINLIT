@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, Map, BarChart2, Award, Sparkles, Heart, Zap, CheckCircle2 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
+import FloatingMentor from '../../components/mentor/FloatingMentor';
 
 // ─── Design tokens (self-contained) ──────────────────────────────────────────
 const C = {
@@ -188,6 +189,22 @@ export default function FashionDashboard() {
 
   const firstName = profile?.name?.split(' ')[0] || 'Darling';
 
+  const getFashionGreeting = () => {
+    const h = new Date().getHours();
+    const t = completedTopics.length;
+    const s = streak ?? 0;
+    if (t === 0) return [`Welcome to the atelier, ${firstName}.`, 'Your first look awaits. Let\'s style something extraordinary.'];
+    if (s >= 14) return [`Darling, ${firstName}!`, `${s} days of pure elegance. You're an icon.`];
+    if (s >= 7)  return [`Darling, ${firstName}!`, `${s}-day streak, darling. The runway belongs to you.`];
+    if (s >= 3)  return [`Welcome back, ${firstName}.`, `${s} days running. Absolutely relentless.`];
+    if (h < 6)   return [`Still awake, ${firstName}?`, 'Even at this hour, your taste is impeccable.'];
+    if (h < 12)  return [`Good morning, ${firstName}.`, "Today's collection is about to turn heads."];
+    if (h < 17)  return [`Back in the atelier, ${firstName}.`, 'Midday glow-up incoming.'];
+    if (h < 21)  return [`Evening, ${firstName}.`, 'The golden hour is all yours.'];
+    return              [`Late-night haute couture, ${firstName}.`, 'The most fashionable hour.'];
+  };
+  const [greetMain, greetSub] = getFashionGreeting();
+
   const allTopics = FASHION_DISTRICTS.flatMap(d => d.topics);
   const nextTopic = allTopics.find(t => !completedTopics.includes(t));
   const nextTopicDistrict = nextTopic
@@ -248,7 +265,7 @@ export default function FashionDashboard() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
           {fashionCharacter && <ChibiAvatar char={fashionCharacter} size={64} />}
           <div>
-            <Heading size={28}>Darling, {firstName}!</Heading>
+            <Heading size={28}>{greetMain}</Heading>
             {fashionCharacter && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
                 <span style={{ fontFamily: F.heading, fontWeight: 500, fontSize: 14, color: fashionCharacter.colors.primary }}>{fashionCharacter.name}</span>
@@ -259,7 +276,7 @@ export default function FashionDashboard() {
             )}
           </div>
         </div>
-        <ScriptSub style={{ marginTop: 10 }}>Absolutely stunning work!</ScriptSub>
+        <ScriptSub style={{ marginTop: 10 }}>{greetSub}</ScriptSub>
       </div>
 
       {/* ── STAT CARDS ── */}
@@ -342,6 +359,8 @@ export default function FashionDashboard() {
           )}
         </GlassCard>
       </motion.div>
+
+      <FloatingMentor userInterest="fashion" />
 
       {/* ── RECENT LOOKS ── */}
       {recentLooks.length > 0 && (

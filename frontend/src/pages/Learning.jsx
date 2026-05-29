@@ -92,7 +92,7 @@ const Learning = () => {
   const location  = useLocation();
   const navigate  = useNavigate();
   const { profile, completedTopics, addTopicProgress } = useUser();
-  const { xpPopups, awardXP } = useGamification();
+  const { xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
   const outletCtx  = useOutletContext();
 
   const isGamingMode  = !!(outletCtx?.colors);
@@ -129,6 +129,7 @@ const Learning = () => {
       navigate(isGamingMode ? '/gaming/map' : '/dashboard');
       return;
     }
+    if (!profile) return; // Wait for profile to load before doing anything
     if (!isTopicUnlocked(completedTopics, domain, topic)) { setStage('locked'); return; }
 
     const saved = loadProgress(topic);
@@ -155,7 +156,7 @@ const Learning = () => {
     } else {
       setStage('pacing');
     }
-  }, [topic]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [topic, profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (topic && stage !== 'loading' && stage !== 'locked') {
@@ -166,6 +167,7 @@ const Learning = () => {
   // ── Explanation loading ───────────────────────────────────────────────────
 
   const loadExplanation = async (variation = 0, isRegen = false) => {
+    if (!profile) return;
     try {
       // Serve from sessionStorage cache on remount — avoids redundant API calls
       if (!isRegen) {
@@ -283,12 +285,19 @@ const Learning = () => {
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {
-      addTopicProgress({ topic, score, totalQuestions, difficulty: profile.difficulty });
+      awardXP.completeQuiz(score, totalQuestions);
+      addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+      // TOPIC_MASTER: completedTopics reflects pre-add state, so +1 for the topic just completed
+      const newCount = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
+      if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
       proceedToComplete();
     }
   };
 
   const proceedToComplete = () => {
+    // Award first_lesson badge on every completion — useGamification deduplicates internally
+    checkBadgeUnlock('FIRST_LESSON');
+
     const collectible = getCollectible(domain, topic);
     if (collectible) {
       setUnlockCollectible(collectible);
@@ -329,6 +338,7 @@ const Learning = () => {
   };
 
   if (!topic) return null;
+  if (!profile) return null; // Wait for UserContext to load before rendering
 
   const chapterInfo  = getTopicChapterInfo(domain, topic);
   const allChapters  = getChapterProgress(completedTopics, domain);
@@ -342,8 +352,8 @@ const Learning = () => {
     const gc = gamingColors;
     return (
       <div style={{ padding: '24px 32px', maxWidth: '900px', margin: '0 auto' }}>
-        <XPPopup popups={xpPopups} gamingMode={true} gamingColors={gc} />
-        <CollectibleUnlock collectible={unlockCollectible} domain={domain} onClose={handleCollectibleDismiss} />
+        <XPPopup popups={xpPopups} gamingMode={true} gamingColors={gc} badge={badgeNotification} />
+        <CollectibleUnlock collectible={unlockCollectible} domain={domain} onClose={handleCollectibleDismiss} gamingMode={true} gamingColors={gc} />
         {showCompletionModal && completedChapter && (
           <ChapterCompletionModal
             chapter={completedChapter} nextChapter={nextChapter}
@@ -469,7 +479,7 @@ const Learning = () => {
           {stage === 'explanation' && explanation && (
             <motion.div key="explanation" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               <ExplanationDisplay
-                explanation={explanation} topic={topic} interest={profile.primaryInterest}
+                explanation={explanation} topic={topic} interest={profile?.primaryInterest}
                 onRegenerate={handleRegenerate} isRegenerating={isRegenerating}
                 pacing={pacing} comprehensionState={comprehensionState}
                 onComprehension={handleComprehension} adaptiveContent={adaptiveContent}
@@ -578,7 +588,7 @@ const Learning = () => {
         </AnimatePresence>
 
         <FloatingMentor
-          currentTopic={topic} userInterest={profile.primaryInterest}
+          currentTopic={topic} userInterest={profile?.primaryInterest}
           isVisible={stage === 'explanation' || stage === 'quiz'}
           gamingMode={true} gamingColors={gc}
         />
@@ -590,7 +600,7 @@ const Learning = () => {
 
   return (
     <div className="min-h-screen bg-brutal-bg p-4 md:p-8">
-      <XPPopup popups={xpPopups} />
+      <XPPopup popups={xpPopups} badge={badgeNotification} />
       <CollectibleUnlock collectible={unlockCollectible} domain={domain} onClose={handleCollectibleDismiss} />
       {showCompletionModal && completedChapter && (
         <ChapterCompletionModal
@@ -611,10 +621,10 @@ const Learning = () => {
               </button>
               <div className="flex items-center gap-2">
                 <div className="bg-brutal-pink border-2 border-brutal-black px-3 py-1 rounded-none">
-                  <span className="text-xs font-black text-brutal-black">{profile.primaryInterest.toUpperCase()}</span>
+                  <span className="text-xs font-black text-brutal-black">{profile?.primaryInterest?.toUpperCase()}</span>
                 </div>
                 <div className="bg-brutal-green border-2 border-brutal-black px-3 py-1 rounded-none">
-                  <span className="text-xs font-black text-brutal-black">{profile.difficulty.toUpperCase()}</span>
+                  <span className="text-xs font-black text-brutal-black">{profile?.difficulty?.toUpperCase()}</span>
                 </div>
               </div>
             </div>
@@ -628,7 +638,7 @@ const Learning = () => {
             )}
             <div className="bg-brutal-blue px-6 py-8">
               <h1 className="text-4xl md:text-5xl font-black text-brutal-white leading-tight">{topic.toUpperCase()}</h1>
-              <p className="text-brutal-white mt-2 text-lg font-bold">Learning through {profile.primaryInterest}</p>
+              <p className="text-brutal-white mt-2 text-lg font-bold">Learning through {profile?.primaryInterest}</p>
             </div>
           </div>
         </motion.div>
@@ -687,7 +697,7 @@ const Learning = () => {
           {stage === 'explanation' && explanation && (
             <motion.div key="explanation" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               <ExplanationDisplay
-                explanation={explanation} topic={topic} interest={profile.primaryInterest}
+                explanation={explanation} topic={topic} interest={profile?.primaryInterest}
                 onRegenerate={handleRegenerate} isRegenerating={isRegenerating}
                 pacing={pacing} comprehensionState={comprehensionState}
                 onComprehension={handleComprehension} adaptiveContent={adaptiveContent}
@@ -748,7 +758,7 @@ const Learning = () => {
         </AnimatePresence>
       </div>
 
-      <FloatingMentor currentTopic={topic} userInterest={profile.primaryInterest}
+      <FloatingMentor currentTopic={topic} userInterest={profile?.primaryInterest}
         isVisible={stage === 'explanation' || stage === 'quiz'} />
     </div>
   );
