@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Brain, Lightbulb, Target, GraduationCap, TrendingUp, Timer, Send, X,
-  Gamepad2, Sparkles, Award, Film, ChefHat, Music,
+  Lightbulb, Target, GraduationCap, TrendingUp, Timer, Send, X,
 } from 'lucide-react';
-import AnimatedIcon from '../shared/AnimatedIcon';
 import { useAuth } from '../../context/AuthContext';
 import { useUser } from '../../context/UserContext';
 import useGamification from '../../hooks/useGamification';
@@ -20,7 +18,336 @@ function hexToRgbStr(hex) {
 const MAX_CHARS = 500;
 const RATE_LIMIT = 10;
 
-const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisible = true, externalOpen = false, onExternalClose, gamingMode, gamingColors }) => {
+// ── Domain style factory ──────────────────────────────────────────────────────
+function buildStyles(domain, domainColors) {
+  const accent = domainColors?.primary;
+
+  if (domain === 'fashion') {
+    return {
+      fab: {
+        position: 'fixed', bottom: 32, right: 32,
+        width: 56, height: 56, borderRadius: '50%',
+        background: 'linear-gradient(135deg, #f7a0b8, #c084fc)',
+        boxShadow: '0 6px 24px rgba(192,132,252,0.45), 0 2px 8px rgba(247,160,184,0.30)',
+        border: '1.5px solid rgba(255,255,255,0.60)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', zIndex: 50,
+      },
+      fabIconColor: '#fff',
+      fabBadge: {
+        position: 'absolute', top: -5, right: -5,
+        width: 18, height: 18, borderRadius: '50%',
+        background: '#d4537e',
+        border: '1.5px solid rgba(255,255,255,0.80)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 9, fontFamily: "'DM Sans', sans-serif",
+        color: '#fff', fontWeight: 700,
+      },
+      chatWindow: {
+        position: 'fixed', bottom: 32, right: 32,
+        width: 380, height: 580,
+        background: 'rgba(255,255,255,0.30)',
+        backdropFilter: 'blur(32px) saturate(220%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(220%)',
+        borderTop: '1.5px solid rgba(255,255,255,0.75)',
+        borderLeft: '1.5px solid rgba(255,255,255,0.75)',
+        borderBottom: '1.5px solid rgba(247,160,184,0.40)',
+        borderRight: '1.5px solid rgba(247,160,184,0.40)',
+        borderRadius: 28,
+        boxShadow: '0 24px 64px rgba(247,160,184,0.35), 0 8px 32px rgba(192,132,252,0.20)',
+        display: 'flex', flexDirection: 'column', zIndex: 50,
+        overflow: 'hidden',
+      },
+      header: {
+        padding: '16px 20px',
+        borderBottom: '1px solid rgba(247,160,184,0.25)',
+        background: 'linear-gradient(135deg, rgba(247,160,184,0.18) 0%, rgba(192,132,252,0.10) 100%)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        flexShrink: 0,
+      },
+      headerTitle: {
+        fontFamily: "'Playfair Display', serif",
+        fontSize: 14, fontWeight: 600,
+        color: '#9d1f4a', letterSpacing: '0.2px', margin: 0,
+      },
+      headerSub: {
+        fontFamily: "'DM Sans', sans-serif",
+        fontSize: 9, color: '#d4537e',
+        letterSpacing: '0.08em', marginTop: 3,
+      },
+      headerIconColor: '#d4537e',
+      closeBtn: {
+        width: 28, height: 28, borderRadius: '50%',
+        background: 'rgba(255,255,255,0.40)',
+        border: '1px solid rgba(247,160,184,0.45)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer',
+      },
+      closeBtnColor: '#9d1f4a',
+      messageArea: {
+        flex: 1, overflowY: 'auto', padding: '16px',
+        display: 'flex', flexDirection: 'column', gap: 12,
+        background: 'rgba(255,255,255,0.08)',
+      },
+      userBubble: {
+        maxWidth: '78%', padding: '10px 14px', borderRadius: 16,
+        background: 'rgba(247,160,184,0.22)',
+        border: '1px solid rgba(247,160,184,0.50)',
+      },
+      asstBubble: {
+        maxWidth: '78%', padding: '10px 14px', borderRadius: 16,
+        background: 'rgba(255,255,255,0.50)',
+        border: '1px solid rgba(255,255,255,0.65)',
+      },
+      msgText: {
+        fontFamily: "'DM Sans', sans-serif", fontSize: 13,
+        color: '#9d1f4a', lineHeight: 1.65, whiteSpace: 'pre-wrap', margin: 0,
+      },
+      typingBubble: {
+        background: 'rgba(255,255,255,0.50)',
+        border: '1px solid rgba(255,255,255,0.65)',
+        padding: '10px 14px', borderRadius: 16,
+      },
+      typingDot: { background: '#d4537e' },
+      errorBubble: {
+        maxWidth: '78%', padding: '10px 14px', borderRadius: 16,
+        background: 'rgba(232,112,112,0.15)',
+        border: '1px solid rgba(232,112,112,0.45)',
+      },
+      quickArea: {
+        borderTop: '1px solid rgba(247,160,184,0.20)',
+        padding: '12px 16px', flexShrink: 0,
+        background: 'rgba(255,255,255,0.12)',
+      },
+      quickLabel: {
+        fontFamily: "'DM Sans', sans-serif", fontSize: 9,
+        letterSpacing: '0.18em', color: '#c98a9e',
+        textTransform: 'uppercase', marginBottom: 8,
+      },
+      quickBtn: {
+        padding: '5px 12px', borderRadius: 99,
+        background: 'rgba(255,255,255,0.35)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid rgba(255,255,255,0.62)',
+        fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+        color: '#9d1f4a', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', gap: 5,
+      },
+      quickBtnIconColor: '#d4537e',
+      inputArea: {
+        borderTop: '1px solid rgba(247,160,184,0.20)',
+        padding: '12px 16px', flexShrink: 0,
+        background: 'rgba(255,255,255,0.18)',
+      },
+      textarea: {
+        width: '100%', padding: '10px 12px', borderRadius: 14,
+        background: 'rgba(255,255,255,0.45)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(247,160,184,0.45)',
+        fontFamily: "'DM Sans', sans-serif", fontSize: 13,
+        color: '#9d1f4a', outline: 'none',
+        resize: 'none', lineHeight: 1.5, boxSizing: 'border-box',
+      },
+      charCount: (over) => ({
+        fontFamily: "'DM Sans', sans-serif", fontSize: 9,
+        color: over ? '#e87070' : '#c98a9e',
+        textAlign: 'right', marginTop: 3,
+      }),
+      sendBtn: {
+        padding: '10px 14px', borderRadius: 14, alignSelf: 'flex-start',
+        background: 'linear-gradient(135deg, #f7a0b8, #c084fc)',
+        border: 'none', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: '0 4px 16px rgba(192,132,252,0.40)',
+      },
+      sendBtnIconColor: '#fff',
+      rateLimitText: {
+        fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+        color: '#e87070', marginBottom: 8,
+        display: 'flex', alignItems: 'center', gap: 4,
+      },
+    };
+  }
+
+  // Sports / Gaming (dark themes)
+  const isSports = domain === 'sports';
+  const accentHex = accent || (isSports ? '#E8457A' : '#9FE0D3');
+  const accentRgb = hexToRgbStr(accentHex);
+  const panelBg   = isSports ? 'rgba(15,15,15,0.96)' : gamingTheme.bgMid;
+  const msgDarkBg = isSports ? 'rgba(26,26,26,0.90)' : 'rgba(30,42,69,0.7)';
+  const fontHeading = isSports ? "'Bebas Neue', cursive" : gamingTheme.fontHeading;
+  const fontLabel   = isSports ? "'Barlow Condensed', sans-serif" : gamingTheme.fontLabel;
+  const fontBody    = isSports ? "'Inter', sans-serif" : gamingTheme.fontBody;
+  const textColor   = isSports ? '#ffffff' : gamingTheme.seafoam;
+
+  return {
+    fab: {
+      position: 'fixed', bottom: 32, right: 32,
+      width: 56, height: 56, borderRadius: '50%',
+      background: isSports ? 'rgba(15,15,15,0.90)' : gamingTheme.cardBg,
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: `2px solid ${accentHex}`,
+      boxShadow: `0 0 20px ${domainColors?.glow || accentHex + '55'}, 0 4px 16px rgba(0,0,0,0.4)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      cursor: 'pointer', zIndex: 50,
+    },
+    fabIconColor: accentHex,
+    fabBadge: {
+      position: 'absolute', top: -6, right: -6,
+      width: 20, height: 20, borderRadius: '50%',
+      background: accentHex,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 10, fontFamily: fontLabel,
+      color: isSports ? '#000' : gamingTheme.bgDark, fontWeight: 700,
+    },
+    chatWindow: {
+      position: 'fixed', bottom: 32, right: 32,
+      width: 380, height: 580,
+      background: panelBg,
+      border: `1.5px solid rgba(${accentRgb},0.40)`,
+      borderRadius: isSports ? 16 : 20,
+      boxShadow: `0 0 48px rgba(${accentRgb},0.18), 0 16px 48px rgba(0,0,0,0.5)`,
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      display: 'flex', flexDirection: 'column', zIndex: 50,
+      overflow: 'hidden',
+    },
+    header: {
+      padding: '16px 20px',
+      borderBottom: `1px solid rgba(${accentRgb},0.25)`,
+      background: `linear-gradient(135deg, rgba(${accentRgb},0.12) 0%, transparent 100%)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      flexShrink: 0,
+    },
+    headerTitle: {
+      fontFamily: fontHeading,
+      fontSize: isSports ? 16 : 14,
+      fontWeight: isSports ? 400 : 700,
+      color: '#ffffff',
+      letterSpacing: isSports ? '1.5px' : '1px',
+      textTransform: 'uppercase', margin: 0,
+    },
+    headerSub: {
+      fontFamily: fontLabel,
+      fontSize: isSports ? 10 : 9,
+      color: accentHex,
+      letterSpacing: isSports ? '0.10em' : '1px',
+      marginTop: 3,
+      textTransform: 'uppercase',
+    },
+    headerIconColor: accentHex,
+    closeBtn: {
+      width: 30, height: 30, borderRadius: 8,
+      background: 'rgba(61,78,122,0.5)',
+      border: `1px solid rgba(${accentRgb},0.25)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      cursor: 'pointer',
+    },
+    closeBtnColor: isSports ? 'rgba(255,255,255,0.70)' : gamingTheme.seafoam,
+    messageArea: {
+      flex: 1, overflowY: 'auto', padding: 16,
+      display: 'flex', flexDirection: 'column', gap: 12,
+      background: 'rgba(10,14,30,0.5)',
+    },
+    userBubble: {
+      maxWidth: '78%', padding: '10px 14px',
+      borderRadius: isSports ? 10 : 12,
+      background: `rgba(${accentRgb},0.15)`,
+      border: `1px solid rgba(${accentRgb},0.40)`,
+    },
+    asstBubble: {
+      maxWidth: '78%', padding: '10px 14px',
+      borderRadius: isSports ? 10 : 12,
+      background: msgDarkBg,
+      border: '1px solid rgba(255,255,255,0.08)',
+    },
+    msgText: {
+      fontFamily: fontBody, fontSize: 13,
+      color: textColor, lineHeight: 1.6,
+      whiteSpace: 'pre-wrap', margin: 0,
+    },
+    typingBubble: {
+      background: msgDarkBg,
+      border: '1px solid rgba(255,255,255,0.08)',
+      padding: '10px 16px', borderRadius: isSports ? 10 : 12,
+    },
+    typingDot: { background: accentHex },
+    errorBubble: {
+      maxWidth: '78%', padding: '10px 14px',
+      borderRadius: isSports ? 10 : 12,
+      background: 'rgba(248,113,113,0.10)',
+      border: '1px solid rgba(248,113,113,0.30)',
+    },
+    quickArea: {
+      borderTop: `1px solid rgba(${accentRgb},0.15)`,
+      padding: '12px 16px', flexShrink: 0,
+      background: 'rgba(10,14,30,0.4)',
+    },
+    quickLabel: {
+      fontFamily: fontLabel, fontSize: isSports ? 9 : 8,
+      letterSpacing: '2px', color: isSports ? 'rgba(255,255,255,0.35)' : gamingTheme.mutedBlue,
+      textTransform: 'uppercase', marginBottom: 8,
+    },
+    quickBtn: {
+      padding: '5px 10px', borderRadius: isSports ? 6 : 6,
+      background: `rgba(${accentRgb},0.10)`,
+      border: `1px solid rgba(${accentRgb},0.30)`,
+      fontFamily: fontLabel, fontSize: isSports ? 10 : 9,
+      color: accentHex, cursor: 'pointer',
+      display: 'flex', alignItems: 'center', gap: 5,
+      letterSpacing: '0.5px',
+      textTransform: isSports ? 'uppercase' : 'none',
+    },
+    quickBtnIconColor: accentHex,
+    inputArea: {
+      borderTop: `1px solid rgba(${accentRgb},0.15)`,
+      padding: '12px 16px', flexShrink: 0,
+      background: isSports ? 'rgba(15,15,15,0.60)' : gamingTheme.bgMid,
+    },
+    textarea: {
+      width: '100%', padding: '10px 12px', borderRadius: 10,
+      background: 'rgba(30,42,69,0.7)',
+      border: '1px solid rgba(139,184,233,0.25)',
+      fontFamily: fontBody, fontSize: 13,
+      color: '#ffffff', outline: 'none',
+      resize: 'none', lineHeight: 1.5, boxSizing: 'border-box',
+    },
+    charCount: (over) => ({
+      fontFamily: fontLabel, fontSize: 9,
+      color: over ? '#F87171' : (isSports ? 'rgba(255,255,255,0.30)' : gamingTheme.mutedBlue),
+      textAlign: 'right', marginTop: 3,
+    }),
+    sendBtn: {
+      padding: '10px 14px', borderRadius: 10, alignSelf: 'flex-start',
+      background: `linear-gradient(135deg, ${accentHex}, ${domainColors?.secondary || accentHex})`,
+      border: 'none', cursor: 'pointer',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      boxShadow: `0 0 12px ${domainColors?.glow || accentHex + '55'}`,
+    },
+    sendBtnIconColor: isSports ? '#000' : gamingTheme.bgDark,
+    rateLimitText: {
+      fontFamily: fontBody, fontSize: 11,
+      color: '#F87171', marginBottom: 8,
+      display: 'flex', alignItems: 'center', gap: 4,
+    },
+  };
+}
+
+// ── FloatingMentor ────────────────────────────────────────────────────────────
+const FloatingMentor = ({
+  currentTopic,
+  nextRecommendation,
+  userInterest,
+  isVisible = true,
+  externalOpen = false,
+  onExternalClose,
+  gamingColors,        // kept for backward compat (gaming/sports pass this)
+  domainColors,        // preferred alias
+}) => {
   const { user, session } = useAuth();
   const { profile, completedTopics } = useUser();
   const { xp, level, awardXP } = useGamification();
@@ -30,6 +357,9 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
   const domainPersonality = getDomainPersonality(domain);
   const userName = profile?.name || 'there';
   const completedCount = completedTopics?.length || 0;
+
+  const colors = domainColors || gamingColors || null;
+  const S = buildStyles(domain, colors);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,33 +383,22 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
   const textareaRef = useRef(null);
   const prevMsgLenRef = useRef(0);
 
-  // ── Load history once when user is available ──────────────────────────────
   useEffect(() => {
     if (!user || !session || messages !== null) return;
     (async () => {
       try {
         const result = await loadMentorHistory(user.id, session.access_token);
         if (result.success && result.history.length > 0) {
-          setMessages(
-            result.history.map(m => ({
-              role: m.role,
-              content: m.message,
-              timestamp: m.created_at,
-            }))
-          );
+          setMessages(result.history.map(m => ({
+            role: m.role,
+            content: m.message,
+            timestamp: m.created_at,
+          })));
         } else {
-          setMessages([{
-            role: 'assistant',
-            content: getDomainGreeting(domain, userName, completedCount),
-            timestamp: new Date().toISOString(),
-          }]);
+          setMessages([{ role: 'assistant', content: getDomainGreeting(domain, userName, completedCount), timestamp: new Date().toISOString() }]);
         }
       } catch {
-        setMessages([{
-          role: 'assistant',
-          content: getDomainGreeting(domain, userName, completedCount),
-          timestamp: new Date().toISOString(),
-        }]);
+        setMessages([{ role: 'assistant', content: getDomainGreeting(domain, userName, completedCount), timestamp: new Date().toISOString() }]);
       }
     })();
   }, [user?.id, session]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,14 +415,10 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
     prevMsgLenRef.current = messages.length;
   }, [messages, isOpen]);
 
-  useEffect(() => {
-    if (isOpen) setUnreadCount(0);
-  }, [isOpen]);
+  useEffect(() => { if (isOpen) setUnreadCount(0); }, [isOpen]);
 
-  const isRateLimited = () => {
-    const now = Date.now();
-    return msgTimestamps.filter(t => now - t < 60000).length >= RATE_LIMIT;
-  };
+  const isRateLimited = () =>
+    msgTimestamps.filter(t => Date.now() - t < 60000).length >= RATE_LIMIT;
 
   const handleSend = async (customText = null) => {
     const text = (customText ?? input).trim();
@@ -113,11 +428,8 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
     setError(null);
     setInput('');
     setMsgTimestamps(prev => [...prev, Date.now()]);
-
-    const userMsg = { role: 'user', content: text, timestamp: new Date().toISOString() };
-    setMessages(prev => [...(prev || []), userMsg]);
+    setMessages(prev => [...(prev || []), { role: 'user', content: text, timestamp: new Date().toISOString() }]);
     setIsLoading(true);
-
     awardXP.useChat();
 
     const msgContext = {
@@ -130,18 +442,11 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
       currentTopic: currentTopic || null,
     };
 
-    const recentHistory = (messages || []).slice(-10).map(m => ({
-      role: m.role,
-      message: m.content,
-    }));
+    const recentHistory = (messages || []).slice(-10).map(m => ({ role: m.role, message: m.content }));
 
     try {
       const result = await sendMentorMessage(text, msgContext, recentHistory, session.access_token);
-      setMessages(prev => [...(prev || []), {
-        role: 'assistant',
-        content: result.response,
-        timestamp: new Date().toISOString(),
-      }]);
+      setMessages(prev => [...(prev || []), { role: 'assistant', content: result.response, timestamp: new Date().toISOString() }]);
     } catch {
       setError(getDomainError(domain));
     } finally {
@@ -150,34 +455,25 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
   const nextTopicName = typeof nextRecommendation === 'string'
-    ? nextRecommendation
-    : nextRecommendation?.name || null;
+    ? nextRecommendation : nextRecommendation?.name || null;
   const nextTopicReason = nextRecommendation?.reason || null;
 
   const nextStepPrompt = nextTopicName
     ? `My recommended next topic is "${nextTopicName}"${nextTopicReason ? ` (${nextTopicReason})` : ''}. Can you give me a quick overview of what I'll learn and why it matters for someone into ${effectiveInterest}?`
     : `Based on where I am in my financial learning, what should I focus on next? I'm into ${effectiveInterest}.`;
 
-  // Domain-aware quick actions
   const quickActions = [
-    { Icon: Lightbulb,     label: 'Simplify',                   prompt: `Explain ${currentTopic || 'this concept'} as simply as possible — plain language, no jargon.` },
-    { Icon: Target,        label: `${effectiveInterest} take`,  prompt: `Give me a ${effectiveInterest} analogy for ${currentTopic || 'personal finance'}.` },
-    { Icon: GraduationCap, label: 'Why care?',                  prompt: `Why should someone who loves ${effectiveInterest} care about ${currentTopic || 'financial literacy'}? Be specific and practical.` },
-    { Icon: TrendingUp,    label: "What's next?",               prompt: nextStepPrompt },
+    { Icon: Lightbulb,     label: 'Simplify',                  prompt: `Explain ${currentTopic || 'this concept'} as simply as possible — plain language, no jargon.` },
+    { Icon: Target,        label: `${effectiveInterest} take`, prompt: `Give me a ${effectiveInterest} analogy for ${currentTopic || 'personal finance'}.` },
+    { Icon: GraduationCap, label: 'Why care?',                 prompt: `Why should someone who loves ${effectiveInterest} care about ${currentTopic || 'financial literacy'}? Be specific and practical.` },
+    { Icon: TrendingUp,    label: "What's next?",              prompt: nextStepPrompt },
   ];
 
-  // Domain-specific icon and colors
   const DomainIcon = domainPersonality.primaryIconComponent;
-  const fabBgClass = domainPersonality.fabBg;
-  const headerBgClass = domainPersonality.headerBg;
-  const headerTextClass = domainPersonality.headerText;
   const iconAnimation = domainPersonality.animation;
 
   if (!isVisible) return null;
@@ -192,37 +488,14 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, rotate: 180 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.93 }}
             onClick={() => setIsOpen(true)}
-            className={gamingMode ? undefined : `fixed bottom-8 right-8 w-16 h-16 ${fabBgClass} border-4 border-brutal-black shadow-brutal rounded-none flex items-center justify-center cursor-pointer z-50`}
-            style={gamingMode && gamingColors ? {
-              position: 'fixed', bottom: '32px', right: '32px',
-              width: 56, height: 56, borderRadius: '50%',
-              background: gamingTheme.cardBg,
-              backdropFilter: `blur(${gamingTheme.glassBlur})`,
-              border: `2px solid ${gamingColors.primary}`,
-              boxShadow: `0 0 20px ${gamingColors.glow}, 0 4px 16px rgba(0,0,0,0.4)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', zIndex: 50, position: 'fixed',
-            } : undefined}
+            style={S.fab}
           >
-            {gamingMode
-              ? <DomainIcon size={24} color={gamingColors?.primary || gamingTheme.mint} />
-              : <AnimatedIcon icon={DomainIcon} size={30} animation={iconAnimation} className={headerTextClass} />
-            }
+            <DomainIcon size={24} color={S.fabIconColor} />
             {unreadCount > 0 && (
-              <span
-                className={gamingMode ? undefined : 'absolute -top-2 -right-2 w-6 h-6 bg-brutal-pink border-2 border-brutal-black rounded-none flex items-center justify-center text-xs font-black text-brutal-black'}
-                style={gamingMode && gamingColors ? {
-                  position: 'absolute', top: -6, right: -6,
-                  width: 20, height: 20, borderRadius: '50%',
-                  background: gamingColors.primary,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '10px', fontFamily: gamingTheme.fontLabel,
-                  color: gamingTheme.bgDark, fontWeight: 700,
-                } : undefined}
-              >
+              <span style={S.fabBadge}>
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
@@ -239,75 +512,35 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 80, scale: 0.9 }}
             transition={{ type: 'spring', damping: 22, stiffness: 260 }}
-            className={gamingMode ? undefined : 'fixed bottom-8 right-8 w-96 h-[600px] bg-brutal-white border-4 border-brutal-black shadow-brutal-lg rounded-none flex flex-col z-50'}
-            style={gamingMode && gamingColors ? {
-              position: 'fixed', bottom: '32px', right: '32px',
-              width: '380px', height: '580px',
-              background: gamingTheme.bgMid,
-              border: `1.5px solid rgba(${hexToRgbStr(gamingColors.primary)},0.5)`,
-              borderRadius: '20px',
-              boxShadow: `0 0 48px rgba(${hexToRgbStr(gamingColors.primary)},0.18), 0 16px 48px rgba(0,0,0,0.5)`,
-              backdropFilter: `blur(${gamingTheme.glassBlur})`,
-              display: 'flex', flexDirection: 'column', zIndex: 50,
-              overflow: 'hidden',
-            } : undefined}
+            style={S.chatWindow}
           >
             {/* Header */}
-            <div
-              className={gamingMode ? undefined : `${headerBgClass} border-b-4 border-brutal-black p-4 flex items-center justify-between shrink-0`}
-              style={gamingMode && gamingColors ? {
-                padding: '16px 20px',
-                borderBottom: `1px solid rgba(${hexToRgbStr(gamingColors.primary)},0.25)`,
-                background: `linear-gradient(135deg, rgba(${hexToRgbStr(gamingColors.primary)},0.12) 0%, transparent 100%)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                flexShrink: 0,
-              } : undefined}
-            >
-              <div className={gamingMode ? undefined : 'flex items-center gap-3'} style={gamingMode ? { display: 'flex', alignItems: 'center', gap: '12px' } : undefined}>
-                {gamingMode
-                  ? <DomainIcon size={22} color={gamingColors?.primary || gamingTheme.mint} />
-                  : <AnimatedIcon icon={DomainIcon} size={28} animation={iconAnimation} className={headerTextClass} />
-                }
+            <div style={S.header}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <DomainIcon size={22} color={S.headerIconColor} />
                 <div>
-                  <h3 style={gamingMode ? { fontFamily: gamingTheme.fontHeading, fontSize: '14px', fontWeight: 700, color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '1.5px', margin: 0 } : undefined}
-                    className={gamingMode ? undefined : `font-black ${headerTextClass} text-base leading-none`}>
-                    FINN — FINLIT MENTOR
-                  </h3>
-                  <p style={gamingMode ? { fontFamily: gamingTheme.fontLabel, fontSize: '9px', color: gamingColors?.primary, letterSpacing: '1px', marginTop: '3px' } : undefined}
-                    className={gamingMode ? undefined : `${headerTextClass} opacity-60 text-xs mt-0.5`}>
+                  <h3 style={S.headerTitle}>FINN — FINLIT MENTOR</h3>
+                  <p style={S.headerSub}>
                     {domainPersonality.tagline} · Level {level}
                   </p>
                 </div>
               </div>
-              <button
-                onClick={handleClose}
-                className={gamingMode ? undefined : 'w-8 h-8 bg-brutal-white border-2 border-brutal-black flex items-center justify-center text-brutal-black hover:bg-brutal-pink transition-colors'}
-                style={gamingMode ? {
-                  width: 30, height: 30, borderRadius: '8px',
-                  background: 'rgba(61,78,122,0.5)',
-                  border: '1px solid rgba(139,184,233,0.25)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer',
-                } : undefined}
-              >
-                <X size={14} color={gamingMode ? gamingTheme.seafoam : undefined} strokeWidth={2.5} />
+              <button onClick={handleClose} style={S.closeBtn}>
+                <X size={14} color={S.closeBtnColor} strokeWidth={2.5} />
               </button>
             </div>
 
             {/* Messages */}
-            <div
-              className={gamingMode ? undefined : 'flex-1 overflow-y-auto p-4 space-y-3 bg-brutal-bg'}
-              style={gamingMode ? { flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(10,14,30,0.5)' } : undefined}
-            >
+            <div style={S.messageArea}>
               {messages === null && (
-                <div className="flex justify-center items-center h-full">
-                  <div className="flex gap-1">
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                  <div style={{ display: 'flex', gap: 6 }}>
                     {[0, 1, 2].map(i => (
                       <motion.div
                         key={i}
                         animate={{ y: [-3, 3, -3] }}
                         transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15 }}
-                        className="w-2 h-2 bg-brutal-blue border-2 border-brutal-black"
+                        style={{ width: 8, height: 8, borderRadius: '50%', ...S.typingDot }}
                       />
                     ))}
                   </div>
@@ -320,32 +553,13 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
-                  className={gamingMode ? undefined : `flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}
-                  style={gamingMode ? { display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', gap: '8px' } : undefined}
+                  style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', gap: 8 }}
                 >
                   {msg.role === 'assistant' && (
-                    gamingMode && gamingColors
-                      ? <DomainIcon size={16} color={gamingColors.primary} style={{ flexShrink: 0, marginTop: 3 }} />
-                      : <DomainIcon size={18} strokeWidth={2.5} className="text-brutal-blue shrink-0 mt-1" />
+                    <DomainIcon size={16} color={S.headerIconColor} style={{ flexShrink: 0, marginTop: 3 }} />
                   )}
-                  <div
-                    className={gamingMode ? undefined : `max-w-[78%] px-3 py-2 border-4 border-brutal-black shadow-brutal-sm rounded-none ${msg.role === 'user' ? 'bg-brutal-pink' : 'bg-brutal-white'}`}
-                    style={gamingMode && gamingColors ? {
-                      maxWidth: '78%', padding: '10px 14px', borderRadius: '12px',
-                      background: msg.role === 'user'
-                        ? `rgba(${hexToRgbStr(gamingColors.primary)},0.15)`
-                        : 'rgba(30,42,69,0.7)',
-                      border: msg.role === 'user'
-                        ? `1px solid rgba(${hexToRgbStr(gamingColors.primary)},0.4)`
-                        : '1px solid rgba(139,184,233,0.15)',
-                    } : undefined}
-                  >
-                    <p
-                      className={gamingMode ? undefined : 'text-sm font-bold text-brutal-black leading-relaxed whitespace-pre-wrap'}
-                      style={gamingMode ? { fontFamily: gamingTheme.fontBody, fontSize: '13px', color: gamingTheme.seafoam, lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 } : undefined}
-                    >
-                      {msg.content}
-                    </p>
+                  <div style={msg.role === 'user' ? S.userBubble : S.asstBubble}>
+                    <p style={S.msgText}>{msg.content}</p>
                   </div>
                 </motion.div>
               ))}
@@ -354,17 +568,17 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex justify-start gap-2"
+                  style={{ display: 'flex', justifyContent: 'flex-start', gap: 8 }}
                 >
-                  <DomainIcon size={18} strokeWidth={2.5} className="text-brutal-blue shrink-0 mt-1" />
-                  <div className="bg-brutal-white border-4 border-brutal-black shadow-brutal-sm rounded-none px-4 py-3">
-                    <div className="flex gap-1.5 items-center">
+                  <DomainIcon size={16} color={S.headerIconColor} style={{ flexShrink: 0, marginTop: 3 }} />
+                  <div style={S.typingBubble}>
+                    <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                       {[0, 1, 2].map(i => (
                         <motion.div
                           key={i}
                           animate={{ y: [-3, 3, -3] }}
                           transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.18 }}
-                          className="w-2 h-2 bg-brutal-black rounded-none"
+                          style={{ width: 7, height: 7, borderRadius: '50%', ...S.typingDot }}
                         />
                       ))}
                     </div>
@@ -376,12 +590,15 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex justify-start gap-2"
+                  style={{ display: 'flex', justifyContent: 'flex-start', gap: 8 }}
                 >
-                  <DomainIcon size={18} strokeWidth={2.5} className="text-brutal-blue shrink-0 mt-1" />
-                  <div className="bg-brutal-pink border-4 border-brutal-black shadow-brutal-sm rounded-none px-3 py-2">
-                    <p className="text-sm font-bold text-brutal-black">{error}</p>
-                    <button onClick={() => setError(null)} className="mt-1 text-xs font-black text-brutal-black/50 underline">
+                  <DomainIcon size={16} color={S.headerIconColor} style={{ flexShrink: 0, marginTop: 3 }} />
+                  <div style={S.errorBubble}>
+                    <p style={{ ...S.msgText, color: domain === 'fashion' ? '#e87070' : '#F87171' }}>{error}</p>
+                    <button
+                      onClick={() => setError(null)}
+                      style={{ marginTop: 4, fontSize: 11, color: S.headerIconColor, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    >
                       Dismiss
                     </button>
                   </div>
@@ -392,33 +609,20 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
             </div>
 
             {/* Quick actions */}
-            <div
-              className={gamingMode ? undefined : 'border-t-4 border-brutal-black p-3 bg-brutal-bg shrink-0'}
-              style={gamingMode ? { borderTop: `1px solid rgba(139,184,233,0.15)`, padding: '12px 16px', flexShrink: 0, background: 'rgba(10,14,30,0.4)' } : undefined}
-            >
-              <p
-                className={gamingMode ? undefined : 'text-[10px] font-black text-brutal-black/50 uppercase tracking-wider mb-2'}
-                style={gamingMode ? { fontFamily: gamingTheme.fontLabel, fontSize: '8px', letterSpacing: '2px', color: gamingTheme.mutedBlue, textTransform: 'uppercase', marginBottom: '8px' } : undefined}
-              >Quick actions</p>
-              <div className={gamingMode ? undefined : 'flex flex-wrap gap-1.5'} style={gamingMode ? { display: 'flex', flexWrap: 'wrap', gap: '6px' } : undefined}>
+            <div style={S.quickArea}>
+              <p style={S.quickLabel}>Quick actions</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {quickActions.map((a, i) => (
                   <button
                     key={i}
                     onClick={() => handleSend(a.prompt)}
                     disabled={isLoading || isRateLimited()}
-                    className={gamingMode ? undefined : 'bg-brutal-green border-2 border-brutal-black shadow-brutal-sm hover:shadow-brutal px-2.5 py-1 text-xs font-black text-brutal-black disabled:opacity-40 transition-all flex items-center gap-1'}
-                    style={gamingMode && gamingColors ? {
-                      padding: '5px 10px', borderRadius: '6px',
-                      background: `rgba(${hexToRgbStr(gamingColors.primary)},0.10)`,
-                      border: `1px solid rgba(${hexToRgbStr(gamingColors.primary)},0.3)`,
-                      fontFamily: gamingTheme.fontLabel, fontSize: '9px',
-                      color: gamingColors.primary, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: '5px',
+                    style={{
+                      ...S.quickBtn,
                       opacity: isLoading || isRateLimited() ? 0.4 : 1,
-                      letterSpacing: '0.5px',
-                    } : undefined}
+                    }}
                   >
-                    <a.Icon size={11} strokeWidth={2.5} color={gamingMode && gamingColors ? gamingColors.primary : undefined} />
+                    <a.Icon size={11} strokeWidth={2.5} color={S.quickBtnIconColor} />
                     {a.label}
                   </button>
                 ))}
@@ -426,20 +630,14 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
             </div>
 
             {/* Input */}
-            <div
-              className={gamingMode ? undefined : 'border-t-4 border-brutal-black p-3 bg-brutal-white shrink-0'}
-              style={gamingMode ? { borderTop: `1px solid rgba(139,184,233,0.15)`, padding: '12px 16px', background: gamingTheme.bgMid, flexShrink: 0 } : undefined}
-            >
+            <div style={S.inputArea}>
               {isRateLimited() && (
-                <p
-                  className={gamingMode ? undefined : 'text-xs font-bold text-red-500 mb-2 flex items-center gap-1'}
-                  style={gamingMode ? { fontFamily: gamingTheme.fontBody, fontSize: '11px', color: '#F87171', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' } : undefined}
-                >
+                <p style={S.rateLimitText}>
                   <Timer size={12} strokeWidth={2.5} /> Slow down! Max 10 messages/minute.
                 </p>
               )}
-              <div className={gamingMode ? undefined : 'flex gap-2 items-end'} style={gamingMode ? { display: 'flex', gap: '8px', alignItems: 'flex-end' } : undefined}>
-                <div className={gamingMode ? undefined : 'flex-1'} style={gamingMode ? { flex: 1 } : undefined}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+                <div style={{ flex: 1 }}>
                   <textarea
                     ref={textareaRef}
                     value={input}
@@ -448,38 +646,24 @@ const FloatingMentor = ({ currentTopic, nextRecommendation, userInterest, isVisi
                     placeholder="Ask FINN anything… (Shift+Enter for new line)"
                     disabled={isLoading || isRateLimited()}
                     rows={2}
-                    className={gamingMode ? undefined : 'w-full border-4 border-brutal-black rounded-none px-3 py-2 text-sm focus:outline-none font-bold text-brutal-black placeholder-brutal-black/30 disabled:opacity-50 resize-none leading-snug'}
-                    style={gamingMode ? {
-                      width: '100%', padding: '10px 12px', borderRadius: '10px',
-                      background: 'rgba(30,42,69,0.7)',
-                      border: '1px solid rgba(139,184,233,0.25)',
-                      fontFamily: gamingTheme.fontBody, fontSize: '13px',
-                      color: gamingTheme.stellarWhite, outline: 'none',
-                      resize: 'none', lineHeight: 1.5, boxSizing: 'border-box',
+                    style={{
+                      ...S.textarea,
                       opacity: isLoading || isRateLimited() ? 0.5 : 1,
-                    } : undefined}
+                    }}
                   />
-                  <p
-                    className={gamingMode ? undefined : `text-[10px] font-bold text-right mt-0.5 ${input.length > MAX_CHARS * 0.9 ? 'text-red-500' : 'text-brutal-black/30'}`}
-                    style={gamingMode ? { fontFamily: gamingTheme.fontLabel, fontSize: '9px', color: input.length > MAX_CHARS * 0.9 ? '#F87171' : gamingTheme.mutedBlue, textAlign: 'right', marginTop: '3px' } : undefined}
-                  >
+                  <p style={S.charCount(input.length > MAX_CHARS * 0.9)}>
                     {input.length}/{MAX_CHARS}
                   </p>
                 </div>
                 <button
                   onClick={() => handleSend()}
                   disabled={isLoading || !input.trim() || input.trim().length < 2 || isRateLimited()}
-                  className={gamingMode ? undefined : `${headerBgClass} border-4 border-brutal-black shadow-brutal-sm hover:shadow-brutal px-4 py-3 ${headerTextClass} disabled:opacity-40 transition-all self-start flex items-center justify-center`}
-                  style={gamingMode && gamingColors ? {
-                    padding: '10px 14px', borderRadius: '10px', alignSelf: 'flex-start',
-                    background: `linear-gradient(135deg, ${gamingColors.primary}, ${gamingColors.secondary || gamingColors.primary})`,
-                    border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  style={{
+                    ...S.sendBtn,
                     opacity: isLoading || !input.trim() || input.trim().length < 2 || isRateLimited() ? 0.4 : 1,
-                    boxShadow: `0 0 12px ${gamingColors.glow}`,
-                  } : undefined}
+                  }}
                 >
-                  <Send size={16} color={gamingMode ? gamingTheme.bgDark : undefined} strokeWidth={2.5} />
+                  <Send size={16} color={S.sendBtnIconColor} strokeWidth={2.5} />
                 </button>
               </div>
             </div>

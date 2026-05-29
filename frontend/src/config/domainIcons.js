@@ -70,9 +70,6 @@ const DOMAIN_PERSONALITY = {
   gaming: {
     primaryIconComponent: Gamepad2,
     animation: 'flash',
-    headerBg: 'bg-brutal-green',
-    headerText: 'text-brutal-black',
-    fabBg: 'bg-brutal-green',
     tagline: 'gaming specialist · your financial buddy',
     greetings: [
       (name) => `Yo ${name}! Ready to grind some financial XP?`,
@@ -85,9 +82,6 @@ const DOMAIN_PERSONALITY = {
   fashion: {
     primaryIconComponent: Sparkles,
     animation: 'pulse',
-    headerBg: 'bg-brutal-pink',
-    headerText: 'text-brutal-black',
-    fabBg: 'bg-brutal-pink',
     tagline: 'fashion specialist · your style curator',
     greetings: [
       (name) => `Darling ${name}! Ready to curate your financial style?`,
@@ -100,9 +94,6 @@ const DOMAIN_PERSONALITY = {
   sports: {
     primaryIconComponent: Award,
     animation: 'bounce',
-    headerBg: 'bg-brutal-blue',
-    headerText: 'text-brutal-white',
-    fabBg: 'bg-brutal-blue',
     tagline: 'sports specialist · your head coach',
     greetings: [
       (name) => `Coach is in! ${name}, ready to build your championship strategy?`,
@@ -115,9 +106,6 @@ const DOMAIN_PERSONALITY = {
   movies: {
     primaryIconComponent: Film,
     animation: 'wiggle',
-    headerBg: 'bg-brutal-black',
-    headerText: 'text-brutal-green',
-    fabBg: 'bg-brutal-black',
     tagline: 'film specialist · your creative director',
     greetings: [
       (name) => `Action! ${name}, ready to direct your financial story?`,
@@ -130,9 +118,6 @@ const DOMAIN_PERSONALITY = {
   food: {
     primaryIconComponent: ChefHat,
     animation: 'flicker',
-    headerBg: 'bg-brutal-green',
-    headerText: 'text-brutal-black',
-    fabBg: 'bg-brutal-green',
     tagline: 'culinary specialist · your head chef',
     greetings: [
       (name) => `Chef ${name}! Ready to master your financial kitchen?`,
@@ -145,9 +130,6 @@ const DOMAIN_PERSONALITY = {
   music: {
     primaryIconComponent: Music,
     animation: 'float',
-    headerBg: 'bg-brutal-blue',
-    headerText: 'text-brutal-white',
-    fabBg: 'bg-brutal-blue',
     tagline: 'music specialist · your maestro',
     greetings: [
       (name) => `Maestro ${name}! Ready to compose your financial symphony?`,
