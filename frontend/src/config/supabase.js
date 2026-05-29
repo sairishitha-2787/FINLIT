@@ -4,11 +4,9 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_S
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables!');
-  console.log('Looking for:', {
-    url: 'VITE_SUPABASE_URL or REACT_APP_SUPABASE_URL',
-    key: 'VITE_SUPABASE_ANON_KEY or REACT_APP_SUPABASE_ANON_KEY',
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Missing Supabase environment variables (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)');
+  }
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
