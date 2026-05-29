@@ -95,7 +95,7 @@ export default function SportsLearning() {
   const location  = useLocation();
   const navigate  = useNavigate();
   const { profile, completedTopics, addTopicProgress } = useUser();
-  const { xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
+  const { xp, level, xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
   const outletCtx = useOutletContext();
 
   const C    = outletCtx?.sportsColor  || '#E8457A';
@@ -156,7 +156,11 @@ export default function SportsLearning() {
         setExplanation(res.explanation);
         setExplCache(topic, variation, res.explanation);
         if (!isRegen) setStage('explanation');
-        setTimeout(() => awardXP.readExplanation(), 1000);
+        // Award read XP once per topic per lifetime
+        const explXpKey = `finlit_expl_xp_${topic?.replace(/\s+/g,'_')}`;
+        if (!isRegen && !localStorage.getItem(explXpKey)) {
+          setTimeout(() => { awardXP.readExplanation(); try { localStorage.setItem(explXpKey,'1'); } catch {} }, 1000);
+        }
       } else {
         setError('Failed to load explanation. Please try again.');
       }
@@ -231,11 +235,14 @@ export default function SportsLearning() {
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {
-      awardXP.completeQuiz(score, totalQuestions);
-      addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
-      checkBadgeUnlock('FIRST_LESSON');
-      const newCount = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
-      if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
+      const alreadyDone = completedTopics.includes(topic);
+      if (!alreadyDone) {
+        awardXP.completeQuiz(score, totalQuestions);
+        addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+        checkBadgeUnlock('FIRST_LESSON');
+        const newCount = completedTopics.length + 1;
+        if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
+      }
       clear(topic);
       setStage('complete');
       setShowReflection(true);
@@ -259,38 +266,63 @@ export default function SportsLearning() {
 
       <div style={{ position: 'relative', zIndex: 1, padding: '20px 20px 56px', maxWidth: 760, margin: '0 auto' }}>
 
-        {/* ── Header ── */}
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}
-        >
-          <motion.button
-            whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.93 }}
-            onClick={() => navigate(backPath)}
-            style={{
-              width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-              background: `${C}15`, border: `1px solid ${C}40`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}
+        {/* ── Header (sticky) ── */}
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 20,
+          background: sportsTheme.bgDark,
+          borderBottom: `1px solid rgba(255,255,255,0.06)`,
+          marginBottom: 20, paddingTop: 12, paddingBottom: 12,
+        }}>
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 14 }}
           >
-            <ArrowLeft size={17} color={C} />
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.93 }}
+              onClick={() => navigate(backPath)}
+              style={{
+                width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                background: `${C}15`, border: `1px solid ${C}40`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <ArrowLeft size={17} color={C} />
+            </motion.button>
 
-          <div style={{ flex: 1 }}>
-            <Label color={C}>Training Session · {backLabel}</Label>
-            <div style={{
-              fontFamily: sportsTheme.fontHeading,
-              fontSize: 'clamp(22px,4vw,30px)',
-              letterSpacing: '2px', color: '#fff',
-              textShadow: `0 0 18px ${G}`,
-              lineHeight: 1.05,
-            }}>
-              {topic?.toUpperCase()}
+            <div style={{ flex: 1 }}>
+              <Label color={C}>Training Session · {backLabel}</Label>
+              <div style={{
+                fontFamily: sportsTheme.fontHeading,
+                fontSize: 'clamp(20px,4vw,28px)',
+                letterSpacing: '2px', color: '#fff',
+                textShadow: `0 0 18px ${G}`,
+                lineHeight: 1.05,
+              }}>
+                {topic?.toUpperCase()}
+              </div>
             </div>
-          </div>
-        </motion.div>
+
+            {/* XP pill */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0,
+            }}>
+              <div style={{
+                fontFamily: sportsTheme.fontSub, fontWeight: 700,
+                fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase',
+                color: sportsTheme.textMuted, marginBottom: 3,
+              }}>LV {level}</div>
+              <div style={{
+                padding: '4px 10px', borderRadius: 8,
+                background: `${C}18`, border: `1px solid ${C}40`,
+                fontFamily: sportsTheme.fontHeading, fontSize: 14, letterSpacing: '1px', color: C,
+              }}>
+                {xp} XP
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
         {/* ── Error ── */}
         {error && (

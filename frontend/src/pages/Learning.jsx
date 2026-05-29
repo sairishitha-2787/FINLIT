@@ -92,7 +92,7 @@ const Learning = () => {
   const location  = useLocation();
   const navigate  = useNavigate();
   const { profile, completedTopics, addTopicProgress } = useUser();
-  const { xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
+  const { xp, level, xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
   const outletCtx  = useOutletContext();
 
   const isGamingMode  = !!(outletCtx?.colors);
@@ -188,7 +188,10 @@ const Learning = () => {
         setExplanation(response.explanation);
         setCachedExplanation(topic, variation, response.explanation);
         if (!isRegen) setStage('explanation');
-        setTimeout(() => { awardXP.readExplanation(); }, 1000);
+        const explXpKey = `finlit_expl_xp_${topic?.replace(/\s+/g,'_')}`;
+        if (!isRegen && !localStorage.getItem(explXpKey)) {
+          setTimeout(() => { awardXP.readExplanation(); try { localStorage.setItem(explXpKey,'1'); } catch {} }, 1000);
+        }
       } else {
         setError('Failed to load explanation');
       }
@@ -286,11 +289,13 @@ const Learning = () => {
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {
-      awardXP.completeQuiz(score, totalQuestions);
-      addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
-      // TOPIC_MASTER: completedTopics reflects pre-add state, so +1 for the topic just completed
-      const newCount = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
-      if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
+      const alreadyDone = completedTopics.includes(topic);
+      if (!alreadyDone) {
+        awardXP.completeQuiz(score, totalQuestions);
+        addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+        const newCount = completedTopics.length + 1;
+        if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
+      }
       proceedToComplete();
     }
   };
@@ -362,56 +367,73 @@ const Learning = () => {
           />
         )}
 
-        {/* Gaming header */}
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '16px',
-            marginBottom: '28px',
-          }}
-        >
-          <motion.button
-            whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
-            onClick={handleBackToDashboard}
-            style={{
-              width: 40, height: 40, borderRadius: '10px', flexShrink: 0,
-              background: `rgba(${hexToRgbStr(gc.primary)},0.12)`,
-              border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.3)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}
+        {/* Gaming header (sticky) */}
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 20,
+          background: gamingTheme.bgDark,
+          borderBottom: `1px solid rgba(${hexToRgbStr(gc.primary)},0.15)`,
+          marginBottom: 20, marginLeft: -32, marginRight: -32,
+          paddingLeft: 32, paddingRight: 32, paddingTop: 10, paddingBottom: 10,
+        }}>
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '16px' }}
           >
-            <ArrowLeft size={18} color={gc.primary} />
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
+              onClick={handleBackToDashboard}
+              style={{
+                width: 40, height: 40, borderRadius: '10px', flexShrink: 0,
+                background: `rgba(${hexToRgbStr(gc.primary)},0.12)`,
+                border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.3)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <ArrowLeft size={18} color={gc.primary} />
+            </motion.button>
 
-          <div>
-            <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', letterSpacing: '2.5px', color: gamingTheme.mutedBlue, textTransform: 'uppercase', marginBottom: '4px' }}>
-              Quest Briefing
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '9px', letterSpacing: '2.5px', color: gamingTheme.mutedBlue, textTransform: 'uppercase', marginBottom: '2px' }}>
+                Quest Briefing
+              </div>
+              <h1 style={{
+                fontFamily: gamingTheme.fontHeading, fontSize: 'clamp(16px,3vw,22px)', fontWeight: 800,
+                color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '2px',
+                textShadow: `0 0 16px ${gc.glow}`, margin: 0,
+              }}>
+                {topic}
+              </h1>
             </div>
-            <h1 style={{
-              fontFamily: gamingTheme.fontHeading, fontSize: '22px', fontWeight: 800,
-              color: gamingTheme.stellarWhite, textTransform: 'uppercase', letterSpacing: '2px',
-              textShadow: `0 0 16px ${gc.glow}`, margin: 0,
-            }}>
-              {topic}
-            </h1>
-          </div>
 
-          {chapterInfo && (
-            <div style={{
-              marginLeft: 'auto', padding: '5px 14px', borderRadius: '999px',
-              background: `rgba(${hexToRgbStr(gc.primary)},0.1)`,
-              border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.25)`,
-              fontFamily: gamingTheme.fontLabel, fontSize: '9px',
-              letterSpacing: '1px', color: gc.primary,
-              display: 'flex', alignItems: 'center', gap: '6px',
-            }}>
-              <BookOpen size={11} />
-              Ch.{chapterInfo.chapter.number} · Topic {chapterInfo.position}/{chapterInfo.topicTotal}
+            {/* XP pill */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: 2 }}>
+              <div style={{ fontFamily: gamingTheme.fontLabel, fontSize: '8px', letterSpacing: '2px', color: gamingTheme.mutedBlue, textTransform: 'uppercase' }}>LV {level}</div>
+              <div style={{
+                padding: '3px 10px', borderRadius: 7,
+                background: `rgba(${hexToRgbStr(gc.primary)},0.14)`,
+                border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.38)`,
+                fontFamily: gamingTheme.fontHeading, fontSize: 13, letterSpacing: '1px', color: gc.primary,
+              }}>{xp} XP</div>
             </div>
-          )}
-        </motion.div>
+
+            {chapterInfo && (
+              <div style={{
+                padding: '4px 12px', borderRadius: '999px',
+                background: `rgba(${hexToRgbStr(gc.primary)},0.1)`,
+                border: `1px solid rgba(${hexToRgbStr(gc.primary)},0.25)`,
+                fontFamily: gamingTheme.fontLabel, fontSize: '9px',
+                letterSpacing: '1px', color: gc.primary,
+                display: 'flex', alignItems: 'center', gap: '6px',
+                flexShrink: 0,
+              }}>
+                <BookOpen size={11} />
+                Ch.{chapterInfo.chapter.number}
+              </div>
+            )}
+          </motion.div>
+        </div>
 
         {/* Error */}
         {error && (

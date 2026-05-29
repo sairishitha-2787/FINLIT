@@ -438,7 +438,7 @@ export default function FashionLearning() {
   const ctx = useOutletContext() || {};
   const { fashionCharacter } = ctx;
   const { profile, addTopicProgress, completedTopics } = useUser();
-  const { awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
+  const { xp, level, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
   const topic      = location.state?.topic;
   const nextTopic  = location.state?.nextTopic || null;
@@ -480,7 +480,10 @@ export default function FashionLearning() {
         setExpl(res.explanation);
         setEx(topic, v, res.explanation);
         setStage('explanation');
-        if (!isRegen) setTimeout(() => awardXP?.readExplanation?.(), 800);
+        const explXpKey = `finlit_expl_xp_${topic?.replace(/\s+/g,'_')}`;
+        if (!isRegen && !localStorage.getItem(explXpKey)) {
+          setTimeout(() => { awardXP?.readExplanation?.(); try { localStorage.setItem(explXpKey,'1'); } catch {} }, 800);
+        }
       } else {
         const fallback = getStaticExplanation(topic);
         setExpl(fallback);
@@ -582,14 +585,17 @@ export default function FashionLearning() {
   const finishQuiz = () => {
     const finalScore = scoreRef.current;
     const didPass    = finalScore >= PASS_SCORE;
+    const alreadyDone = completedTopics.includes(topic);
     setPassed(didPass);
     clearQz(topic);
-    awardXP?.completeQuiz?.(finalScore, questions.length);
+    if (!alreadyDone) awardXP?.completeQuiz?.(finalScore, questions.length);
     if (didPass) {
-      addTopicProgress({ topic, score: finalScore, totalQuestions: questions.length, difficulty: profile?.difficulty || 'beginner' });
-      checkBadgeUnlock('FIRST_LESSON');
-      const newCount1 = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
-      if (newCount1 >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount1);
+      if (!alreadyDone) {
+        addTopicProgress({ topic, score: finalScore, totalQuestions: questions.length, difficulty: profile?.difficulty || 'beginner' });
+        checkBadgeUnlock('FIRST_LESSON');
+        const newCount1 = completedTopics.length + 1;
+        if (newCount1 >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount1);
+      }
       if (finalScore === questions.length) {
         confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
         setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
@@ -612,12 +618,15 @@ export default function FashionLearning() {
     clearQz(topic);
     try { sessionStorage.removeItem(`finlit_scenario_prog_${(topic || '').replace(/\s+/g,'_')}`); } catch {}
     try { sessionStorage.removeItem(`finlit_quiz_prog_${(topic || '').replace(/\s+/g,'_')}`); } catch {}
-    awardXP?.completeQuiz?.(score, totalQuestions);
+    const alreadyDoneQ = completedTopics.includes(topic);
+    if (!alreadyDoneQ) awardXP?.completeQuiz?.(score, totalQuestions);
     if (didPass) {
-      addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
-      checkBadgeUnlock('FIRST_LESSON');
-      const newCount = completedTopics.includes(topic) ? completedTopics.length : completedTopics.length + 1;
-      if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
+      if (!alreadyDoneQ) {
+        addTopicProgress({ topic, score, totalQuestions, difficulty: profile?.difficulty || 'beginner' });
+        checkBadgeUnlock('FIRST_LESSON');
+        const newCount = completedTopics.length + 1;
+        if (newCount >= 10) checkBadgeUnlock('TOPIC_MASTER', newCount);
+      }
       if (score === totalQuestions) {
         confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#f7a0b8','#c084fc','#fde68a'] });
         setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#f7a0b8','#c084fc'] }), 260);
@@ -658,49 +667,68 @@ export default function FashionLearning() {
       style={{ padding: '20px 24px', maxWidth: 720, margin: '0 auto 60px' }}
     >
 
-      {/* ── Top bar ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-        <motion.button
-          whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.93 }}
-          onClick={() => navigate('/fashion/map')}
-          style={{
-            width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
-            background: 'rgba(255,255,255,0.35)',
-            backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.62)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-          }}
-        >
-          <ChevronLeft size={18} color={C.deepRose} />
-        </motion.button>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 9, letterSpacing: '0.20em', textTransform: 'uppercase', color: C.label, marginBottom: 2 }}>
-            {distLabel}
-          </div>
-          <h1 style={{ fontFamily: F.heading, fontWeight: 600, fontSize: 20, letterSpacing: '-0.01em', color: C.deepRose, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {topic}
-          </h1>
-        </div>
-
-        {stage === 'explanation' && (
+      {/* ── Top bar (sticky) ── */}
+      <div style={{
+        position: 'sticky', top: 0, zIndex: 20,
+        background: 'rgba(250,245,236,0.92)',
+        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+        borderBottom: '1px solid rgba(247,160,184,0.22)',
+        marginBottom: 20, padding: '10px 0',
+        marginLeft: -24, marginRight: -24, paddingLeft: 24, paddingRight: 24,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <motion.button
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-            onClick={handleRegen} disabled={regenning}
-            title="Explain differently"
+            whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.93 }}
+            onClick={() => navigate('/fashion/map')}
             style={{
-              width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-              background: 'rgba(255,255,255,0.32)', border: '1px solid rgba(255,255,255,0.55)',
+              width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+              background: 'rgba(255,255,255,0.35)',
+              backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.62)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: regenning ? 'not-allowed' : 'pointer', opacity: regenning ? 0.5 : 1,
+              cursor: 'pointer',
             }}
           >
-            <RefreshCw size={14} color={C.midRose} style={{ animation: regenning ? 'spin 1s linear infinite' : 'none' }} />
+            <ChevronLeft size={18} color={C.deepRose} />
           </motion.button>
-        )}
 
-        <ChibiThumb char={fashionCharacter} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 9, letterSpacing: '0.20em', textTransform: 'uppercase', color: C.label, marginBottom: 2 }}>
+              {distLabel}
+            </div>
+            <h1 style={{ fontFamily: F.heading, fontWeight: 600, fontSize: 20, letterSpacing: '-0.01em', color: C.deepRose, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {topic}
+            </h1>
+          </div>
+
+          {/* XP pill */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: 2 }}>
+            <div style={{ fontFamily: F.ui, fontWeight: 500, fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.label }}>Lv {level}</div>
+            <div style={{
+              padding: '3px 10px', borderRadius: 8,
+              background: 'rgba(247,160,184,0.15)', border: '1px solid rgba(247,160,184,0.40)',
+              fontFamily: F.ui, fontWeight: 700, fontSize: 12, color: C.deepRose,
+            }}>{xp} XP</div>
+          </div>
+
+          {stage === 'explanation' && (
+            <motion.button
+              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+              onClick={handleRegen} disabled={regenning}
+              title="Explain differently"
+              style={{
+                width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+                background: 'rgba(255,255,255,0.32)', border: '1px solid rgba(255,255,255,0.55)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: regenning ? 'not-allowed' : 'pointer', opacity: regenning ? 0.5 : 1,
+              }}
+            >
+              <RefreshCw size={14} color={C.midRose} style={{ animation: regenning ? 'spin 1s linear infinite' : 'none' }} />
+            </motion.button>
+          )}
+
+          <ChibiThumb char={fashionCharacter} />
+        </div>
       </div>
 
       {/* ── Badge unlock notification ── */}

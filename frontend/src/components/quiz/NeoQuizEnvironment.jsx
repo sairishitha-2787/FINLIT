@@ -84,13 +84,6 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
       try { sessionStorage.removeItem(progressKey(topic)); } catch {}
       const finalScore = score;
 
-      // Only award XP on first completion — prevent farming on reattempts
-      const alreadyDone = localStorage.getItem(completedKey(topic)) === 'true';
-      if (!alreadyDone) {
-        awardXP.completeQuiz(finalScore, totalQuestions);
-        localStorage.setItem(completedKey(topic), 'true');
-      }
-
       // Confetti celebration
       if (finalScore === totalQuestions) {
         // Perfect score - epic confetti
