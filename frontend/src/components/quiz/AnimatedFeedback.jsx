@@ -67,7 +67,6 @@ const AnimatedFeedback = ({
   const userAnswerText = optText(options[answerLabels.indexOf(userAnswer)]);
 
   const feedbackText = brutalHonestFeedback || explanation || 'Keep pushing forward!';
-  const gc = gamingColors || {};
 
   // ── Sports theme override ────────────────────────────────────────────────────
   const sm = !!(gamingMode && gc.sports);

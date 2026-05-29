@@ -124,7 +124,7 @@ const Learning = () => {
   const [quizResult, setQuizResult]   = useState(null);
   const [showReflection, setShowReflection] = useState(false);
 
-  const { celebrate } = useCelebration(isGamingMode ? 'gaming' : 'gaming', gc?.primary);
+  const { celebrate } = useCelebration('gaming', gamingColors?.primary);
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
