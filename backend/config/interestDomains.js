@@ -1,19 +1,7 @@
 // FINLIT - Interest Domains Configuration
-// Exactly 11 interest domains for personalized learning
+// 9 interest domains (food and movies removed — no built domain for those)
 
 const interestDomains = [
-  {
-    id: 'writing',
-    name: 'Writing & Storytelling',
-    icon: 'PenLine',
-    description: 'Learn finance through narrative structures and writing concepts'
-  },
-  {
-    id: 'movies',
-    name: 'Movies & TV Shows',
-    icon: 'Film',
-    description: 'Understand money through plots, characters, and productions'
-  },
   {
     id: 'gaming',
     name: 'Gaming',
@@ -21,16 +9,22 @@ const interestDomains = [
     description: 'Level up your finance knowledge with gaming analogies'
   },
   {
-    id: 'music',
-    name: 'Music',
-    icon: 'Music',
-    description: 'Compose your financial future with music industry insights'
-  },
-  {
     id: 'fashion',
     name: 'Fashion',
     icon: 'Shirt',
     description: 'Style your finances with fashion industry parallels'
+  },
+  {
+    id: 'sports',
+    name: 'Sports',
+    icon: 'Activity',
+    description: 'Score financial wins with sports strategy and team building'
+  },
+  {
+    id: 'music',
+    name: 'Music',
+    icon: 'Music',
+    description: 'Compose your financial future with music industry insights'
   },
   {
     id: 'technology',
@@ -45,10 +39,10 @@ const interestDomains = [
     description: 'Master finance through entrepreneurship and business strategy'
   },
   {
-    id: 'food',
-    name: 'Food',
-    icon: 'UtensilsCrossed',
-    description: 'Cook up financial success with culinary comparisons'
+    id: 'writing',
+    name: 'Writing & Storytelling',
+    icon: 'PenLine',
+    description: 'Learn finance through narrative structures and writing concepts'
   },
   {
     id: 'college',
@@ -61,12 +55,6 @@ const interestDomains = [
     name: 'Art',
     icon: 'Palette',
     description: 'Paint your financial picture with artistic concepts'
-  },
-  {
-    id: 'sports',
-    name: 'Sports',
-    icon: 'Activity',
-    description: 'Score financial wins with sports strategy and team building'
   }
 ];
 

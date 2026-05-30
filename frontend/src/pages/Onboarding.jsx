@@ -6,7 +6,7 @@ import {
   Check, Rocket, ArrowRight, ArrowLeft, Lock,
   GraduationCap, Briefcase, Sparkles, CreditCard, PiggyBank,
   TrendingUp, HelpCircle, Sprout, Leaf, TreePine,
-  Gamepad2, Trophy, Film, ChefHat, Music,
+  Gamepad2, Trophy, Music, Sparkles,
 } from 'lucide-react';
 import AnimatedIcon from '../components/shared/AnimatedIcon';
 import { useUser } from '../context/UserContext';
@@ -22,8 +22,6 @@ const CORE_DOMAINS = [
   { id: 'gaming',  name: 'Gaming',  Icon: Gamepad2, desc: 'XP, quests & boss battles',        color: '#9FE0D3', bg: 'linear-gradient(135deg, #9FE0D3 0%, #5E86C1 100%)' },
   { id: 'fashion', name: 'Fashion', Icon: Sparkles, desc: 'Style your financial future',       color: '#f7a0b8', bg: 'linear-gradient(135deg, #f7a0b8 0%, #c084fc 50%, #fbb6c4 100%)' },
   { id: 'sports',  name: 'Sports',  Icon: Trophy,   desc: 'Your championship finance roster',  color: '#FF6B35', bg: 'linear-gradient(135deg, #FF6B35 0%, #F7C59F 100%)' },
-  { id: 'movies',  name: 'Movies',  Icon: Film,     desc: 'Direct your financial blockbuster', color: '#DC2626', bg: 'linear-gradient(135deg, #DC2626 0%, #F59E0B 100%)' },
-  { id: 'food',    name: 'Food',    Icon: ChefHat,  desc: 'Master your financial kitchen',     color: '#FB923C', bg: 'linear-gradient(135deg, #FB923C 0%, #FEF3C7 100%)' },
   { id: 'music',   name: 'Music',   Icon: Music,    desc: 'Compose your financial symphony',   color: '#7C3AED', bg: 'linear-gradient(135deg, #7C3AED 0%, #EAB308 100%)' },
 ];
 

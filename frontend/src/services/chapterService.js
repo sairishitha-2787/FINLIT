@@ -135,8 +135,7 @@ function normalizeDomain(domain) {
   const aliases = {
     'video games': 'gaming', 'esports': 'gaming', 'games': 'gaming',
     'clothes': 'fashion', 'style': 'fashion',
-    'cooking': 'food', 'chef': 'food', 'culinary': 'food',
-    'film': 'movies', 'cinema': 'movies',
+    'sound': 'music', 'beats': 'music',
     'exercise': 'sports', 'fitness': 'sports', 'gym': 'sports',
     'song': 'music', 'songs': 'music', 'instruments': 'music',
   };

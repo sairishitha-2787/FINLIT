@@ -142,9 +142,7 @@ function App() {
               <Route path="settings" element={<SportsSettings />} />
             </Route>
 
-            {/* Coming soon domains */}
-            <Route path="/movies" element={<ProtectedRoute><ComingSoon domain="movies" /></ProtectedRoute>} />
-            <Route path="/food"   element={<ProtectedRoute><ComingSoon domain="food"   /></ProtectedRoute>} />
+            {/* Music — in development */}
             <Route path="/music"  element={<ProtectedRoute><ComingSoon domain="music"  /></ProtectedRoute>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />

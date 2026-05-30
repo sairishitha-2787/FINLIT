@@ -4,27 +4,20 @@ import React from 'react';
 import GamingProgress   from './GamingProgress';
 import FashionProgress  from './FashionProgress';
 import SportsProgress   from './SportsProgress';
-import MoviesProgress   from './MoviesProgress';
-import FoodProgress     from './FoodProgress';
 import MusicProgress    from './MusicProgress';
 
 const DOMAIN_MAP = {
   gaming:   GamingProgress,
   fashion:  FashionProgress,
   sports:   SportsProgress,
-  movies:   MoviesProgress,
-  food:     FoodProgress,
   music:    MusicProgress,
 };
 
-// Normalize aliases so 'video games' → gaming, etc.
 function normalizeDomain(domain = '') {
   const d = domain.toLowerCase().trim();
   const ALIASES = {
     'video games': 'gaming', 'videogames': 'gaming', 'games': 'gaming',
     'clothes': 'fashion', 'clothing': 'fashion',
-    'film': 'movies', 'cinema': 'movies',
-    'cooking': 'food', 'cuisine': 'food',
     'exercise': 'sports', 'fitness': 'sports',
     'songs': 'music', 'song': 'music',
   };

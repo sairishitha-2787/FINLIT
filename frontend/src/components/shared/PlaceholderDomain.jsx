@@ -1,22 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Lock, Sparkles } from 'lucide-react';
-import { Film, Music, UtensilsCrossed, Activity, Code2, Briefcase, PenLine, Palette, GraduationCap } from 'lucide-react';
+import { Music, Activity, Code2, Briefcase, PenLine, Palette, GraduationCap } from 'lucide-react';
 
 const DOMAIN_CONFIG = {
-  movies: {
-    name: 'Movies',
-    Icon: Film,
-    tagline: 'Learn finance through the magic of cinema',
-    color: '#F59E0B',
-    lightBg: 'from-amber-50 to-orange-50/60',
-    accent: '#D97706',
-    features: [
-      'Budget like a Hollywood producer',
-      'Understand box office economics',
-      'Learn investing through studio deals',
-    ],
-  },
   music: {
     name: 'Music',
     Icon: Music,
@@ -28,19 +15,6 @@ const DOMAIN_CONFIG = {
       'Manage finances like a music artist',
       'Understand royalties and streaming revenue',
       'Plan income like a touring musician',
-    ],
-  },
-  food: {
-    name: 'Food',
-    Icon: UtensilsCrossed,
-    tagline: 'Cook up your financial future',
-    color: '#10B981',
-    lightBg: 'from-emerald-50 to-green-50/60',
-    accent: '#059669',
-    features: [
-      'Budget like a restaurant owner',
-      'Learn margins and profitability',
-      'Understand food business economics',
     ],
   },
   sports: {

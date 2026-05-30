@@ -85,8 +85,6 @@ const Dashboard = () => {
   if (interest === 'gaming')  { navigate('/gaming',  { replace: true }); return null; }
   if (interest === 'fashion') { navigate('/fashion', { replace: true }); return null; }
   if (interest === 'sports')  { navigate('/sports',  { replace: true }); return null; }
-  if (interest === 'movies')  { navigate('/movies',  { replace: true }); return null; }
-  if (interest === 'food')    { navigate('/food',    { replace: true }); return null; }
   if (interest === 'music')   { navigate('/music',   { replace: true }); return null; }
 
   // Whether to show a "coming soon" domain section below the main dashboard

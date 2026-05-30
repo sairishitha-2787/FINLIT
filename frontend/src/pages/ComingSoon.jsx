@@ -1,12 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Film, ChefHat, Music, ArrowLeft, Wrench } from 'lucide-react';
+import { Music, ArrowLeft, Wrench } from 'lucide-react';
 
 const DOMAIN_CONFIG = {
-  movies: { label: 'Movies',  Icon: Film,    color: '#DC2626', bg: '#1a0505' },
-  food:   { label: 'Food',    Icon: ChefHat, color: '#FB923C', bg: '#1a0e05' },
-  music:  { label: 'Music',   Icon: Music,   color: '#A78BFA', bg: '#0e0519' },
+  music: { label: 'Music', Icon: Music, color: '#A78BFA', bg: '#0e0519' },
 };
 
 export default function ComingSoon({ domain }) {

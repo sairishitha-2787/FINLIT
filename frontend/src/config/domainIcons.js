@@ -3,16 +3,16 @@
 // Icons are Lucide React components (no emojis).
 
 import {
-  Gamepad2, Sparkles, Award, Film, ChefHat, Music,
-  Trophy, Target, Star, Crown, Shield, Flame, Utensils,
-  Zap, Camera, Heart, TrendingUp, Brain,
+  Gamepad2, Sparkles, Award, Music,
+  Trophy, Target, Star, Crown, Shield, Flame,
+  Zap, Heart, TrendingUp, Brain,
 } from 'lucide-react';
 
 // ── Icon name → component lookup (for dynamic icon loading) ──────────────────
 const ICON_LOOKUP = {
-  Gamepad2, Sparkles, Award, Film, ChefHat, Music,
-  Trophy, Target, Star, Crown, Shield, Flame, Utensils,
-  Zap, Camera, Heart, TrendingUp, Brain,
+  Gamepad2, Sparkles, Award, Music,
+  Trophy, Target, Star, Crown, Shield, Flame,
+  Zap, Heart, TrendingUp, Brain,
 };
 
 export function getIconComponent(name) {
@@ -40,20 +40,6 @@ export const domainIcons = {
     success: 'Trophy',
     learning: 'Target',
     challenge: 'Shield',
-    progress: 'TrendingUp',
-  },
-  movies: {
-    primary: 'Film',
-    success: 'Star',
-    learning: 'Camera',
-    challenge: 'Award',
-    progress: 'TrendingUp',
-  },
-  food: {
-    primary: 'ChefHat',
-    success: 'Star',
-    learning: 'Utensils',
-    challenge: 'Flame',
     progress: 'TrendingUp',
   },
   music: {
@@ -103,30 +89,6 @@ const DOMAIN_PERSONALITY = {
     ],
     errorMessage: () => "Technical timeout! Equipment issue on my end. Back in a second.",
   },
-  movies: {
-    primaryIconComponent: Film,
-    animation: 'wiggle',
-    tagline: 'film specialist · your creative director',
-    greetings: [
-      (name) => `Action! ${name}, ready to direct your financial story?`,
-      (name) => `${name}! Your financial screenplay is waiting.`,
-      (name) => `Lights, camera — ${name}! Let's craft your next chapter.`,
-      (name) => `The director is in! ${name}, what's today's scene?`,
-    ],
-    errorMessage: () => "Cut! Technical difficulties on set. Stand by while we reset.",
-  },
-  food: {
-    primaryIconComponent: ChefHat,
-    animation: 'flicker',
-    tagline: 'culinary specialist · your head chef',
-    greetings: [
-      (name) => `Chef ${name}! Ready to master your financial kitchen?`,
-      (name) => `Welcome to the kitchen ${name}. What are we perfecting?`,
-      (name) => `${name}! Your mise en place is ready. Time to elevate.`,
-      (name) => `Good timing ${name}! Let's get the fundamentals dialed in.`,
-    ],
-    errorMessage: () => "Kitchen incident on my end! Just grabbing a fresh ingredient. One moment.",
-  },
   music: {
     primaryIconComponent: Music,
     animation: 'float',
@@ -145,8 +107,7 @@ const DOMAIN_ALIASES = {
   'video games': 'gaming', videogames: 'gaming', games: 'gaming',
   clothes: 'fashion', clothing: 'fashion', style: 'fashion',
   athletics: 'sports', fitness: 'sports',
-  cooking: 'food', culinary: 'food',
-  film: 'movies', cinema: 'movies',
+  sound: 'music', beats: 'music',
 };
 
 export function normalizeDomain(domain = '') {

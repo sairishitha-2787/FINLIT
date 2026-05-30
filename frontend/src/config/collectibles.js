@@ -64,38 +64,6 @@ export const COLLECTIBLES = {
     'Portfolio Rebalancing': { id:'s13', name:'General Manager',      position:'GM',  number:13, chapter:3, color:'#f472b6', desc:'Full roster command — every asset in its optimal position.' },
   },
 
-  movies: {
-    'Budgeting Basics':      { id:'m01', name:'The Production Brief',  act:1, scene:1,  chapter:1, color:'#4ade80', desc:'Every dollar planned before cameras roll.' },
-    'Saving Money':          { id:'m02', name:'Lead Cast Secured',     act:1, scene:2,  chapter:1, color:'#4ade80', desc:'The reliable contract — the constant every production needs.' },
-    'Emergency Fund':        { id:'m03', name:'Contingency Reserve',   act:1, scene:3,  chapter:1, color:'#4ade80', desc:'What every producer keeps off-sheet — the safety net.' },
-    'Credit Scores':         { id:'m04', name:'Studio Deal Signed',    act:1, scene:4,  chapter:1, color:'#4ade80', desc:'Your studio reputation — the number that opens every door.' },
-    'Compound Interest':     { id:'m05', name:'The Sequel Effect',     act:2, scene:5,  chapter:2, color:'#60a5fa', desc:'Each film earns more than the last — returns compound.' },
-    'Investing Basics':      { id:'m06', name:'Box Office Strategy',   act:2, scene:6,  chapter:2, color:'#60a5fa', desc:'Calculated release timing — deploy capital when ready.' },
-    'Stock Market':          { id:'m07', name:'Hollywood Floor',       act:2, scene:7,  chapter:2, color:'#60a5fa', desc:'High drama, higher stakes — the volatile trading floor.' },
-    'Risk Management':       { id:'m08', name:'The Plot Twist',        act:2, scene:8,  chapter:2, color:'#60a5fa', desc:'You saw it coming — because you planned for every scenario.' },
-    'Diversification':       { id:'m09', name:'Ensemble Cast',         act:2, scene:9,  chapter:2, color:'#60a5fa', desc:'No single actor carries it — your portfolio performs together.' },
-    'Retirement Planning':   { id:'m10', name:'Franchise Vision',      act:3, scene:10, chapter:3, color:'#f472b6', desc:'The decades-long story arc — built scene by scene.' },
-    'Tax Optimization':      { id:'m11', name:'Studio Accounting',     act:3, scene:11, chapter:3, color:'#f472b6', desc:'The back-office magic — where real profits are actually made.' },
-    'Real Estate':           { id:'m12', name:'Backlot Purchase',      act:3, scene:12, chapter:3, color:'#f472b6', desc:'Your own studio — income streams beyond any single film.' },
-    'Portfolio Rebalancing': { id:'m13', name:'Final Cut',             act:3, scene:13, chapter:3, color:'#f472b6', desc:'Every frame perfect — the director\'s cut of your wealth story.' },
-  },
-
-  food: {
-    'Budgeting Basics':      { id:'fo01', name:'Flour',          shelf:1, slot:1, chapter:1, color:'#4ade80', desc:'The foundation — without this, nothing else can be made.' },
-    'Saving Money':          { id:'fo02', name:'Salt',           shelf:1, slot:2, chapter:1, color:'#4ade80', desc:'The essential preservative — makes everything else taste better.' },
-    'Emergency Fund':        { id:'fo03', name:'Olive Oil',      shelf:1, slot:3, chapter:1, color:'#4ade80', desc:'Versatile and essential — handles crisis and celebration equally.' },
-    'Credit Scores':         { id:'fo04', name:'Butter',         shelf:1, slot:4, chapter:1, color:'#4ade80', desc:'The quality marker every chef is ultimately judged by.' },
-    'Compound Interest':     { id:'fo05', name:'Active Yeast',   shelf:2, slot:1, chapter:2, color:'#60a5fa', desc:'Patient and powerful — given time, it multiplies everything.' },
-    'Investing Basics':      { id:'fo06', name:'Stock Base',     shelf:2, slot:2, chapter:2, color:'#60a5fa', desc:'Simmered slowly — the depth behind every great dish.' },
-    'Stock Market':          { id:'fo07', name:'Fresh Herbs',    shelf:2, slot:3, chapter:2, color:'#60a5fa', desc:'Sourced fresh — quality varies, but the right pick elevates all.' },
-    'Risk Management':       { id:'fo08', name:'Spice Blend',    shelf:2, slot:4, chapter:2, color:'#60a5fa', desc:'Used with precision — too much heat ruins the whole dish.' },
-    'Diversification':       { id:'fo09', name:'Sauce Set',      shelf:2, slot:5, chapter:2, color:'#60a5fa', desc:'A balanced collection — each sauce unlocks a new category.' },
-    'Retirement Planning':   { id:'fo10', name:'Black Truffle',  shelf:3, slot:1, chapter:3, color:'#f472b6', desc:'The most prized ingredient — harvested once, valued forever.' },
-    'Tax Optimization':      { id:'fo11', name:'Saffron',        shelf:3, slot:2, chapter:3, color:'#f472b6', desc:'Rare and precise — a little goes a long way when used correctly.' },
-    'Real Estate':           { id:'fo12', name:'Aged Wine',      shelf:3, slot:3, chapter:3, color:'#f472b6', desc:'Time transforms it — the longer you hold, the more complex.' },
-    'Portfolio Rebalancing': { id:'fo13', name:'Wagyu Cut',      shelf:3, slot:4, chapter:3, color:'#f472b6', desc:'Premium and proportioned — the executive decision ingredient.' },
-  },
-
   music: {
     'Budgeting Basics':      { id:'mu01', name:'First Violin',   section:'strings',    seat:1, chapter:1, color:'#4ade80', desc:'The lead melody — sets the rhythm every other section follows.' },
     'Saving Money':          { id:'mu02', name:'Second Violin',  section:'strings',    seat:2, chapter:1, color:'#4ade80', desc:'Steady harmony — the consistent voice beneath the lead.' },
@@ -120,8 +88,6 @@ export function normalizeDomain(domain = '') {
   const MAP = {
     'video games': 'gaming', 'videogames': 'gaming', 'games': 'gaming',
     'clothes': 'fashion', 'clothing': 'fashion',
-    'film': 'movies', 'cinema': 'movies',
-    'cooking': 'food', 'cuisine': 'food',
     'exercise': 'sports', 'fitness': 'sports',
     'songs': 'music', 'song': 'music',
   };

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  PenLine, Film, Gamepad2, Music, Shirt, Code2,
-  Briefcase, UtensilsCrossed, GraduationCap, Palette, Activity, Check,
+  PenLine, Gamepad2, Music, Shirt, Code2,
+  Briefcase, GraduationCap, Palette, Activity, Check,
 } from 'lucide-react';
 import { getInterests } from '../../services/api';
 
 const INTEREST_ICON_MAP = {
-  PenLine, Film, Gamepad2, Music, Shirt, Code2,
-  Briefcase, UtensilsCrossed, GraduationCap, Palette, Activity,
+  PenLine, Gamepad2, Music, Shirt, Code2,
+  Briefcase, GraduationCap, Palette, Activity,
 };
 
 const Loader = () => (

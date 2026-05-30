@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, BarChart2, Target, Zap,
   Clock, ChevronDown, ChevronUp, RefreshCw,
-  Gamepad2, Shirt, Trophy, Film, UtensilsCrossed, Music,
+  Gamepad2, Shirt, Trophy, Music,
 } from 'lucide-react';
 import AnimatedIcon from '../shared/AnimatedIcon';
 import ComprehensionCheck from './ComprehensionCheck';
@@ -32,8 +32,6 @@ const DOMAIN_ICON_MAP = {
   gaming:  Gamepad2,
   fashion: Shirt,
   sports:  Trophy,
-  movies:  Film,
-  food:    UtensilsCrossed,
   music:   Music,
 };
 

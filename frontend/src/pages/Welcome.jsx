@@ -1,23 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Brain, TrendingUp, Zap, Gamepad2, ChefHat, Music, Award, Sparkles } from 'lucide-react';
+import { Brain, TrendingUp, Gamepad2, Music, Award, Sparkles } from 'lucide-react';
 import GridDistortion from '../components/effects/GridDistortion';
 import GlassCard from '../components/core/GlassCard';
 import { glass } from '../styles/coreTheme';
 
 const features = [
   { Icon: Brain,      title: 'Adaptive Explanations', desc: 'Pick your pace — quick overview or deep dive. Re-explain any concept until it clicks.' },
-  { Icon: Sparkles,   title: 'Your Interests, Your Language', desc: 'Finance through gaming, food, sports, music, or fashion. FINN speaks your dialect.' },
+  { Icon: Sparkles,   title: 'Your Interests, Your Language', desc: 'Finance through gaming, sports, music, or fashion. FINN speaks your dialect.' },
   { Icon: TrendingUp, title: 'Gamified Progress', desc: 'Earn XP, level up, maintain streaks, and unlock badges as you master each concept.' },
 ];
 
 const domainIcons = [
   { Icon: Gamepad2, label: 'Gaming' },
-  { Icon: ChefHat,  label: 'Food'   },
-  { Icon: Music,    label: 'Music'  },
-  { Icon: Award,    label: 'Sports' },
   { Icon: Sparkles, label: 'Fashion'},
+  { Icon: Award,    label: 'Sports' },
+  { Icon: Music,    label: 'Music'  },
 ];
 
 const Welcome = () => (
