@@ -37,6 +37,10 @@ import { SportsProvider } from './contexts/SportsContext';
 import SportsLearning from './pages/sports/SportsLearning';
 import SportsSettings from './pages/sports/SportsSettings';
 import ComingSoon from './pages/ComingSoon';
+import MusicDashboard from './pages/music/MusicDashboard';
+import VinylRecords from './pages/music/VinylRecords';
+import NeonGlitch from './pages/music/NeonGlitch';
+import DreamyForest from './pages/music/DreamyForest';
 
 function App() {
   return (
@@ -142,8 +146,11 @@ function App() {
               <Route path="settings" element={<SportsSettings />} />
             </Route>
 
-            {/* Music — in development */}
-            <Route path="/music"  element={<ProtectedRoute><ComingSoon domain="music"  /></ProtectedRoute>} />
+            {/* Music domain */}
+            <Route path="/music"        element={<ProtectedRoute><MusicDashboard /></ProtectedRoute>} />
+            <Route path="/music/vinyl"  element={<ProtectedRoute><VinylRecords /></ProtectedRoute>} />
+            <Route path="/music/neon"   element={<ProtectedRoute><NeonGlitch /></ProtectedRoute>} />
+            <Route path="/music/forest" element={<ProtectedRoute><DreamyForest /></ProtectedRoute>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
