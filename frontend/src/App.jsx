@@ -36,11 +36,18 @@ import SportsBadgesPage from './pages/sports/SportsBadgesPage';
 import { SportsProvider } from './contexts/SportsContext';
 import SportsLearning from './pages/sports/SportsLearning';
 import SportsSettings from './pages/sports/SportsSettings';
-import ComingSoon from './pages/ComingSoon';
+import MusicLayout from './layouts/MusicLayout';
 import MusicDashboard from './pages/music/MusicDashboard';
+import MusicPlaybook from './pages/music/MusicPlaybook';
+import MusicLearning from './pages/music/MusicLearning';
+import MusicVault from './pages/music/MusicVault';
+import MusicCharts from './pages/music/MusicCharts';
+import MusicMixer from './pages/music/MusicMixer';
+import MusicBossBattle from './pages/music/MusicBossBattle';
 import VinylRecords from './pages/music/VinylRecords';
 import NeonGlitch from './pages/music/NeonGlitch';
 import DreamyForest from './pages/music/DreamyForest';
+import { MusicProvider } from './contexts/MusicContext';
 
 function App() {
   return (
@@ -147,10 +154,27 @@ function App() {
             </Route>
 
             {/* Music domain */}
-            <Route path="/music"        element={<ProtectedRoute><MusicDashboard /></ProtectedRoute>} />
-            <Route path="/music/vinyl"  element={<ProtectedRoute><VinylRecords /></ProtectedRoute>} />
-            <Route path="/music/neon"   element={<ProtectedRoute><NeonGlitch /></ProtectedRoute>} />
-            <Route path="/music/forest" element={<ProtectedRoute><DreamyForest /></ProtectedRoute>} />
+            <Route
+              path="/music"
+              element={
+                <ProtectedRoute>
+                  <MusicProvider>
+                    <MusicLayout />
+                  </MusicProvider>
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<MusicDashboard />} />
+              <Route path="setlist"       element={<MusicPlaybook />} />
+              <Route path="learn"         element={<MusicLearning />} />
+              <Route path="vault"         element={<MusicVault />} />
+              <Route path="charts"        element={<MusicCharts />} />
+              <Route path="mixer"         element={<MusicMixer />} />
+              <Route path="boss/:bossId"  element={<MusicBossBattle />} />
+              <Route path="vinyl"         element={<VinylRecords />} />
+              <Route path="neon"          element={<NeonGlitch />} />
+              <Route path="forest"        element={<DreamyForest />} />
+            </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

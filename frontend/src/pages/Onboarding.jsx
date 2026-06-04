@@ -6,7 +6,7 @@ import {
   Check, Rocket, ArrowRight, ArrowLeft, Lock,
   GraduationCap, Briefcase, Sparkles, CreditCard, PiggyBank,
   TrendingUp, HelpCircle, Sprout, Leaf, TreePine,
-  Gamepad2, Trophy, Music, Sparkles,
+  Gamepad2, Trophy, Music,
 } from 'lucide-react';
 import AnimatedIcon from '../components/shared/AnimatedIcon';
 import { useUser } from '../context/UserContext';

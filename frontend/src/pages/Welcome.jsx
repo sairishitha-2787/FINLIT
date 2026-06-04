@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Brain, TrendingUp, Gamepad2, Music, Award, Sparkles } from 'lucide-react';
+import { Brain, TrendingUp, Zap, Gamepad2, Music, Award, Sparkles } from 'lucide-react';
 import GridDistortion from '../components/effects/GridDistortion';
 import GlassCard from '../components/core/GlassCard';
 import { glass } from '../styles/coreTheme';

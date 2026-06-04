@@ -41,7 +41,8 @@ export default function BadgeSection({
 
   const isGaming = domain === 'gaming';
   const isSports = domain === 'sports';
-  const isDark   = isGaming || isSports;
+  const isMusic  = domain === 'music';
+  const isDark   = isGaming || isSports || isMusic;
   const allEarned = earnedCount === badges.length && badges.length > 0;
 
   const sorted = sortBadges(badges);
@@ -51,6 +52,8 @@ export default function BadgeSection({
     ? (glowColor || '#E8457A')
     : isGaming
       ? (theme.mint || '#9FE0D3')
+    : isMusic
+      ? (glowColor || '#D798A3')
       : (theme.midRose || '#d4537e');
 
   // Theme-specific styles
@@ -61,10 +64,14 @@ export default function BadgeSection({
   const titleColor = isDark ? '#ffffff' : (theme.deepRose || '#9d1f4a');
   const titleFont = isSports
     ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+    : isMusic
+      ? (theme.fontHeading || "'Cormorant Garamond', serif")
     : theme.fontHeading || (isGaming ? '"Orbitron", sans-serif' : "'Playfair Display', serif");
   const countColor = isDark ? 'rgba(255,255,255,0.40)' : (theme.body || '#b0627a');
   const countFont = isSports
     ? (theme.fontSub || "'Barlow Condensed', sans-serif")
+    : isMusic
+      ? (theme.fontSub || "'DM Sans', sans-serif")
     : isGaming
       ? (theme.fontLabel || '"Michroma", sans-serif')
       : (theme.fontUI || "'DM Sans', sans-serif");
@@ -167,7 +174,7 @@ export default function BadgeSection({
               style={{
                 padding: '20px 18px 24px',
                 display: 'grid',
-                gridTemplateColumns: `repeat(${columns}, ${badgeW}px)`,
+                gridTemplateColumns: `repeat(auto-fill, ${badgeW}px)`,
                 gap: '12px 16px',
                 justifyContent: 'start',
               }}

@@ -1,0 +1,101 @@
+/* FINLIT Music Dashboard — Cluster-specific CSS effects */
+
+/* ── Neon (CYPHER) ─────────────────────────────────────────────────────────── */
+
+/* Persistent scan-line overlay on the entire content area */
+.music-neon {
+  position: relative;
+}
+.music-neon::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.11) 0 1px,
+    transparent 1px 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Heading text-shadow glow */
+.music-neon .music-heading {
+  text-shadow: 0 0 24px rgba(0, 217, 255, 0.45), 0 0 6px rgba(194, 49, 201, 0.35);
+  letter-spacing: 1px !important;
+}
+
+/* Cluster active card glow for neon */
+.music-neon .music-cluster-active {
+  animation: musicNeonCardPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes musicNeonCardPulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(194, 49, 201, 0.18); }
+  50%       { box-shadow: 0 0 32px rgba(194, 49, 201, 0.40); }
+}
+
+/* ── Dreamy (LUNA) ──────────────────────────────────────────────────────────── */
+
+/* Heading italic style */
+.music-dreamy .music-heading {
+  font-style: italic;
+  font-weight: 300;
+  text-shadow: 0 2px 18px rgba(215, 152, 163, 0.35);
+}
+
+/* Cluster active card gentle pulse */
+.music-dreamy .music-cluster-active {
+  animation: musicDreamyGlow 4s ease-in-out infinite;
+}
+
+@keyframes musicDreamyGlow {
+  0%, 100% { box-shadow: 0 0 16px rgba(215, 152, 163, 0.18); }
+  50%       { box-shadow: 0 0 28px rgba(215, 152, 163, 0.36); }
+}
+
+/* ── Vinyl (JAY) ────────────────────────────────────────────────────────────── */
+
+.music-vinyl .music-heading {
+  text-shadow: 1px 1px 0 rgba(85, 31, 34, 0.5);
+}
+
+/* Active cluster card warm glow */
+.music-vinyl .music-cluster-active {
+  animation: musicVinylWarm 3s ease-in-out infinite;
+}
+
+@keyframes musicVinylWarm {
+  0%, 100% { box-shadow: 0 0 16px rgba(196, 193, 184, 0.14); }
+  50%       { box-shadow: 0 0 26px rgba(196, 193, 184, 0.28); }
+}
+
+/* ── Shared keyframes used by MusicLayout backgrounds ─────────────────────── */
+
+/* Dreamy butterfly wing flap */
+@keyframes dreamyFlap {
+  0%, 100% { transform: scaleX(1); }
+  50%       { transform: scaleX(0.42); }
+}
+
+@keyframes musicVinylSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes musicDreamyFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.8; }
+  50%       { transform: translateY(-8px); opacity: 1; }
+}
+
+@keyframes musicNeonPulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .music-cluster-row {
+    flex-direction: column !important;
+  }
+}

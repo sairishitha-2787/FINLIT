@@ -17,7 +17,7 @@ import useGamification from '../hooks/useGamification';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
 
 // Domains that have a dedicated, fully-built UI
-const BUILT_DOMAINS = ['gaming', 'fashion'];
+const BUILT_DOMAINS = ['gaming', 'fashion', 'sports', 'music'];
 // Domains with partial content but no dedicated layout yet
 const GENERIC_INTERESTS = ['general', 'finance', null, undefined];
 

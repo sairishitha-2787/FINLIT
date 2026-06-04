@@ -35,6 +35,16 @@ const DEFAULT_SECTIONS = [
   { key: 'secret',       label: 'Surprises',              icon: <Sparkles size={15} /> },
 ];
 
+// ── Music section definitions ─────────────────────────────────────────────────
+export const MUSIC_SECTIONS = [
+  { key: 'milestone',   label: 'Milestones',         icon: <Trophy   size={15} /> },
+  { key: 'performance', label: 'Performance',         icon: <Target   size={15} /> },
+  { key: 'genre',       label: 'Topic Badges',        icon: <Sparkles size={15} /> },
+  { key: 'rarity',      label: 'Rarity Progression',  icon: <Crown    size={15} /> },
+  { key: 'engagement',  label: 'Engagement',          icon: <Flame    size={15} /> },
+  { key: 'mastery',     label: 'Mastery',             icon: <Swords   size={15} /> },
+];
+
 // ── Sports section definitions ────────────────────────────────────────────────
 export const SPORTS_SECTIONS = [
   { key: 'progression', label: 'Milestones',   icon: <Trophy size={15} /> },
