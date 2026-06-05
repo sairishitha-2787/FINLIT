@@ -41,7 +41,7 @@ function useMusicFonts() {
   }, []);
 }
 
-// shared vinyl disc JSX helper
+// shared vinyl disc JSX helper — mirrors the Vinyl Records reference record art
 function VinylDisc({ size, top, bottom, left, right, speed, direction = 1, opacity }) {
   return (
     <motion.div
@@ -52,38 +52,42 @@ function VinylDisc({ size, top, bottom, left, right, speed, direction = 1, opaci
         width: size, height: size, borderRadius: '50%',
         background: `
           repeating-radial-gradient(circle at center,
-            rgba(0,0,0,0) 0 2px, rgba(85,31,34,0.10) 2px 3px, rgba(0,0,0,0) 3px 6px),
+            rgba(0,0,0,0) 0 2px, rgba(85,31,34,0.16) 2px 3px, rgba(0,0,0,0) 3px 6px),
           radial-gradient(circle at center, #1c1614 0 28%, #0c0a09 28% 30%, #161210 30% 100%)
         `,
         opacity,
       }}
     >
-      <div style={{ position: 'absolute', inset: '42%', borderRadius: '50%', background: 'radial-gradient(circle at center, #8A2D31 0 60%, #1a0a0c 60%)' }} />
+      {/* Center label */}
+      <div style={{ position: 'absolute', inset: '42%', borderRadius: '50%', background: 'radial-gradient(circle at center, #8A2D31 0 60%, #551F22 60%)', boxShadow: '0 0 0 4px rgba(0,0,0,0.4)' }} />
+      {/* Spindle hole */}
       <div style={{ position: 'absolute', inset: '48%', borderRadius: '50%', background: '#0a0807', zIndex: 2 }} />
     </motion.div>
   );
 }
 
 // ─── Vinyl background (JAY) ───────────────────────────────────────────────────
+// Mirrors Vinyl Records.html: deep Nuln-Oil base, warm crimson glow, and three
+// spinning records (large one anchored top-right) over a fine grain overlay.
 function VinylBackground({ color }) {
   return (
     <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', overflow: 'hidden', zIndex: -1 }}>
       {/* Base */}
       <div style={{ position: 'absolute', inset: 0, backgroundColor: '#130F0D' }} />
-      {/* Warm crimson glow — top right */}
-      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 50% at 85% 0%, rgba(85,31,34,0.58) 0%, transparent 55%)' }} />
-      {/* Secondary mauve glow — top left */}
-      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 50% 35% at 15% 0%, rgba(138,45,49,0.22) 0%, transparent 50%)' }} />
-      {/* Character color accent — bottom */}
-      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 55% 38% at 20% 100%, ${color}18 0%, transparent 55%)` }} />
-      {/* Vignette */}
-      <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 180px rgba(0,0,0,0.65)' }} />
-      {/* Vinyl 1 — large, bottom-right */}
-      <VinylDisc size={640} bottom={-200} right={-200} speed={24} direction={1} opacity={0.38} />
+      {/* Warm crimson glow — top right (behind the big record) */}
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 50% at 82% 8%, rgba(138,45,49,0.45) 0%, transparent 55%)' }} />
+      {/* Character color accent — bottom left */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 50% 38% at 18% 100%, ${color}16 0%, transparent 55%)` }} />
+
+      {/* Vinyl 1 — large, TOP-right (focal record, matches reference) */}
+      <VinylDisc size={680} top={-180} right={-180} speed={24} direction={1} opacity={0.55} />
       {/* Vinyl 2 — medium, bottom-left */}
-      <VinylDisc size={440} bottom={-140} left={-140} speed={32} direction={-1} opacity={0.14} />
-      {/* Vinyl 3 — small, upper center */}
-      <VinylDisc size={260} top="44%" left="42%" speed={18} direction={1} opacity={0.08} />
+      <VinylDisc size={520} bottom={-170} left={-150} speed={32} direction={-1} opacity={0.3} />
+      {/* Vinyl 3 — small, center */}
+      <VinylDisc size={300} top="44%" left="38%" speed={18} direction={1} opacity={0.2} />
+
+      {/* Vignette */}
+      <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 200px rgba(0,0,0,0.6)' }} />
       {/* Grain texture overlay */}
       <div style={{
         position: 'absolute', inset: 0, opacity: 0.05, mixBlendMode: 'overlay',
@@ -104,6 +108,16 @@ function NeonBackground({ color }) {
       duration: 1.4 + (i % 4) * 0.5,
       delay:    (i % 6) * 0.28,
       isAccent: i % 3 === 0,
+    })), []);
+
+  // Equalizer spectrum — bars bounce on staggered cycles. `base` follows a gentle
+  // arc envelope so the row reads like a live audio spectrum rather than noise.
+  const N_BARS = 44;
+  const eqBars = useMemo(() =>
+    [...Array(N_BARS)].map((_, i) => ({
+      base:     0.22 + 0.58 * Math.sin((i / (N_BARS - 1)) * Math.PI),
+      duration: 0.85 + (i % 5) * 0.16,
+      delay:    (i % 7) * 0.11,
     })), []);
 
   return (
@@ -148,6 +162,29 @@ function NeonBackground({ color }) {
           }}
         />
       ))}
+
+      {/* Equalizer spectrum — anchored at the bottom, fading up via a mask */}
+      <div style={{
+        position: 'absolute', left: 0, right: 0, bottom: 0,
+        height: '32%', display: 'flex', alignItems: 'flex-end',
+        gap: 3, padding: '0 16px', opacity: 0.32,
+        WebkitMaskImage: 'linear-gradient(to top, #000 0%, transparent 100%)',
+        maskImage: 'linear-gradient(to top, #000 0%, transparent 100%)',
+      }}>
+        {eqBars.map((b, i) => (
+          <motion.div
+            key={i}
+            animate={{ scaleY: [b.base * 0.35, b.base, b.base * 0.55] }}
+            transition={{ duration: b.duration, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: b.delay }}
+            style={{
+              flex: 1, height: '100%', transformOrigin: 'bottom',
+              borderRadius: '2px 2px 0 0',
+              background: 'linear-gradient(180deg, #6BA2EB 0%, #4C5DD7 45%, #C231C9 100%)',
+              boxShadow: '0 0 6px rgba(194,49,201,0.4)',
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }

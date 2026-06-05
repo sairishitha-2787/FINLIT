@@ -178,8 +178,8 @@
 }
 
 @keyframes vinylBossPulse {
-  0%, 100% { box-shadow: 0 0 16px rgba(232, 69, 122, 0.18); }
-  50%       { box-shadow: 0 0 30px rgba(232, 69, 122, 0.38); }
+  0%, 100% { box-shadow: 0 0 16px rgba(230, 57, 70, 0.18); }
+  50%       { box-shadow: 0 0 30px rgba(230, 57, 70, 0.38); }
 }
 
 /* ── Path connector pulse keyframe (used by inline animation) ────────────── */

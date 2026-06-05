@@ -184,11 +184,12 @@ export default function MusicMixer() {
 
   const Row = ({ label, desc, right, onClick, danger, last }) => (
     <motion.div
-      whileHover={onClick ? { background: 'rgba(255,255,255,0.02)' } : {}}
+      whileHover={onClick ? { backgroundColor: 'rgba(255,255,255,0.02)' } : {}}
       onClick={onClick}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '13px 16px',
+        backgroundColor: 'rgba(255,255,255,0)',
         borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.05)',
         cursor: onClick ? 'pointer' : 'default',
       }}

@@ -41,13 +41,31 @@ function getDivision(xp) {
   return { cur, next };
 }
 
-// ── Rarity palette ─────────────────────────────────────────────────────────────
+// ── Rarity tiers (colors resolved per-cluster below) ──────────────────────────
 const RARITY = [
-  { tier: 'common',    label: 'Common',    color: '#9ca3af' },
-  { tier: 'rare',      label: 'Rare',      color: '#60a5fa' },
-  { tier: 'epic',      label: 'Epic',      color: '#a78bfa' },
-  { tier: 'legendary', label: 'Legendary', color: '#fbbf24' },
+  { tier: 'common',    label: 'Common' },
+  { tier: 'rare',      label: 'Rare' },
+  { tier: 'epic',      label: 'Epic' },
+  { tier: 'legendary', label: 'Legendary' },
 ];
+
+// ── Per-cluster accent palettes ───────────────────────────────────────────────
+// Secondary chart/stat colors that harmonize with each character's UI theme,
+// while keeping rarity tiers visually distinct from one another.
+const CLUSTER_ACCENTS = {
+  vinyl: {  // Jay — warm crimson / gold / bronze / cream
+    streak: '#E0763C', score: '#C98A5E', badges: '#D4A24C',
+    rarity: { common: '#8C8780', rare: '#B8AE9C', epic: '#D4A24C', legendary: '#E63946' },
+  },
+  neon: {   // Cypher — electric cyan / indigo / magenta / gold
+    streak: '#FF6BAA', score: '#6BA2EB', badges: '#FFD60A',
+    rarity: { common: '#6BA2EB', rare: '#4C5DD7', epic: '#C231C9', legendary: '#FFD60A' },
+  },
+  dreamy: { // Luna — soft rose / mauve / terracotta / cream
+    streak: '#D98C6A', score: '#B57E9A', badges: '#C9A24C',
+    rarity: { common: '#9B666B', rare: '#C99AA3', epic: '#D798A3', legendary: '#E3C0C7' },
+  },
+};
 
 // ── Relative time ──────────────────────────────────────────────────────────────
 function relTime(iso) {
@@ -117,6 +135,8 @@ export default function MusicCharts() {
   const color   = C || '#D798A3';
   const glow    = musicCharacter?.glow || `${color}80`;
   const neon    = cluster === 'neon';
+  const A       = CLUSTER_ACCENTS[cluster] || CLUSTER_ACCENTS.vinyl;
+  const rarityColor = (tier) => A.rarity[tier] || color;
   const HEAD    = (big, sm = 0) => (neon ? big - sm - 4 : big);
 
   const PREVIEW = ['hannie@gmail.com'].includes(user?.email?.toLowerCase());
@@ -235,16 +255,16 @@ export default function MusicCharts() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
         {[
           { label: 'Concert Points', value: xp,                       Icon: TrendingUp, col: color },
-          { label: 'Day Streak',     value: streak,                   Icon: Flame,      col: streak > 0 ? '#fb923c' : theme.textMuted },
+          { label: 'Day Streak',     value: streak,                   Icon: Flame,      col: streak > 0 ? A.streak : theme.textMuted },
           { label: 'Topics Done',    value: `${topicsDone}/${totalTopics}`, Icon: Music, col: color },
-          { label: 'Avg Score',      value: `${avgScore}%`,           Icon: Target,     col: '#a78bfa' },
+          { label: 'Avg Score',      value: `${avgScore}%`,           Icon: Target,     col: A.score },
           { label: 'Bosses',         value: `${bossesDone}/3`,        Icon: Trophy,     col: color },
-          { label: 'Badges',         value: `${badgeStats.totalEarned}/${badgeStats.totalBadges}`, Icon: Award, col: '#fbbf24' },
+          { label: 'Badges',         value: `${badgeStats.totalEarned}/${badgeStats.totalBadges}`, Icon: Award, col: A.badges },
         ].map(({ label, value, Icon, col }, i) => (
           <motion.div key={label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}
             style={{ ...panel({ borderLeft: `3px solid ${col}` }), padding: 14, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
             <div style={{ width: 34, height: 34, borderRadius: 8, background: `${col}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Icon size={17} color={col} strokeWidth={1.8} fill={label === 'Day Streak' && streak > 0 ? '#fb923c' : 'none'} />
+              <Icon size={17} color={col} strokeWidth={1.8} fill={label === 'Day Streak' && streak > 0 ? A.streak : 'none'} />
             </div>
             <div>
               <div style={{ fontFamily: theme.fontSub, fontSize: 9, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: theme.textMuted, marginBottom: 2 }}>{label}</div>
@@ -287,7 +307,8 @@ export default function MusicCharts() {
             <ArrowRight size={14} color={theme.textMuted} style={{ marginTop: -8 }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {RARITY.map(({ tier: rt, label, color: rc }) => {
+            {RARITY.map(({ tier: rt, label }) => {
+              const rc  = rarityColor(rt);
               const tot = badgeStats.totals[rt] || 0;
               const got = badgeStats.earned[rt] || 0;
               const pct = tot ? (got / tot) * 100 : 0;
@@ -374,7 +395,7 @@ export default function MusicCharts() {
             </div>
           ) : (
             recent.map((a, i) => {
-              const rc = RARITY.find(r => r.tier === a.tier)?.color || color;
+              const rc = rarityColor(a.tier);
               return (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 2px', borderBottom: i < recent.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
                   <div style={{ width: 30, height: 30, borderRadius: 8, background: `${rc}18`, border: `1px solid ${rc}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
