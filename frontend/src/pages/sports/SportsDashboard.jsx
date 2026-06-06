@@ -6,6 +6,7 @@ import { useUser } from '../../context/UserContext';
 import { sportsTheme, getDivisionName } from '../../styles/sportsTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
+import SuggestedForReview from '../../components/SuggestedForReview';
 
 const ALL_TOPIC_NAMES = [
   'Budgeting Basics','Saving 101','Income Tracking','Emergency Funds',
@@ -240,6 +241,14 @@ export default function SportsDashboard() {
           fontBody: sportsTheme.fontBody,
           overlayBg: 'rgba(15,15,15,0.94)',
         }}
+      />
+
+      {/* ── Suggested for Review (spaced repetition) ── */}
+      <SuggestedForReview
+        domain="sports"
+        compact
+        accent={C}
+        theme={{ surface: sportsTheme.bgCard, border: 'rgba(255,255,255,0.10)', textPrimary: sportsTheme.textPrimary, textMuted: sportsTheme.textMuted, radius: 8, fontHeading: sportsTheme.fontHeading, fontBody: sportsTheme.fontBody }}
       />
 
       {/* ── Daily drill card ── */}

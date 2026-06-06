@@ -12,6 +12,7 @@ import { useMusic } from '../../contexts/MusicContext';
 import { getClusterTheme, CLUSTER_MAP, musicTheme } from '../../styles/musicTheme';
 import { MUSIC_TOPICS } from '../../data/musicTopics';
 import { MUSIC_BOSSES } from '../../data/musicBosses';
+import SuggestedForReview from '../../components/SuggestedForReview';
 import './MusicPlaybook.css';
 
 // ─── Assign icons to topics ───────────────────────────────────────────────────
@@ -645,6 +646,13 @@ export default function MusicPlaybook() {
             </div>
           </div>
         </div>
+
+        {/* ── Suggested for Review (spaced repetition) ── */}
+        <SuggestedForReview
+          domain="music"
+          accent={color}
+          theme={{ surface: theme.bgCard, border: 'rgba(255,255,255,0.10)', textPrimary: theme.textPrimary, textMuted: theme.textMuted, radius: cluster === 'neon' ? 0 : 14, fontHeading: theme.fontHeading, fontBody: theme.fontBody }}
+        />
 
         {/* ── Seasons ── */}
         {SEASONS.map((season, si) => {

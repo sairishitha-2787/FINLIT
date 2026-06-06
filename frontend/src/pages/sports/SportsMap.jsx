@@ -12,6 +12,7 @@ import { useUser } from '../../context/UserContext';
 import { useSports } from '../../contexts/SportsContext';
 import BossMatchModal from '../../components/sports/BossMatchModal';
 import { sportsTheme } from '../../styles/sportsTheme';
+import SuggestedForReview from '../../components/SuggestedForReview';
 
 // ─── Season data ──────────────────────────────────────────────────────────────
 const SEASONS = [
@@ -443,6 +444,13 @@ export default function SportsMap() {
             </div>
           </div>
         </div>
+
+        {/* ── Suggested for Review (spaced repetition) ── */}
+        <SuggestedForReview
+          domain="sports"
+          accent={color}
+          theme={{ surface: sportsTheme.bgCard, border: 'rgba(255,255,255,0.10)', textPrimary: sportsTheme.textPrimary, textMuted: sportsTheme.textMuted, radius: 12, fontHeading: sportsTheme.fontHeading, fontBody: sportsTheme.fontBody }}
+        />
 
         {/* ── Seasons ───────────────────────────────────────────────── */}
         {SEASONS.map((season, si) => {

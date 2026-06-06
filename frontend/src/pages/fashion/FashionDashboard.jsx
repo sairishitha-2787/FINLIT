@@ -6,6 +6,7 @@ import { useUser } from '../../context/UserContext';
 import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
+import SuggestedForReview from '../../components/SuggestedForReview';
 
 // ─── Design tokens (self-contained) ──────────────────────────────────────────
 const C_BASE = {
@@ -330,6 +331,16 @@ export default function FashionDashboard() {
             fontBody: "'DM Sans', sans-serif",
             overlayBg: 'rgba(255,250,247,0.95)',
           }}
+        />
+      </div>
+
+      {/* ── SUGGESTED FOR REVIEW (spaced repetition) ── */}
+      <div style={{ marginBottom: 16 }}>
+        <SuggestedForReview
+          domain="fashion"
+          compact
+          accent={fashionColor}
+          theme={{ surface: 'rgba(255,255,255,0.7)', border: 'rgba(247,160,184,0.4)', textPrimary: '#9d1f4a', textMuted: '#b0627a', radius: 18, fontHeading: "'Playfair Display', serif", fontBody: "'DM Sans', sans-serif" }}
         />
       </div>
 

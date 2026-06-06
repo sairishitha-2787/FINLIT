@@ -8,6 +8,7 @@ import { useUser } from '../../context/UserContext';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
+import SuggestedForReview from '../../components/SuggestedForReview';
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };
 
@@ -180,6 +181,14 @@ export default function GamingDashboard() {
             overlayBg: 'rgba(20,26,45,0.94)',
           }}
         />
+        <div style={{ marginTop: 12 }}>
+          <SuggestedForReview
+            domain="gaming"
+            compact
+            accent={colors.primary}
+            theme={{ surface: gamingTheme.cardBg, border: gamingTheme.glassBorder, textPrimary: gamingTheme.stellarWhite, textMuted: gamingTheme.mutedBlue, radius: 14, fontHeading: gamingTheme.fontHeading, fontBody: gamingTheme.fontBody }}
+          />
+        </div>
       </div>
 
       {/* Quick actions */}

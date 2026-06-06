@@ -17,6 +17,7 @@ import { getClusterTheme, CLUSTER_MAP } from '../../styles/musicTheme';
 import { MUSIC_TOPICS } from '../../data/musicTopics';
 import { MUSIC_BADGES_CONFIG } from '../../data/musicBadges';
 import { supabase } from '../../config/supabase';
+import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 
 const LS_DIFFICULTY = 'finlit_music_difficulty';
 const LS_PREFS      = 'finlit_music_prefs';
@@ -65,6 +66,7 @@ export default function MusicMixer() {
   // ── State ──────────────────────────────────────────────────────────────────
   const [difficulty, setDifficulty] = useState(() => localStorage.getItem(LS_DIFFICULTY) || 'beginner');
   const [prefs, setPrefs]           = useState(loadPrefs);
+  const [srEnabled, setSrEnabled]   = useState(loadSRPref);
   const [name, setName]             = useState('');
   const [nameSaving, setNameSaving] = useState(false);
   const [toast, setToast]           = useState(null);
@@ -320,10 +322,14 @@ export default function MusicMixer() {
           { key: 'enableCelebrations', label: 'Celebration Effects', desc: 'Confetti and animations on wins' },
           { key: 'showHints',          label: 'Learning Hints',      desc: 'Show helpful hints during lessons' },
           { key: 'reduceMotion',       label: 'Reduce Motion',       desc: 'Minimize background animations' },
-        ].map((p, i, arr) => (
-          <Row key={p.key} last={i === arr.length - 1} label={p.label} desc={p.desc}
+        ].map((p, i) => (
+          <Row key={p.key} label={p.label} desc={p.desc}
             right={<Toggle on={prefs[p.key]} onToggle={() => togglePref(p.key)} />} />
         ))}
+        <Row last
+          label="Spaced Repetition"
+          desc="Smart suggestions for topics to review"
+          right={<Toggle on={srEnabled} onToggle={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); flashToast('Preference saved'); }} />} />
       </Section>
 
       {/* ── ACCOUNT ── */}

@@ -5,6 +5,7 @@ import { Check, ChevronRight, Heart } from 'lucide-react';
 import { useFashion } from '../../contexts/FashionContext';
 import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
+import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 
 const F = {
   heading: "'Playfair Display', serif",
@@ -146,6 +147,7 @@ export default function FashionSettings() {
   const glow   = fashionCharacter?.colors?.glow    || 'rgba(247,160,184,0.35)';
 
   const [difficulty,    setDifficulty]    = useState('beginner');
+  const [srEnabled,     setSrEnabled]     = useState(loadSRPref);
   const [name,          setName]          = useState('');
   const [nameSaving,    setNameSaving]    = useState(false);
   const [imgLoaded,     setImgLoaded]     = useState(false);
@@ -323,6 +325,23 @@ export default function FashionSettings() {
             />
           );
         })}
+      </Section>
+
+      {/* Learning */}
+      <Section title="Learning" accent={accent}>
+        <SettingRow
+          last accent={accent}
+          label="Spaced Repetition"
+          desc="Smart suggestions for topics to review"
+          right={
+            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); }}
+              role="switch" aria-checked={srEnabled}
+              style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
+                border: `1px solid ${srEnabled ? accent : 'rgba(157,31,74,0.25)'}`, background: srEnabled ? accent : 'rgba(157,31,74,0.08)' }}>
+              <span style={{ position: 'absolute', top: 2, left: srEnabled ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s' }} />
+            </button>
+          }
+        />
       </Section>
 
       {/* Account */}

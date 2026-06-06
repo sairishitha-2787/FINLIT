@@ -9,6 +9,7 @@ import { useSports, SPORTS_CHARACTERS } from '../../contexts/SportsContext';
 import { useAuth } from '../../context/AuthContext';
 import { useUser } from '../../context/UserContext';
 import { sportsTheme } from '../../styles/sportsTheme';
+import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 
 const LS_DIFFICULTY = 'finlit_sports_difficulty';
 
@@ -179,6 +180,7 @@ export default function SportsSettings() {
   const [difficulty, setDifficulty] = useState(
     () => localStorage.getItem(LS_DIFFICULTY) || 'beginner'
   );
+  const [srEnabled, setSrEnabled] = useState(loadSRPref);
 
   // Name editing
   const [name,       setName]       = useState('');
@@ -355,6 +357,23 @@ export default function SportsSettings() {
             />
           );
         })}
+      </Section>
+
+      {/* ── LEARNING ── */}
+      <Section title="Learning" icon={Shield}>
+        <SettingRow
+          last
+          label="Spaced Repetition"
+          desc="Smart suggestions for topics to review"
+          right={
+            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); }}
+              role="switch" aria-checked={srEnabled}
+              style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
+                border: `1px solid ${srEnabled ? C : 'rgba(255,255,255,0.18)'}`, background: srEnabled ? C : 'rgba(255,255,255,0.08)' }}>
+              <span style={{ position: 'absolute', top: 2, left: srEnabled ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: srEnabled ? '#000' : '#fff', transition: 'left 0.2s' }} />
+            </button>
+          }
+        />
       </Section>
 
       {/* ── ACCOUNT ── */}

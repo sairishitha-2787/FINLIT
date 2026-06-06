@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDomain } from '../../contexts/DomainContext';
 import { useUser } from '../../context/UserContext';
 import IslandMap from '../../components/gaming/IslandMap';
+import SuggestedForReview from '../../components/SuggestedForReview';
 import BossBattleModal from '../../components/gaming/BossBattleModal';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 
@@ -76,6 +77,14 @@ export default function GamingMap() {
         }}>
           {completedTopics.length} topics cleared
         </div>
+      </div>
+
+      <div style={{ padding: '20px 32px 0' }}>
+        <SuggestedForReview
+          domain="gaming"
+          accent={colors.primary}
+          theme={{ surface: gamingTheme.cardBg, border: gamingTheme.glassBorder, textPrimary: gamingTheme.stellarWhite, textMuted: gamingTheme.mutedBlue, radius: 14, fontHeading: gamingTheme.fontHeading, fontBody: gamingTheme.fontBody }}
+        />
       </div>
 
       <IslandMap

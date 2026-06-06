@@ -10,6 +10,7 @@ import { getMusicTierName, getClusterTheme, CLUSTER_MAP } from '../../styles/mus
 import { MUSIC_TOPICS } from '../../data/musicTopics';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
+import SuggestedForReview from '../../components/SuggestedForReview';
 import './MusicDashboard.css';
 
 const ALL_TOPIC_NAMES = [
@@ -289,6 +290,22 @@ export default function MusicDashboard() {
           fontHeading: theme.fontHeading,
           fontBody: theme.fontBody,
           overlayBg: 'rgba(10,8,10,0.94)',
+        }}
+      />
+
+      {/* ── Suggested for Review (spaced repetition) ── */}
+      <SuggestedForReview
+        domain="music"
+        compact
+        accent={C}
+        theme={{
+          surface: theme.bgCard,
+          border: theme.borderFaint.replace('1px solid ', ''),
+          textPrimary: theme.textPrimary,
+          textMuted: theme.textMuted,
+          radius: cluster === 'neon' ? 0 : cluster === 'dreamy' ? 16 : 8,
+          fontHeading: theme.fontHeading,
+          fontBody: theme.fontBody,
         }}
       />
 
