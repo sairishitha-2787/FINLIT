@@ -5,6 +5,7 @@ import { BookOpen, Map, BarChart2, Award, Sparkles, Heart, Zap, CheckCircle2 } f
 import { useUser } from '../../context/UserContext';
 import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
+import DailyChallengeCard from '../../components/DailyChallengeCard';
 
 // ─── Design tokens (self-contained) ──────────────────────────────────────────
 const C_BASE = {
@@ -187,7 +188,7 @@ function ChibiAvatar({ char, size = 64 }) {
 
 export default function FashionDashboard() {
   const navigate = useNavigate();
-  const { xp, level, streak, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, onOpenSheet } = useOutletContext();
+  const { xp, level, streak, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, awardXP, onOpenSheet } = useOutletContext();
   const { profile, completedTopics, progress, loading } = useUser();
 
   // Dynamic accent colors driven by selected character
@@ -311,6 +312,25 @@ export default function FashionDashboard() {
             </GlassCard>
           </motion.div>
         ))}
+      </div>
+
+      {/* ── DAILY CIPHER (fashion daily challenge) ── */}
+      <div style={{ marginBottom: 16 }}>
+        <DailyChallengeCard
+          domain="fashion"
+          awardXP={awardXP}
+          accent={fashionColor}
+          theme={{
+            surface: 'rgba(255,255,255,0.55)',
+            border: 'rgba(247,160,184,0.40)',
+            textPrimary: '#9d1f4a',
+            textMuted: '#b0627a',
+            radius: 18,
+            fontHeading: "'Playfair Display', serif",
+            fontBody: "'DM Sans', sans-serif",
+            overlayBg: 'rgba(255,250,247,0.95)',
+          }}
+        />
       </div>
 
       {/* ── QUICK ACTIONS ── */}

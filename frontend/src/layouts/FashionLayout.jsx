@@ -127,7 +127,7 @@ export default function FashionLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
-  const { xp, level, streak, getLevelProgress } = useGamification();
+  const { xp, level, streak, getLevelProgress, awardXP } = useGamification();
   const { isMobile } = useIsMobile();
   const [sidebarOpen, setSidebarOpen]       = useState(() => window.innerWidth >= 768);
   const [sheetOpen, setSheetOpen]           = useState(false);
@@ -155,7 +155,7 @@ export default function FashionLayout() {
   const fashionGlow      = fashionCharacter?.colors?.glow      || 'rgba(247,160,184,0.35)';
   const fashionGradient  = fashionCharacter?.colors?.gradient  || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
 
-  const outletContext = { xp, level, streak, getLevelProgress, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, onOpenSheet: () => setSheetOpen(true) };
+  const outletContext = { xp, level, streak, getLevelProgress, awardXP, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, onOpenSheet: () => setSheetOpen(true) };
 
   return (
     <>

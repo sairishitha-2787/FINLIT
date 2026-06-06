@@ -7,6 +7,7 @@ import { useDomain } from '../../contexts/DomainContext';
 import { useUser } from '../../context/UserContext';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
+import DailyChallengeCard from '../../components/DailyChallengeCard';
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };
 
@@ -14,7 +15,7 @@ export default function GamingDashboard() {
   const navigate = useNavigate();
   const { character, defeatedBosses } = useDomain();
   const { profile, completedTopics, loading } = useUser();
-  const { xp, level, streak, getLevelProgress, getXPForNextLevel, colors: layoutColors, onOpenSheet } = useOutletContext();
+  const { xp, level, streak, getLevelProgress, getXPForNextLevel, colors: layoutColors, awardXP, onOpenSheet } = useOutletContext();
 
   if (loading) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: 14 }}>
@@ -160,6 +161,25 @@ export default function GamingDashboard() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Daily Cipher (gaming daily challenge) */}
+      <div style={{ marginBottom: 20 }}>
+        <DailyChallengeCard
+          domain="gaming"
+          awardXP={awardXP}
+          accent={colors.primary}
+          theme={{
+            surface: gamingTheme.cardBg,
+            border: gamingTheme.glassBorder,
+            textPrimary: gamingTheme.stellarWhite,
+            textMuted: gamingTheme.mutedBlue,
+            radius: 12,
+            fontHeading: gamingTheme.fontHeading,
+            fontBody: gamingTheme.fontBody,
+            overlayBg: 'rgba(20,26,45,0.94)',
+          }}
+        />
       </div>
 
       {/* Quick actions */}

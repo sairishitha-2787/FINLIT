@@ -9,6 +9,7 @@ import { useUser } from '../../context/UserContext';
 import { getMusicTierName, getClusterTheme, CLUSTER_MAP } from '../../styles/musicTheme';
 import { MUSIC_TOPICS } from '../../data/musicTopics';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
+import DailyChallengeCard from '../../components/DailyChallengeCard';
 import './MusicDashboard.css';
 
 const ALL_TOPIC_NAMES = [
@@ -105,7 +106,7 @@ export default function MusicDashboard() {
   const {
     musicCharacter, musicColor: C, musicCluster,
     xp, streak, tier, tierName, levelProgress, getXPForNextLevel,
-    onOpenSheet,
+    awardXP, onOpenSheet,
   } = useOutletContext();
 
   // Derive cluster from character id (fallback to vinyl)
@@ -273,6 +274,23 @@ export default function MusicDashboard() {
         </div>
       </div>
 
+
+      {/* ── Daily Cipher (music daily challenge) ── */}
+      <DailyChallengeCard
+        domain="music"
+        awardXP={awardXP}
+        accent={C}
+        theme={{
+          surface: theme.bgCard,
+          border: theme.borderFaint.replace('1px solid ', ''),
+          textPrimary: theme.textPrimary,
+          textMuted: theme.textMuted,
+          radius: cluster === 'neon' ? 0 : cluster === 'dreamy' ? 16 : 8,
+          fontHeading: theme.fontHeading,
+          fontBody: theme.fontBody,
+          overlayBg: 'rgba(10,8,10,0.94)',
+        }}
+      />
 
       {/* ── Daily track ── */}
       <div style={{ ...panelStyle(), ...neonCardExtra, padding: 18 }}>

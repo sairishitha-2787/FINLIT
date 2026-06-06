@@ -5,6 +5,7 @@ import { ArrowRight, Flame, Zap, BookOpen, Trophy, FileText, CheckCircle2 } from
 import { useUser } from '../../context/UserContext';
 import { sportsTheme, getDivisionName } from '../../styles/sportsTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
+import DailyChallengeCard from '../../components/DailyChallengeCard';
 
 const ALL_TOPIC_NAMES = [
   'Budgeting Basics','Saving 101','Income Tracking','Emergency Funds',
@@ -73,7 +74,7 @@ export default function SportsDashboard() {
   const {
     sportsCharacter, sportsColor,
     xp, streak, division, levelProgress, getXPForNextLevel,
-    onOpenSheet,
+    awardXP, onOpenSheet,
   } = useOutletContext();
 
   const C          = sportsColor;
@@ -223,6 +224,23 @@ export default function SportsDashboard() {
           {commentary}
         </p>
       </Panel>
+
+      {/* ── Daily Cipher (sports daily challenge) ── */}
+      <DailyChallengeCard
+        domain="sports"
+        awardXP={awardXP}
+        accent={C}
+        theme={{
+          surface: sportsTheme.bgCard,
+          border: 'rgba(255,255,255,0.07)',
+          textPrimary: sportsTheme.textPrimary,
+          textMuted: sportsTheme.textMuted,
+          radius: 8,
+          fontHeading: sportsTheme.fontHeading,
+          fontBody: sportsTheme.fontBody,
+          overlayBg: 'rgba(15,15,15,0.94)',
+        }}
+      />
 
       {/* ── Daily drill card ── */}
       <Panel color={C} style={{ padding: '18px' }}>
