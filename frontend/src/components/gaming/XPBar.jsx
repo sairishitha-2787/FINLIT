@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { LogOut, User, Menu, Flame, Snowflake, Leaf } from 'lucide-react';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import NotificationBell from '../NotificationBell';
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };
 
@@ -190,6 +191,13 @@ export default function XPBar({
           }}>{xp.toLocaleString()} XP</span>
         </div>
       )}
+
+      {/* Notifications */}
+      <NotificationBell
+        accent={colors.primary}
+        size={isMobile ? 44 : 34}
+        theme={{ surface: 'rgba(30,42,69,0.99)', border: 'rgba(139,184,233,0.25)', textPrimary: gamingTheme.stellarWhite, textMuted: gamingTheme.mutedBlue, fontHeading: gamingTheme.fontHeading, fontBody: gamingTheme.fontBody }}
+      />
 
       {/* Logout */}
       <motion.button

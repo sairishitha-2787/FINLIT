@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ClickSpark from './components/effects/ClickSpark';
 import Welcome from './pages/Welcome';
 import Landing from './pages/Landing';
+import NotificationCenter from './pages/NotificationCenter';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
@@ -92,6 +93,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Progress />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationCenter />
                 </ProtectedRoute>
               }
             />

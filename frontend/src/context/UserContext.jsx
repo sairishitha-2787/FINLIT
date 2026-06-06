@@ -8,6 +8,7 @@ import {
   getUserStats
 } from '../utils/storage';
 import { saveTopicProgress, fetchUserProgress } from '../services/progressService';
+import { logNotification } from '../services/notificationsService';
 
 const UserContext = createContext();
 
@@ -160,6 +161,18 @@ export const UserProvider = ({ children }) => {
         totalQuestions: topicData.totalQuestions,
       }).then(({ error }) => {
         if (error) console.error('Progress save error:', error.message);
+      });
+
+      // Log an in-app notification (gated by user prefs; silent if table missing)
+      const total = topicData.totalQuestions || 0;
+      const p = total ? Math.round((topicData.score / total) * 100) : 0;
+      logNotification(user.id, {
+        type: 'quiz_complete',
+        title: 'Quiz Complete',
+        description: `${topicData.topic} · ${topicData.score}/${total} (${p}%)`,
+        icon: p >= 80 ? '🎉' : '🎯',
+        actionType: 'review_quiz',
+        actionTarget: topicData.topic,
       });
     }
     return true;

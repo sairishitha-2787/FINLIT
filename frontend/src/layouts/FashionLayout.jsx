@@ -11,6 +11,7 @@ import { useFashion } from '../contexts/FashionContext';
 import CharacterSelection from '../components/fashion/CharacterSelection';
 import CharacterSheet from '../components/fashion/CharacterSheet';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
+import NotificationBell from '../components/NotificationBell';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const F = {
@@ -409,6 +410,8 @@ export default function FashionLayout() {
             ) : (
               <div style={{ flex: 1 }} />
             )}
+
+            <NotificationBell accent={fashionColor || '#e85d75'} theme={{ surface: 'rgba(255,255,255,0.94)', border: 'rgba(247,160,184,0.4)', textPrimary: '#9d1f4a', textMuted: '#b0627a', fontHeading: "'Playfair Display', serif", fontBody: "'DM Sans', sans-serif" }} />
 
             {/* Chibi in top bar (click → character sheet) */}
             {fashionCharacter && (

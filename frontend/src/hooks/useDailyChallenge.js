@@ -12,6 +12,7 @@ import { useUser } from '../context/UserContext';
 import {
   pickDailyTopic, getTopicByKey, buildLearnState,
 } from '../data/dailyChallengeTopics';
+import { logNotification } from '../services/notificationsService';
 
 const BASE_XP        = 130;
 const STREAK_BONUS   = 10;   // per day of streak
@@ -159,6 +160,15 @@ export function useDailyChallenge({ domain, awardXP } = {}) {
     setStreak(newStreak);
     setJustCompleted({ xp, streak: newStreak });
     setTimeout(() => setJustCompleted(null), 5000);
+
+    // Log an in-app notification (gated by prefs; silent if table missing)
+    logNotification(user.id, {
+      type: 'daily_challenge',
+      title: 'Daily Cipher Complete',
+      description: `${challenge.topicName} · +${xp} XP · ${newStreak}-day streak 🔥`,
+      icon: '🔥',
+      domain: challenge.domain,
+    });
   }, [user, challenge, streak]);
 
   const topicMeta = challenge ? getTopicByKey(challenge.topicKey) : null;

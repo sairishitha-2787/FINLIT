@@ -16,6 +16,7 @@ import { useOfflineSync } from '../hooks/useOfflineSync';
 
 import MusicDomain        from '../pages/music/MusicDomain';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
+import NotificationBell    from '../components/NotificationBell';
 
 import { musicTheme, CLUSTER_MAP, getMusicTier, getMusicTierName } from '../styles/musicTheme';
 
@@ -832,6 +833,8 @@ export default function MusicLayout() {
             ) : (
               <div style={{ flex: 1 }} />
             )}
+
+            <NotificationBell accent={C} theme={{ surface: 'rgba(20,16,18,0.98)', border: 'rgba(255,255,255,0.12)', textPrimary: '#fff', textMuted: 'rgba(255,255,255,0.5)', fontHeading: musicTheme.fontHeading, fontBody: musicTheme.fontBody }} />
 
             {character && (
               <motion.button

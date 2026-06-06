@@ -16,6 +16,7 @@ import { useOfflineSync } from '../hooks/useOfflineSync';
 
 import SportsCharacterSelection from '../components/sports/SportsCharacterSelection';
 import SportsCharacterSheet     from '../components/sports/SportsCharacterSheet';
+import NotificationBell         from '../components/NotificationBell';
 import LogoutConfirmModal        from '../components/shared/LogoutConfirmModal';
 
 import { sportsTheme, getDivision, getDivisionName } from '../styles/sportsTheme';
@@ -549,6 +550,8 @@ export default function SportsLayout() {
             ) : (
               <div style={{ flex: 1 }} />
             )}
+
+            <NotificationBell accent={C} theme={{ surface: 'rgba(18,18,18,0.98)', border: 'rgba(255,255,255,0.12)', textPrimary: '#fff', textMuted: 'rgba(255,255,255,0.5)', fontHeading: sportsTheme.fontHeading, fontBody: sportsTheme.fontBody }} />
 
             {/* Character avatar chip */}
             {character && (

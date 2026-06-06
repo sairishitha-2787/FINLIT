@@ -9,6 +9,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
+import { logNotification } from '../services/notificationsService';
 
 export function useBadgeTracker() {
   const { user } = useAuth();
@@ -122,6 +123,16 @@ export function useBadgeTracker() {
       };
 
       setNewlyEarned(badgeInfo);
+
+      // Log an in-app notification (gated by prefs; silent if table missing)
+      logNotification(user.id, {
+        type: 'badge_earned',
+        title: 'Badge Unlocked',
+        description: `You earned "${name}"`,
+        icon: '⭐',
+        actionType: 'view_badge',
+        actionTarget: id,
+      });
 
       // Auto-clear newlyEarned after 5s (6s for secrets)
       if (clearTimerRef.current) clearTimeout(clearTimerRef.current);
