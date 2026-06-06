@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Lock, Trophy, RotateCcw, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Lock, Trophy, RotateCcw, ChevronRight, BarChart2 } from 'lucide-react';
+import QuizHistoryModal from '../../components/QuizHistoryModal';
+import { MUSIC_TOPICS } from '../../data/musicTopics';
 import { useUser } from '../../context/UserContext';
 import { getExplanation, getQuiz, generateScenarioQuiz, getAdaptiveExplanation } from '../../services/api';
 import ExplanationDisplay from '../../components/learning/ExplanationDisplay';
@@ -137,6 +139,7 @@ export default function MusicLearning() {
   const [isRegenerating,  setIsRegenerating]  = useState(false);
   const [quizResult,      setQuizResult]      = useState(null);
   const [showReflection,  setShowReflection]  = useState(false);
+  const [showHistory,     setShowHistory]     = useState(false);
   const [comprehension,   setComprehension]   = useState({});
   const [adaptiveContent, setAdaptiveContent] = useState({});
   const [adaptiveLoading, setAdaptiveLoading] = useState({});
@@ -621,6 +624,20 @@ export default function MusicLearning() {
                       <RotateCcw size={13} /> Review
                     </motion.button>
                   </div>
+                  <motion.button
+                    whileHover={{ filter: 'brightness(1.1)' }} whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowHistory(true)}
+                    style={{
+                      width: '100%', padding: '12px', borderRadius: 9,
+                      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                      fontFamily: theme.fontSub, fontWeight: 700,
+                      fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase',
+                      color: theme.textMuted, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                    }}
+                  >
+                    <BarChart2 size={13} /> View Past Attempts
+                  </motion.button>
                 </div>
               </div>
 
@@ -633,6 +650,22 @@ export default function MusicLearning() {
 
         </AnimatePresence>
       </div>
+
+      <QuizHistoryModal
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        topicNames={MUSIC_TOPICS.map(t => t.name)}
+        accent={C}
+        theme={{
+          surface: theme.bgCard, border: 'rgba(255,255,255,0.10)',
+          textPrimary: '#fff', textMuted: theme.textMuted,
+          radius: 16, fontHeading: theme.fontHeading, fontBody: theme.fontBody,
+        }}
+        onRetry={(tp) => {
+          setShowHistory(false);
+          navigate('/music/learn', { state: { topic: tp, topicId: MUSIC_TOPICS.find(x => x.name === tp)?.id || null } });
+        }}
+      />
 
       <FloatingMentor
         currentTopic={topic} userInterest={domain}

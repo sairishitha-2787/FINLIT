@@ -8,8 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, Check, X, Star, Sparkles,
   RotateCcw, Calculator, Heart, Zap, Map as MapIcon,
-  RefreshCw,
+  RefreshCw, BarChart2,
 } from 'lucide-react';
+import QuizHistoryModal from '../../components/QuizHistoryModal';
 import { useUser } from '../../context/UserContext';
 import { useGamification } from '../../hooks/useGamification';
 import confetti from 'canvas-confetti';
@@ -486,6 +487,7 @@ export default function FashionLearning() {
 
   // Explanation navigation
   const [secIdx,   setSecIdx]   = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Quiz state
   const [questions, setQuestions] = useState([]);
@@ -1014,6 +1016,9 @@ export default function FashionLearning() {
                         Review Lesson
                       </GlassBtn>
                     )}
+                    <GlassBtn onClick={() => setShowHistory(true)}>
+                      <BarChart2 size={14} /> Past Attempts
+                    </GlassBtn>
                   </div>
                 </div>
               </div>
@@ -1037,6 +1042,19 @@ export default function FashionLearning() {
         )}
 
       </AnimatePresence>
+
+      <QuizHistoryModal
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        topicNames={['Budgeting Basics','Saving Money','Emergency Funds','Simple Interest','Compound Interest','Credit Scores','Investing Basics','Stocks & Bonds','Debt Management','Retirement Accounts','Tax Fundamentals','Portfolio Diversification','Advanced Planning']}
+        accent={C.pink}
+        theme={{
+          surface: 'rgba(255,255,255,0.92)', border: 'rgba(247,160,184,0.4)',
+          textPrimary: '#9d1f4a', textMuted: '#b0627a',
+          radius: 18, fontHeading: "'Playfair Display', serif", fontBody: "'DM Sans', sans-serif",
+        }}
+        onRetry={(tp) => { setShowHistory(false); navigate('/fashion/learn', { state: { topic: tp } }); }}
+      />
     </motion.div>
   );
 }

@@ -5,7 +5,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Sparkles, ArrowLeft, ArrowRight, Lock, BookOpen, Zap } from 'lucide-react';
+import { Target, Sparkles, ArrowLeft, ArrowRight, Lock, BookOpen, Zap, BarChart2 } from 'lucide-react';
+import QuizHistoryModal from '../components/QuizHistoryModal';
 import AnimatedIcon from '../components/shared/AnimatedIcon';
 import { useUser } from '../context/UserContext';
 import { getExplanation, getQuiz, generateScenarioQuiz, getAdaptiveExplanation } from '../services/api';
@@ -144,6 +145,7 @@ const Learning = () => {
 
   const [quizResult, setQuizResult]   = useState(null);
   const [showReflection, setShowReflection] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
@@ -640,6 +642,22 @@ const Learning = () => {
                         display: 'inline-flex', alignItems: 'center', gap: '8px',
                       }}
                     >Island Map <ArrowRight size={14} /></motion.button>
+                    {isGamingMode && (
+                      <motion.button
+                        whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                        onClick={() => setShowHistory(true)}
+                        style={{
+                          padding: '10px 26px', borderRadius: '12px',
+                          fontFamily: gamingTheme.fontLabel, fontSize: '11px', fontWeight: 700,
+                          letterSpacing: '1.5px', textTransform: 'uppercase',
+                          color: gamingTheme.mutedBlue,
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '1px solid rgba(255,255,255,0.12)',
+                          cursor: 'pointer',
+                          display: 'inline-flex', alignItems: 'center', gap: '7px',
+                        }}
+                      ><BarChart2 size={13} /> Past Attempts</motion.button>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -648,6 +666,19 @@ const Learning = () => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <QuizHistoryModal
+          open={showHistory}
+          onClose={() => setShowHistory(false)}
+          topicNames={['Budgeting Basics','Saving Money','Emergency Funds','Simple Interest','Compound Interest','Credit Scores','Investing Basics','Stocks & Bonds','Retirement Accounts','Tax Fundamentals','Debt Management','Portfolio Diversification']}
+          accent={gc.primary}
+          theme={{
+            surface: gamingTheme.cardBg, border: gamingTheme.glassBorder,
+            textPrimary: gamingTheme.stellarWhite, textMuted: gamingTheme.mutedBlue,
+            radius: 14, fontHeading: gamingTheme.fontHeading, fontBody: gamingTheme.fontBody,
+          }}
+          onRetry={(tp) => { setShowHistory(false); navigate('/gaming/learn', { state: { topic: tp } }); }}
+        />
 
         <FloatingMentor
           currentTopic={topic} userInterest={profile?.primaryInterest}

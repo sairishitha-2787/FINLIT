@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Lock, Trophy, RotateCcw, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Lock, Trophy, RotateCcw, ChevronRight, BarChart2 } from 'lucide-react';
+import QuizHistoryModal from '../../components/QuizHistoryModal';
 import { useUser } from '../../context/UserContext';
 import { getExplanation, getQuiz, generateScenarioQuiz, getAdaptiveExplanation } from '../../services/api';
 import ExplanationDisplay from '../../components/learning/ExplanationDisplay';
@@ -142,6 +143,7 @@ export default function SportsLearning() {
   const [isRegenerating,   setIsRegenerating]   = useState(false);
   const [quizResult,       setQuizResult]       = useState(null);
   const [showReflection,   setShowReflection]   = useState(false);
+  const [showHistory,      setShowHistory]      = useState(false);
   const [comprehension,    setComprehension]    = useState({});
   const [adaptiveContent,  setAdaptiveContent]  = useState({});
   const [adaptiveLoading,  setAdaptiveLoading]  = useState({});
@@ -599,6 +601,20 @@ export default function SportsLearning() {
                       <RotateCcw size={13} /> Review
                     </motion.button>
                   </div>
+                  <motion.button
+                    whileHover={{ filter: 'brightness(1.1)' }} whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowHistory(true)}
+                    style={{
+                      width: '100%', padding: '12px', borderRadius: 9,
+                      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                      fontFamily: sportsTheme.fontSub, fontWeight: 700,
+                      fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase',
+                      color: sportsTheme.textMuted, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                    }}
+                  >
+                    <BarChart2 size={13} /> View Past Attempts
+                  </motion.button>
                 </div>
               </div>
 
@@ -611,6 +627,19 @@ export default function SportsLearning() {
 
         </AnimatePresence>
       </div>
+
+      <QuizHistoryModal
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        topicNames={['Budgeting Basics','Saving 101','Income Tracking','Emergency Funds','Investment Basics','Debt Management','Credit Scores','Tax Fundamentals','Portfolio Building','Retirement Planning','Real Estate','Wealth Building']}
+        accent={C}
+        theme={{
+          surface: sportsTheme.bgCard, border: 'rgba(255,255,255,0.10)',
+          textPrimary: '#fff', textMuted: sportsTheme.textMuted,
+          radius: 12, fontHeading: sportsTheme.fontHeading, fontBody: sportsTheme.fontBody,
+        }}
+        onRetry={(tp) => { setShowHistory(false); navigate('/sports/learn', { state: { topic: tp } }); }}
+      />
 
       <FloatingMentor
         currentTopic={topic} userInterest={domain}
