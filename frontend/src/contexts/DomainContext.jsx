@@ -56,7 +56,11 @@ export function DomainProvider({ children }) {
 
     fetchDefeatedBosses(user.id).then(({ data, error }) => {
       if (error) {
-        console.warn('Could not load defeated bosses from Supabase:', error.message);
+        // Falls back to localStorage. Don't spam the console if the table just
+        // doesn't exist yet (schema-cache miss) — that's an expected state.
+        if (!error.message?.includes('schema cache')) {
+          console.warn('Could not load defeated bosses from Supabase:', error.message);
+        }
         setCharacterLoaded(true);
         return;
       }

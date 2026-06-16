@@ -48,6 +48,16 @@ const Dashboard = () => {
     if (profile) fetchRecommendations();
   }, [profile, completedTopics]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Domain redirect — must happen in an effect, never during render
+  useEffect(() => {
+    if (!profile) return;
+    const interest = profile.primaryInterest?.toLowerCase();
+    if (interest === 'gaming')       navigate('/gaming',  { replace: true });
+    else if (interest === 'fashion') navigate('/fashion', { replace: true });
+    else if (interest === 'sports')  navigate('/sports',  { replace: true });
+    else if (interest === 'music')   navigate('/music',   { replace: true });
+  }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
@@ -80,12 +90,10 @@ const Dashboard = () => {
     );
   }
 
-  // Domain-specific dashboards — redirect into the domain's layout shell
+  // Built domains redirect (handled by the effect above) — don't render this
+  // generic dashboard for them to avoid a flash before navigation.
   const interest = profile.primaryInterest?.toLowerCase();
-  if (interest === 'gaming')  { navigate('/gaming',  { replace: true }); return null; }
-  if (interest === 'fashion') { navigate('/fashion', { replace: true }); return null; }
-  if (interest === 'sports')  { navigate('/sports',  { replace: true }); return null; }
-  if (interest === 'music')   { navigate('/music',   { replace: true }); return null; }
+  if (BUILT_DOMAINS.includes(interest)) return null;
 
   // Whether to show a "coming soon" domain section below the main dashboard
   const showDomainPlaceholder = interest && !BUILT_DOMAINS.includes(interest) && !GENERIC_INTERESTS.includes(interest);
