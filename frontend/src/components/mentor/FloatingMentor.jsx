@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useUser } from '../../context/UserContext';
 import useGamification from '../../hooks/useGamification';
 import { sendMentorMessage, loadMentorHistory } from '../../services/mentorService';
+import { supabase } from '../../config/supabase';
 import { getDomainPersonality, getDomainGreeting, getDomainError, normalizeDomain } from '../../config/domainIcons';
 import { gamingTheme } from '../../styles/gamingTheme';
 
@@ -382,12 +383,18 @@ const FloatingMentor = ({
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
   const prevMsgLenRef = useRef(0);
+  const historyLoadedRef = useRef(false);
 
   useEffect(() => {
-    if (!user || !session || messages !== null) return;
+    if (!user || !session || messages !== null || historyLoadedRef.current) return;
+    historyLoadedRef.current = true;
     (async () => {
       try {
-        const result = await loadMentorHistory(user.id, session.access_token);
+        // Pull a fresh (auto-refreshed) token rather than the possibly-stale
+        // one held in context — avoids a 401 when the stored token has expired.
+        const { data: { session: fresh } } = await supabase.auth.getSession();
+        const token = fresh?.access_token || session.access_token;
+        const result = await loadMentorHistory(user.id, token);
         if (result.success && result.history.length > 0) {
           setMessages(result.history.map(m => ({
             role: m.role,
