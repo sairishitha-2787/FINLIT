@@ -313,8 +313,9 @@ const Learning = () => {
     sessionStorage.removeItem(`finlit_scenario_prog_${topic?.replace(/\s+/g, '_')}`);
     setQuizResult({ score, totalQuestions });
     const pct = Math.round((score / totalQuestions) * 100);
-    if (pct >= 70) toast.celebration(`Topic complete! ${pct}%`);
-    else           toast.warning(`You scored ${pct}% — aim for 70% to master it.`);
+    if (pct >= 70)      toast.celebration(`Topic complete! ${pct}%`);
+    else if (pct >= 60) toast.success(`Passed — ${pct}%. Hit 70% to master it.`);
+    else                toast.warning(`You scored ${pct}% — review and try again.`);
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {

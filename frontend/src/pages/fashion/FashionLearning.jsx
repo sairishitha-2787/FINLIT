@@ -642,8 +642,9 @@ export default function FashionLearning() {
     scoreRef.current = score;
     setScoreDisplay(score);
     const pct = Math.round((score / totalQuestions) * 100);
-    if (pct >= 70) toast.celebration(`Topic complete! ${pct}%`);
-    else           toast.warning(`You scored ${pct}% — aim for 70% to master it.`);
+    if (pct >= 70)      toast.celebration(`Topic complete! ${pct}%`);
+    else if (pct >= 60) toast.success(`Passed — ${pct}%. Hit 70% to master it.`);
+    else                toast.warning(`You scored ${pct}% — review and try again.`);
     const didPass = score >= Math.ceil(totalQuestions * 0.6);
     setPassed(didPass);
     clearQz(topic);

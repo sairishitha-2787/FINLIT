@@ -170,10 +170,9 @@ const Onboarding = () => {
           logDomainSelected(user.id, domain);
           logOnboardingCompleted(user.id, domain);
         }
-        toast.success('Welcome to FINLIT! Ready to learn?');
         const path = getDomainPath(answers.interest);
         if (path) { setSavedInterest(answers.interest); setShowPathPreview(true); }
-        else       { navigate('/dashboard'); }
+        else       { toast.success('Welcome to FINLIT! Ready to learn?'); navigate('/dashboard'); }
       } else {
         setSaveError(result.error || 'Failed to save. Please try again.');
       }
@@ -246,7 +245,7 @@ const Onboarding = () => {
               topic="Your First Challenge"
               gamingMode
               gamingColors={{ primary: C, secondary: C, glow: `${C}55` }}
-              onComplete={(score, total) => { setQuizResult({ score, total }); setPostStage('results'); }}
+              onComplete={(score, total) => { setQuizResult({ score, total }); setPostStage('results'); toast.success('Welcome to FINLIT! Ready to learn?'); }}
             />
           </div>
         </div>
