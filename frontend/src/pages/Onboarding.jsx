@@ -12,6 +12,7 @@ import AnimatedIcon from '../components/shared/AnimatedIcon';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { logEvent, logOnboardingCompleted, logDomainSelected, EVENT_TYPES } from '../services/eventsService';
+import { useToast } from '../context/ToastProvider';
 import { ONBOARDING_QUESTIONS } from '../utils/constants';
 import GridDistortion from '../components/effects/GridDistortion';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
@@ -127,6 +128,7 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const { completeOnboarding } = useUser();
   const { user, logout } = useAuth();
+  const toast = useToast();
   const [currentStep, setCurrentStep]     = useState(0);
   const signupName = user?.user_metadata?.name || user?.user_metadata?.full_name || '';
   const [answers, setAnswers]             = useState({ name: signupName });
@@ -168,6 +170,7 @@ const Onboarding = () => {
           logDomainSelected(user.id, domain);
           logOnboardingCompleted(user.id, domain);
         }
+        toast.success('Welcome to FINLIT! Ready to learn?');
         const path = getDomainPath(answers.interest);
         if (path) { setSavedInterest(answers.interest); setShowPathPreview(true); }
         else       { navigate('/dashboard'); }

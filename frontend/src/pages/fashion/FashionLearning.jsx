@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import QuizHistoryModal from '../../components/QuizHistoryModal';
 import { useUser } from '../../context/UserContext';
+import { useToast } from '../../context/ToastProvider';
 import { useGamification } from '../../hooks/useGamification';
 import confetti from 'canvas-confetti';
 import { getExplanation, getQuiz, generateScenarioQuiz } from '../../services/api';
@@ -461,6 +462,7 @@ export default function FashionLearning() {
   const C = { ...C_BASE, pink: charPrimary || C_BASE.pink, midRose: charSecondary || C_BASE.midRose };
   const GRAD = charGradient || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
   const { profile, addTopicProgress, completedTopics } = useUser();
+  const toast = useToast();
   const { xp, level, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
 
   const topic      = location.state?.topic;
@@ -639,6 +641,9 @@ export default function FashionLearning() {
   const handleQuizComplete = (score, totalQuestions) => {
     scoreRef.current = score;
     setScoreDisplay(score);
+    const pct = Math.round((score / totalQuestions) * 100);
+    if (pct >= 70) toast.celebration(`Topic complete! ${pct}%`);
+    else           toast.warning(`You scored ${pct}% — aim for 70% to master it.`);
     const didPass = score >= Math.ceil(totalQuestions * 0.6);
     setPassed(didPass);
     clearQz(topic);

@@ -5,6 +5,7 @@ import { ArrowLeft, Lock, Trophy, RotateCcw, ChevronRight, BarChart2 } from 'luc
 import QuizHistoryModal from '../../components/QuizHistoryModal';
 import { MUSIC_TOPICS } from '../../data/musicTopics';
 import { useUser } from '../../context/UserContext';
+import { useToast } from '../../context/ToastProvider';
 import { getExplanation, getQuiz, generateScenarioQuiz, getAdaptiveExplanation } from '../../services/api';
 import ExplanationDisplay from '../../components/learning/ExplanationDisplay';
 import QuizDiagnosis from '../../components/learning/QuizDiagnosis';
@@ -114,6 +115,7 @@ export default function MusicLearning() {
   const location  = useLocation();
   const navigate  = useNavigate();
   const { profile, completedTopics, addTopicProgress } = useUser();
+  const toast = useToast();
   const { xp, level, xpPopups, awardXP, checkBadgeUnlock, badgeNotification } = useGamification();
   const outletCtx = useOutletContext();
 
@@ -274,6 +276,9 @@ export default function MusicLearning() {
     sessionStorage.removeItem(`finlit_quiz_prog_${topic?.replace(/\s+/g,'_')}`);
     sessionStorage.removeItem(`finlit_scenario_prog_${topic?.replace(/\s+/g,'_')}`);
     setQuizResult({ score, totalQuestions, xp: Math.round((score / totalQuestions) * 100) });
+    const pct = Math.round((score / totalQuestions) * 100);
+    if (pct >= 70) toast.celebration(`Topic complete! ${pct}%`);
+    else           toast.warning(`You scored ${pct}% — aim for 70% to master it.`);
     if (score / totalQuestions < 0.6) {
       setStage('diagnosis');
     } else {

@@ -7,6 +7,7 @@ import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
 import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 import { loadGlossaryCardPref, saveGlossaryCardPref } from '../../components/DailyGlossaryCard';
+import { useToast } from '../../context/ToastProvider';
 
 const F = {
   heading: "'Playfair Display', serif",
@@ -150,6 +151,7 @@ export default function FashionSettings() {
   const [difficulty,    setDifficulty]    = useState('beginner');
   const [srEnabled,     setSrEnabled]     = useState(loadSRPref);
   const [glossaryEnabled, setGlossaryEnabled] = useState(loadGlossaryCardPref);
+  const toast = useToast();
   const [name,          setName]          = useState('');
   const [nameSaving,    setNameSaving]    = useState(false);
   const [imgLoaded,     setImgLoaded]     = useState(false);
@@ -336,7 +338,7 @@ export default function FashionSettings() {
           label="Spaced Repetition"
           desc="Smart suggestions for topics to review"
           right={
-            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); }}
+            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); toast.success('Preference saved'); }}
               role="switch" aria-checked={srEnabled}
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${srEnabled ? accent : 'rgba(157,31,74,0.25)'}`, background: srEnabled ? accent : 'rgba(157,31,74,0.08)' }}>
@@ -349,7 +351,7 @@ export default function FashionSettings() {
           label="Daily Glossary Term"
           desc="Show a random financial term on the dashboard"
           right={
-            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); }}
+            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); toast.success('Preference saved'); }}
               role="switch" aria-checked={glossaryEnabled}
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${glossaryEnabled ? accent : 'rgba(157,31,74,0.25)'}`, background: glossaryEnabled ? accent : 'rgba(157,31,74,0.08)' }}>

@@ -11,6 +11,7 @@ import { useUser } from '../../context/UserContext';
 import { sportsTheme } from '../../styles/sportsTheme';
 import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 import { loadGlossaryCardPref, saveGlossaryCardPref } from '../../components/DailyGlossaryCard';
+import { useToast } from '../../context/ToastProvider';
 
 const LS_DIFFICULTY = 'finlit_sports_difficulty';
 
@@ -183,6 +184,7 @@ export default function SportsSettings() {
   );
   const [srEnabled, setSrEnabled] = useState(loadSRPref);
   const [glossaryEnabled, setGlossaryEnabled] = useState(loadGlossaryCardPref);
+  const toast = useToast();
 
   // Name editing
   const [name,       setName]       = useState('');
@@ -367,7 +369,7 @@ export default function SportsSettings() {
           label="Spaced Repetition"
           desc="Smart suggestions for topics to review"
           right={
-            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); }}
+            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); toast.success('Preference saved'); }}
               role="switch" aria-checked={srEnabled}
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${srEnabled ? C : 'rgba(255,255,255,0.18)'}`, background: srEnabled ? C : 'rgba(255,255,255,0.08)' }}>
@@ -380,7 +382,7 @@ export default function SportsSettings() {
           label="Daily Glossary Term"
           desc="Show a random financial term on the dashboard"
           right={
-            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); }}
+            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); toast.success('Preference saved'); }}
               role="switch" aria-checked={glossaryEnabled}
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${glossaryEnabled ? C : 'rgba(255,255,255,0.18)'}`, background: glossaryEnabled ? C : 'rgba(255,255,255,0.08)' }}>

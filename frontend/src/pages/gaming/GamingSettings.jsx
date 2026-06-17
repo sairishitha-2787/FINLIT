@@ -8,6 +8,7 @@ import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
 import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 import { loadGlossaryCardPref, saveGlossaryCardPref } from '../../components/DailyGlossaryCard';
+import { useToast } from '../../context/ToastProvider';
 
 const DIFFICULTIES = [
   { id: 'beginner',     label: 'Novice',  desc: 'Easier quests, more time',        xp: 'Standard XP' },
@@ -144,6 +145,7 @@ export default function GamingSettings() {
   const [difficulty,   setDifficulty]   = useState('beginner');
   const [srEnabled,    setSrEnabled]    = useState(loadSRPref);
   const [glossaryEnabled, setGlossaryEnabled] = useState(loadGlossaryCardPref);
+  const toast = useToast();
   const [name,         setName]         = useState('');
   const [nameSaving,   setNameSaving]   = useState(false);
   const [showCharModal, setShowCharModal] = useState(false);
@@ -318,7 +320,7 @@ export default function GamingSettings() {
           label="Spaced Repetition"
           desc="Smart suggestions for topics to review"
           right={
-            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); }}
+            <button onClick={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); toast.success('Preference saved'); }}
               role="switch" aria-checked={srEnabled}
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${srEnabled ? C : 'rgba(139,184,233,0.3)'}`, background: srEnabled ? C : 'rgba(255,255,255,0.08)' }}>
@@ -331,7 +333,7 @@ export default function GamingSettings() {
           label="Daily Glossary Term"
           desc="Show a random financial term on the dashboard"
           right={
-            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); }}
+            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); toast.success('Preference saved'); }}
               role="switch" aria-checked={glossaryEnabled}
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${glossaryEnabled ? C : 'rgba(139,184,233,0.3)'}`, background: glossaryEnabled ? C : 'rgba(255,255,255,0.08)' }}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
+import { ToastProvider } from './context/ToastProvider';
 import { DomainProvider } from './contexts/DomainContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ClickSpark from './components/effects/ClickSpark';
@@ -55,6 +56,7 @@ function App() {
   return (
     <AuthProvider>
       <UserProvider>
+        <ToastProvider>
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <ClickSpark
             sparkColor="#ffffff"
@@ -197,6 +199,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
+        </ToastProvider>
       </UserProvider>
     </AuthProvider>
   );

@@ -19,6 +19,7 @@ import { MUSIC_BADGES_CONFIG } from '../../data/musicBadges';
 import { supabase } from '../../config/supabase';
 import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
 import { loadGlossaryCardPref, saveGlossaryCardPref } from '../../components/DailyGlossaryCard';
+import { useToast } from '../../context/ToastProvider';
 
 const LS_DIFFICULTY = 'finlit_music_difficulty';
 const LS_PREFS      = 'finlit_music_prefs';
@@ -71,7 +72,7 @@ export default function MusicMixer() {
   const [glossaryEnabled, setGlossaryEnabled] = useState(loadGlossaryCardPref);
   const [name, setName]             = useState('');
   const [nameSaving, setNameSaving] = useState(false);
-  const [toast, setToast]           = useState(null);
+  const toast = useToast();
   const [showCharModal, setShowCharModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetting, setResetting]   = useState(false);
@@ -81,9 +82,8 @@ export default function MusicMixer() {
   const nameDirty = name !== (profile?.name || '');
 
   const flashToast = useCallback((msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 1800);
-  }, []);
+    toast.success(msg);
+  }, [toast]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleDifficulty = (id) => {
@@ -389,17 +389,6 @@ export default function MusicMixer() {
         <Row label="Report a Bug" onClick={() => window.open('mailto:support@finlit.app?subject=Bug%20Report%20(Music)', '_blank')} right={<ChevronRight size={16} color="rgba(255,255,255,0.3)" />} />
         <Row last label="Send Feedback" onClick={() => window.open('mailto:support@finlit.app?subject=Feedback%20(Music)', '_blank')} right={<ChevronRight size={16} color="rgba(255,255,255,0.3)" />} />
       </Section>
-
-      {/* ── Toast ── */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
-            style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9000, display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 99, background: color, color: '#000', fontFamily: theme.fontSub, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', boxShadow: `0 8px 28px ${glow}` }}>
-            <Check size={14} strokeWidth={3} /> {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── Change character confirm ── */}
       <AnimatePresence>
