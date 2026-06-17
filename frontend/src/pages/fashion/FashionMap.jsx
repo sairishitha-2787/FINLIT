@@ -6,6 +6,7 @@ import { useFashion } from '../../contexts/FashionContext';
 import RunwayMap from '../../components/fashion/RunwayMap';
 import RunwayShowModal from '../../components/fashion/RunwayShowModal';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import MasteryBanner from '../../components/MasteryBanner';
 
 const F = { heading: "'Playfair Display', serif", ui: "'DM Sans', sans-serif" };
 const C = { deepRose: '#9d1f4a', midRose: '#d4537e', label: '#c98a9e' };
@@ -72,6 +73,12 @@ export default function FashionMap() {
       </div>
 
       <div style={{ padding: '18px 32px 0', maxWidth: 960, margin: '0 auto' }}>
+        <MasteryBanner
+          topics={FASHION_TOPICS_FLAT}
+          completed={completedTopics}
+          accent={fashionColor || '#e85d75'}
+          theme={{ surface: 'rgba(255,255,255,0.7)', border: 'rgba(247,160,184,0.4)', textPrimary: '#9d1f4a', textMuted: '#b0627a', radius: 16, fontHeading: "'Playfair Display', serif", fontBody: "'DM Sans', sans-serif" }}
+        />
         <SuggestedForReview
           domain="fashion"
           accent={fashionColor || '#e85d75'}

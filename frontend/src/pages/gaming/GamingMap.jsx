@@ -6,6 +6,7 @@ import { useDomain } from '../../contexts/DomainContext';
 import { useUser } from '../../context/UserContext';
 import IslandMap from '../../components/gaming/IslandMap';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import MasteryBanner from '../../components/MasteryBanner';
 import BossBattleModal from '../../components/gaming/BossBattleModal';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 
@@ -80,6 +81,12 @@ export default function GamingMap() {
       </div>
 
       <div style={{ padding: '20px 32px 0' }}>
+        <MasteryBanner
+          topics={GAMING_TOPICS_FLAT}
+          completed={completedTopics}
+          accent={colors.primary}
+          theme={{ surface: gamingTheme.cardBg, border: gamingTheme.glassBorder, textPrimary: gamingTheme.stellarWhite, textMuted: gamingTheme.mutedBlue, radius: 14, fontHeading: gamingTheme.fontHeading, fontBody: gamingTheme.fontBody }}
+        />
         <SuggestedForReview
           domain="gaming"
           accent={colors.primary}

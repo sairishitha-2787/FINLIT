@@ -13,6 +13,7 @@ import { getClusterTheme, CLUSTER_MAP, musicTheme } from '../../styles/musicThem
 import { MUSIC_TOPICS } from '../../data/musicTopics';
 import { MUSIC_BOSSES } from '../../data/musicBosses';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import MasteryBanner from '../../components/MasteryBanner';
 import './MusicPlaybook.css';
 
 // ─── Assign icons to topics ───────────────────────────────────────────────────
@@ -646,6 +647,14 @@ export default function MusicPlaybook() {
             </div>
           </div>
         </div>
+
+        {/* ── Mastery gate banner ── */}
+        <MasteryBanner
+          topics={MUSIC_TOPICS.map(t => t.name)}
+          completed={completedTopics}
+          accent={color}
+          theme={{ surface: theme.bgCard, border: 'rgba(255,255,255,0.10)', textPrimary: theme.textPrimary, textMuted: theme.textMuted, radius: cluster === 'neon' ? 0 : 12, fontHeading: theme.fontHeading, fontBody: theme.fontBody }}
+        />
 
         {/* ── Suggested for Review (spaced repetition) ── */}
         <SuggestedForReview

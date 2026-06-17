@@ -80,6 +80,12 @@ const QuizDiagnosis = ({ score, totalQuestions, topic, onReteach, onContinue, ga
             letterSpacing: '1.5px', margin: 0,
             textShadow: `0 0 12px ${gc.glow}`,
           }}>Let's find what tripped you up</h3>
+          <p style={{
+            fontFamily: gamingTheme.fontBody, fontSize: '12px',
+            color: gamingTheme.seafoam, margin: '8px 0 0', opacity: 0.9,
+          }}>
+            Score <strong style={{ color: gc.primary }}>70%+</strong> to unlock the next topic — review and retake.
+          </p>
         </div>
 
         <div style={{ padding: '20px 24px' }}>
