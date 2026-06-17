@@ -42,7 +42,9 @@ export default function SuggestedForReview({
         style={{
           position: 'relative', overflow: 'hidden',
           borderRadius: t.radius, padding: '16px 18px',
-          background: t.surface, border: `1px solid ${t.border}`, borderLeft: `3px solid ${s.urgency.color}`,
+          background: t.surface,
+          borderTop: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`,
+          borderBottom: `1px solid ${t.border}`, borderLeft: `3px solid ${s.urgency.color}`,
           boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
         }}
       >
@@ -86,7 +88,9 @@ export default function SuggestedForReview({
             style={{
               flex: '0 0 220px', minWidth: 220,
               borderRadius: t.radius, padding: '14px 16px',
-              background: t.surface, border: `1px solid ${t.border}`, borderLeft: `3px solid ${s.urgency.color}`,
+              background: t.surface,
+              borderTop: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`,
+              borderBottom: `1px solid ${t.border}`, borderLeft: `3px solid ${s.urgency.color}`,
             }}
           >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 99, marginBottom: 8,

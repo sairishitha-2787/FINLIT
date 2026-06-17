@@ -76,7 +76,11 @@ export default function DailyGlossaryCard({ accent: accentProp, theme: themeProp
           transition={{ duration: 0.2 }}
           style={{
             position: 'relative', borderRadius: t.radius, padding: '16px 18px',
-            background: t.surface, border: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
+            background: t.surface,
+            // Side-specific shorthands only (mixing `border` + `borderLeft`
+            // triggers React's style-conflict warning on rerender).
+            borderTop: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`,
+            borderBottom: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
             boxShadow: '0 4px 20px rgba(0,0,0,0.22)',
           }}
         >

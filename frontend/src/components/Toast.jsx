@@ -58,7 +58,10 @@ export default function Toast({ type = 'info', message, theme, action, onClose, 
         width: '100%', maxWidth: 380, padding: '12px 14px',
         borderRadius: 12,
         background: t.surface || NEUTRAL.surface,
-        border: `1px solid ${t.border || NEUTRAL.border}`,
+        // Side-specific shorthands only — avoid mixing `border` + `borderLeft`.
+        borderTop: `1px solid ${t.border || NEUTRAL.border}`,
+        borderRight: `1px solid ${t.border || NEUTRAL.border}`,
+        borderBottom: `1px solid ${t.border || NEUTRAL.border}`,
         borderLeft: `4px solid ${accent}`,
         boxShadow: celebrate
           ? `0 8px 32px rgba(0,0,0,0.35), 0 0 18px ${accent}66`

@@ -304,7 +304,7 @@ export default function FashionLayout() {
                         fontFamily: F.ui, fontSize: 13.5, fontWeight: active ? 600 : 400,
                         color: active ? C.deepRose : C.midRose,
                         background: active ? 'rgba(247,160,184,0.14)' : 'transparent',
-                        border: 'none', borderLeft: `2.5px solid ${active ? C.pink : 'transparent'}`,
+                        borderTop: 'none', borderRight: 'none', borderBottom: 'none', borderLeft: `2.5px solid ${active ? C.pink : 'transparent'}`,
                         cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
                       }}
                     >
@@ -326,7 +326,7 @@ export default function FashionLayout() {
                       padding: '11px 14px', marginBottom: 3, borderRadius: 12,
                       fontFamily: F.ui, fontSize: 13.5, fontWeight: 400,
                       color: C.midRose, background: 'transparent',
-                      border: 'none', borderLeft: '2.5px solid transparent',
+                      borderTop: 'none', borderRight: 'none', borderBottom: 'none', borderLeft: '2.5px solid transparent',
                       cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
                     }}
                   >
@@ -347,7 +347,7 @@ export default function FashionLayout() {
                         fontFamily: F.ui, fontSize: 13.5, fontWeight: settingsActive ? 600 : 400,
                         color: settingsActive ? C.deepRose : C.midRose,
                         background: settingsActive ? 'rgba(247,160,184,0.14)' : 'transparent',
-                        border: 'none', borderLeft: `2.5px solid ${settingsActive ? C.pink : 'transparent'}`,
+                        borderTop: 'none', borderRight: 'none', borderBottom: 'none', borderLeft: `2.5px solid ${settingsActive ? C.pink : 'transparent'}`,
                         cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
                       }}
                     >

@@ -43,7 +43,9 @@ export default function DailyChallengeCard({ domain, awardXP, accent, theme: the
     return (
       <div style={{
         borderRadius: t.radius, padding: 18, minHeight: 110,
-        background: t.surface, border: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
+        background: t.surface,
+        borderTop: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`,
+        borderBottom: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
@@ -61,8 +63,8 @@ export default function DailyChallengeCard({ domain, awardXP, accent, theme: the
         position: 'relative', overflow: 'hidden',
         borderRadius: t.radius, padding: '18px 20px',
         background: t.surface,
-        border: `1px solid ${t.border}`,
-        borderLeft: `3px solid ${C}`,
+        borderTop: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`,
+        borderBottom: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
         boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
       }}
     >

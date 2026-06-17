@@ -140,7 +140,9 @@ const QuizDiagnosis = ({ score, totalQuestions, topic, onReteach, onContinue, ga
                 <div style={{
                   padding: '14px 16px', borderRadius: '10px',
                   background: 'rgba(78,205,196,0.08)',
-                  border: '1px solid rgba(78,205,196,0.3)',
+                  borderTop: '1px solid rgba(78,205,196,0.3)',
+                  borderRight: '1px solid rgba(78,205,196,0.3)',
+                  borderBottom: '1px solid rgba(78,205,196,0.3)',
                   borderLeft: '3px solid #4ECDC4',
                 }}>
                   <p style={{

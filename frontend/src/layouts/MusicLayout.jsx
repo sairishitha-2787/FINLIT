@@ -714,7 +714,7 @@ export default function MusicLayout() {
                         letterSpacing: '0.05em', textTransform: 'uppercase',
                         color: active ? '#fff' : musicTheme.textMuted,
                         background: active ? 'rgba(255,255,255,0.05)' : 'transparent',
-                        border: 'none', borderLeft: `2.5px solid ${active ? C : 'transparent'}`,
+                        borderTop: 'none', borderRight: 'none', borderBottom: 'none', borderLeft: `2.5px solid ${active ? C : 'transparent'}`,
                         cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
                       }}
                     >
@@ -740,7 +740,7 @@ export default function MusicLayout() {
                       fontFamily: musicTheme.fontSub, fontSize: 13, fontWeight: 600,
                       letterSpacing: '0.05em', textTransform: 'uppercase',
                       color: musicTheme.textMuted, background: 'transparent',
-                      border: 'none', borderLeft: '2.5px solid transparent',
+                      borderTop: 'none', borderRight: 'none', borderBottom: 'none', borderLeft: '2.5px solid transparent',
                       cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
                     }}
                   >
@@ -759,7 +759,7 @@ export default function MusicLayout() {
                     letterSpacing: '0.05em', textTransform: 'uppercase',
                     color: location.pathname === '/music/mixer' ? '#fff' : musicTheme.textMuted,
                     background: location.pathname === '/music/mixer' ? 'rgba(255,255,255,0.05)' : 'transparent',
-                    border: 'none', borderLeft: `2.5px solid ${location.pathname === '/music/mixer' ? C : 'transparent'}`,
+                    borderTop: 'none', borderRight: 'none', borderBottom: 'none', borderLeft: `2.5px solid ${location.pathname === '/music/mixer' ? C : 'transparent'}`,
                     cursor: 'pointer', textAlign: 'left', transition: 'all 0.18s ease',
                   }}
                 >

@@ -178,7 +178,9 @@ export default function MusicCharts() {
   // ── Reusable panel ────────────────────────────────────────────────────────
   const panel = (extra = {}) => ({
     background: theme.bgCard,
-    border: `1px solid ${color}22`,
+    borderTop: `1px solid ${color}22`,
+    borderRight: `1px solid ${color}22`,
+    borderBottom: `1px solid ${color}22`,
     borderLeft: `3px solid ${color}`,
     borderRadius: neon ? 0 : cluster === 'dreamy' ? 16 : 8,
     ...(cluster === 'dreamy' ? { backdropFilter: 'blur(14px)' } : {}),

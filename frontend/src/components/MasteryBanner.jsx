@@ -37,7 +37,9 @@ export default function MasteryBanner({ topics = [], completed = [], accent = '#
   return (
     <div style={{
       marginBottom: 18, padding: '14px 16px', borderRadius: t.radius,
-      background: t.surface, border: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
+      background: t.surface,
+      borderTop: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`,
+      borderBottom: `1px solid ${t.border}`, borderLeft: `3px solid ${C}`,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         <Target size={15} color={C} />

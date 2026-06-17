@@ -35,9 +35,12 @@ function Panel({ color, children, style = {} }) {
   return (
     <div style={{
       background: sportsTheme.bgCard,
+      // Use side-specific shorthands only — never mix the `border` shorthand
+      // with `borderLeft`, which triggers React's style-conflict warning.
+      borderTop: sportsTheme.borderFaint,
+      borderRight: sportsTheme.borderFaint,
+      borderBottom: sportsTheme.borderFaint,
       borderLeft: `3px solid ${color}`,
-      border: sportsTheme.borderFaint,
-      borderLeftWidth: '3px', borderLeftColor: color,
       borderRadius: '8px',
       boxShadow: sportsTheme.cardShadow,
       ...style,
@@ -342,9 +345,10 @@ export default function SportsDashboard() {
             onClick={() => action ? action() : navigate(path)}
             style={{
               background: sportsTheme.bgCard,
+              borderTop: sportsTheme.borderFaint,
+              borderRight: sportsTheme.borderFaint,
+              borderBottom: sportsTheme.borderFaint,
               borderLeft: `3px solid ${C}`,
-              border: sportsTheme.borderFaint,
-              borderLeftWidth: '3px', borderLeftColor: C,
               borderRadius: '8px',
               boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
               padding: '14px',

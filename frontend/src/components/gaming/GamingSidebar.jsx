@@ -39,7 +39,7 @@ export default function GamingSidebar({ character, onOpenSheet, isMobile, onClos
     fontFamily: gamingTheme.fontBody, fontSize: '14px',
     color: active ? colors.primary : gamingTheme.seafoam,
     background: active ? `rgba(${hexToRgbStr(colors.primary)},0.12)` : 'transparent',
-    border: 'none',
+    borderTop: 'none', borderRight: 'none', borderBottom: 'none',
     borderLeft: `2.5px solid ${active ? colors.primary : 'transparent'}`,
     boxShadow: active ? `0 0 16px rgba(${hexToRgbStr(colors.primary)},0.15)` : 'none',
     cursor: 'pointer',

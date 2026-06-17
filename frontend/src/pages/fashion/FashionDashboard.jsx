@@ -411,8 +411,8 @@ export default function FashionDashboard() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }}>
           <SectionLabel style={{ marginBottom: 12 }}>Recent Looks</SectionLabel>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {recentLooks.map((topic) => (
-              <div key={topic} style={{
+            {recentLooks.map((topic, i) => (
+              <div key={`${topic}-${i}`} style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '7px 14px', borderRadius: 99,
                 background: 'rgba(255,255,255,0.28)',
