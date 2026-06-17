@@ -7,6 +7,7 @@ import { sportsTheme, getDivisionName } from '../../styles/sportsTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import DailyGlossaryCard from '../../components/DailyGlossaryCard';
 
 const ALL_TOPIC_NAMES = [
   'Budgeting Basics','Saving 101','Income Tracking','Emergency Funds',
@@ -242,6 +243,9 @@ export default function SportsDashboard() {
           overlayBg: 'rgba(15,15,15,0.94)',
         }}
       />
+
+      {/* ── Daily Glossary term ── */}
+      <DailyGlossaryCard />
 
       {/* ── Suggested for Review (spaced repetition) ── */}
       <SuggestedForReview

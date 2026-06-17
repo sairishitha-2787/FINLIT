@@ -18,6 +18,7 @@ import { MUSIC_TOPICS } from '../../data/musicTopics';
 import { MUSIC_BADGES_CONFIG } from '../../data/musicBadges';
 import { supabase } from '../../config/supabase';
 import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
+import { loadGlossaryCardPref, saveGlossaryCardPref } from '../../components/DailyGlossaryCard';
 
 const LS_DIFFICULTY = 'finlit_music_difficulty';
 const LS_PREFS      = 'finlit_music_prefs';
@@ -67,6 +68,7 @@ export default function MusicMixer() {
   const [difficulty, setDifficulty] = useState(() => localStorage.getItem(LS_DIFFICULTY) || 'beginner');
   const [prefs, setPrefs]           = useState(loadPrefs);
   const [srEnabled, setSrEnabled]   = useState(loadSRPref);
+  const [glossaryEnabled, setGlossaryEnabled] = useState(loadGlossaryCardPref);
   const [name, setName]             = useState('');
   const [nameSaving, setNameSaving] = useState(false);
   const [toast, setToast]           = useState(null);
@@ -326,10 +328,14 @@ export default function MusicMixer() {
           <Row key={p.key} label={p.label} desc={p.desc}
             right={<Toggle on={prefs[p.key]} onToggle={() => togglePref(p.key)} />} />
         ))}
-        <Row last
+        <Row
           label="Spaced Repetition"
           desc="Smart suggestions for topics to review"
           right={<Toggle on={srEnabled} onToggle={() => { const v = !srEnabled; setSrEnabled(v); saveSRPref(v); flashToast('Preference saved'); }} />} />
+        <Row last
+          label="Daily Glossary Term"
+          desc="Show a random financial term on the dashboard"
+          right={<Toggle on={glossaryEnabled} onToggle={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); flashToast('Preference saved'); }} />} />
       </Section>
 
       {/* ── ACCOUNT ── */}

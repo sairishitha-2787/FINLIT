@@ -20,6 +20,8 @@ import NotificationBell         from '../components/NotificationBell';
 import LogoutConfirmModal        from '../components/shared/LogoutConfirmModal';
 
 import { sportsTheme, getDivision, getDivisionName } from '../styles/sportsTheme';
+import { ThemeProvider } from '../context/ThemeContext';
+import { normalizeSportsTheme } from '../styles/normalizeTheme';
 
 // ─── Font injection ───────────────────────────────────────────────────────────
 let fontsInjected = false;
@@ -190,6 +192,7 @@ export default function SportsLayout() {
   const division      = getDivision(level);
   const divName       = getDivisionName(division);
   const CharIcon      = CHAR_ICON[character?.id] || Zap;
+  const themeValue    = normalizeSportsTheme(C, character?.name || null);
 
   const isActive = (item) =>
     item.path === '/sports'
@@ -598,7 +601,9 @@ export default function SportsLayout() {
 
           {/* Scrollable content — transparent so background shows through */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            <Outlet context={outletContext} />
+            <ThemeProvider value={themeValue}>
+              <Outlet context={outletContext} />
+            </ThemeProvider>
           </div>
         </div>
       </div>

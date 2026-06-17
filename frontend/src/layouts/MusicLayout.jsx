@@ -18,7 +18,9 @@ import MusicDomain        from '../pages/music/MusicDomain';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
 import NotificationBell    from '../components/NotificationBell';
 
-import { musicTheme, CLUSTER_MAP, getMusicTier, getMusicTierName } from '../styles/musicTheme';
+import { musicTheme, CLUSTER_MAP, getClusterTheme, getMusicTier, getMusicTierName } from '../styles/musicTheme';
+import { ThemeProvider } from '../context/ThemeContext';
+import { normalizeMusicTheme } from '../styles/normalizeTheme';
 
 // ─── Font injection (all cluster fonts preloaded) ─────────────────────────────
 let fontsInjected = false;
@@ -548,6 +550,7 @@ export default function MusicLayout() {
   const showCharSel   = characterLoaded && !character;
   const C             = character?.color || '#D798A3';
   const cluster       = CLUSTER_MAP[character?.id] || null;
+  const themeValue    = normalizeMusicTheme(getClusterTheme(character?.id), C, character?.name || null, cluster);
   const levelProgress = getLevelProgress();
   const tier          = getMusicTier(level);
   const tierName      = getMusicTierName(tier);
@@ -881,7 +884,9 @@ export default function MusicLayout() {
             .music-scroll-area { scrollbar-color: ${C} rgba(255,255,255,0.04); scrollbar-width: thin; }
           `}</style>
           <div className="music-scroll-area" style={{ flex: 1, overflowY: 'auto' }}>
-            <Outlet context={outletContext} />
+            <ThemeProvider value={themeValue}>
+              <Outlet context={outletContext} />
+            </ThemeProvider>
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import DailyGlossaryCard from '../../components/DailyGlossaryCard';
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };
 
@@ -181,6 +182,9 @@ export default function GamingDashboard() {
             overlayBg: 'rgba(20,26,45,0.94)',
           }}
         />
+        <div style={{ marginTop: 12 }}>
+          <DailyGlossaryCard />
+        </div>
         <div style={{ marginTop: 12 }}>
           <SuggestedForReview
             domain="gaming"

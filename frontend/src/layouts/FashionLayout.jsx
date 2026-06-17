@@ -12,6 +12,8 @@ import CharacterSelection from '../components/fashion/CharacterSelection';
 import CharacterSheet from '../components/fashion/CharacterSheet';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
 import NotificationBell from '../components/NotificationBell';
+import { ThemeProvider } from '../context/ThemeContext';
+import { normalizeFashionTheme } from '../styles/normalizeTheme';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const F = {
@@ -158,6 +160,7 @@ export default function FashionLayout() {
   const fashionGradient  = fashionCharacter?.colors?.gradient  || 'linear-gradient(135deg,#f7a0b8,#c084fc,#fbb6c4)';
 
   const outletContext = { xp, level, streak, getLevelProgress, awardXP, fashionCharacter, fashionColor, fashionSecondary, fashionGlow, fashionGradient, onOpenSheet: () => setSheetOpen(true) };
+  const themeValue = normalizeFashionTheme(fashionColor, fashionCharacter?.name || null);
 
   return (
     <>
@@ -433,7 +436,9 @@ export default function FashionLayout() {
 
           {/* Scrollable content — transparent so blobs show through */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            <Outlet context={outletContext} />
+            <ThemeProvider value={themeValue}>
+              <Outlet context={outletContext} />
+            </ThemeProvider>
           </div>
         </div>
       </div>

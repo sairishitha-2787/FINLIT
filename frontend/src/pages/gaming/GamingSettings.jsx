@@ -7,6 +7,7 @@ import { useDomain } from '../../contexts/DomainContext';
 import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
 import { loadSRPref, saveSRPref } from '../../services/spacedRepetition';
+import { loadGlossaryCardPref, saveGlossaryCardPref } from '../../components/DailyGlossaryCard';
 
 const DIFFICULTIES = [
   { id: 'beginner',     label: 'Novice',  desc: 'Easier quests, more time',        xp: 'Standard XP' },
@@ -142,6 +143,7 @@ export default function GamingSettings() {
 
   const [difficulty,   setDifficulty]   = useState('beginner');
   const [srEnabled,    setSrEnabled]    = useState(loadSRPref);
+  const [glossaryEnabled, setGlossaryEnabled] = useState(loadGlossaryCardPref);
   const [name,         setName]         = useState('');
   const [nameSaving,   setNameSaving]   = useState(false);
   const [showCharModal, setShowCharModal] = useState(false);
@@ -313,7 +315,6 @@ export default function GamingSettings() {
       {/* Learning */}
       <Section title="Learning">
         <SettingRow
-          last
           label="Spaced Repetition"
           desc="Smart suggestions for topics to review"
           right={
@@ -322,6 +323,19 @@ export default function GamingSettings() {
               style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
                 border: `1px solid ${srEnabled ? C : 'rgba(139,184,233,0.3)'}`, background: srEnabled ? C : 'rgba(255,255,255,0.08)' }}>
               <span style={{ position: 'absolute', top: 2, left: srEnabled ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: srEnabled ? gamingTheme.bgDark : '#fff', transition: 'left 0.2s' }} />
+            </button>
+          }
+        />
+        <SettingRow
+          last
+          label="Daily Glossary Term"
+          desc="Show a random financial term on the dashboard"
+          right={
+            <button onClick={() => { const v = !glossaryEnabled; setGlossaryEnabled(v); saveGlossaryCardPref(v); }}
+              role="switch" aria-checked={glossaryEnabled}
+              style={{ width: 42, height: 24, borderRadius: 99, cursor: 'pointer', position: 'relative',
+                border: `1px solid ${glossaryEnabled ? C : 'rgba(139,184,233,0.3)'}`, background: glossaryEnabled ? C : 'rgba(255,255,255,0.08)' }}>
+              <span style={{ position: 'absolute', top: 2, left: glossaryEnabled ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: glossaryEnabled ? gamingTheme.bgDark : '#fff', transition: 'left 0.2s' }} />
             </button>
           }
         />

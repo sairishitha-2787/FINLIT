@@ -11,6 +11,7 @@ import { MUSIC_TOPICS } from '../../data/musicTopics';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import DailyGlossaryCard from '../../components/DailyGlossaryCard';
 import './MusicDashboard.css';
 
 const ALL_TOPIC_NAMES = [
@@ -292,6 +293,9 @@ export default function MusicDashboard() {
           overlayBg: 'rgba(10,8,10,0.94)',
         }}
       />
+
+      {/* ── Daily Glossary term ── */}
+      <DailyGlossaryCard />
 
       {/* ── Suggested for Review (spaced repetition) ── */}
       <SuggestedForReview

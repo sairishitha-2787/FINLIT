@@ -16,6 +16,8 @@ import GamingSidebar from '../components/gaming/GamingSidebar';
 import CharacterSheet from '../components/gaming/CharacterSheet';
 
 import { gamingTheme, getElementColors } from '../styles/gamingTheme';
+import { ThemeProvider } from '../context/ThemeContext';
+import { normalizeGamingTheme } from '../styles/normalizeTheme';
 import { preloadCharacterImages } from '../utils/preloadImages';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
 
@@ -47,6 +49,7 @@ export default function GamingLayout() {
 
   const showCharSel = characterLoaded && !character;
   const colors      = getElementColors(character);
+  const themeValue  = normalizeGamingTheme(colors.primary, character?.name || null);
   const levelProgress = getLevelProgress();
   const xpToNext    = getXPForNextLevel();
 
@@ -148,7 +151,9 @@ export default function GamingLayout() {
           }} />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <Outlet context={outletContext} />
+            <ThemeProvider value={themeValue}>
+              <Outlet context={outletContext} />
+            </ThemeProvider>
           </div>
         </div>
       </div>

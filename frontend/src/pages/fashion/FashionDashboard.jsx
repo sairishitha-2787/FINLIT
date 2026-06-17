@@ -7,6 +7,7 @@ import { FASHION_DISTRICTS } from '../../components/fashion/RunwayMap';
 import FloatingMentor from '../../components/mentor/FloatingMentor';
 import DailyChallengeCard from '../../components/DailyChallengeCard';
 import SuggestedForReview from '../../components/SuggestedForReview';
+import DailyGlossaryCard from '../../components/DailyGlossaryCard';
 
 // ─── Design tokens (self-contained) ──────────────────────────────────────────
 const C_BASE = {
@@ -332,6 +333,11 @@ export default function FashionDashboard() {
             overlayBg: 'rgba(255,250,247,0.95)',
           }}
         />
+      </div>
+
+      {/* ── DAILY GLOSSARY TERM ── */}
+      <div style={{ marginBottom: 16 }}>
+        <DailyGlossaryCard />
       </div>
 
       {/* ── SUGGESTED FOR REVIEW (spaced repetition) ── */}
