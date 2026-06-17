@@ -9,6 +9,8 @@ import {
 } from '../utils/storage';
 import { saveTopicProgress, fetchUserProgress } from '../services/progressService';
 import { logNotification } from '../services/notificationsService';
+import { logQuizSubmitted, logTopicUnlocked, logSessionStarted } from '../services/eventsService';
+import { MASTERY_THRESHOLD } from '../hooks/useMasteryProgress';
 
 const UserContext = createContext();
 
@@ -50,11 +52,19 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const sessionLoggedRef = React.useRef(null);
+
   // Reload profile whenever the logged-in user changes
   useEffect(() => {
     if (user) {
       loadProfile();
+      // Log one session_started per user per app load (analytics).
+      if (sessionLoggedRef.current !== user.id) {
+        sessionLoggedRef.current = user.id;
+        logSessionStarted(user.id);
+      }
     } else {
+      sessionLoggedRef.current = null;
       setProfile(null);
       setProgress([]);
       setCompletedTopics([]);
@@ -174,6 +184,16 @@ export const UserProvider = ({ children }) => {
         actionType: 'review_quiz',
         actionTarget: topicData.topic,
       });
+
+      // Analytics (fire-and-forget). Domain is the user's primary interest.
+      const evtDomain = profile?.primaryInterest?.toLowerCase() || null;
+      logQuizSubmitted(user.id, evtDomain, {
+        topicName: topicData.topic, score: topicData.score, total,
+        percent: p, difficulty: topicData.difficulty,
+      });
+      if (p >= MASTERY_THRESHOLD) {
+        logTopicUnlocked(user.id, evtDomain, { topicName: topicData.topic, percent: p });
+      }
     }
     return true;
   };

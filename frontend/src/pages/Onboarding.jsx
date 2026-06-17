@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -11,6 +11,7 @@ import {
 import AnimatedIcon from '../components/shared/AnimatedIcon';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
+import { logEvent, logOnboardingCompleted, logDomainSelected, EVENT_TYPES } from '../services/eventsService';
 import { ONBOARDING_QUESTIONS } from '../utils/constants';
 import GridDistortion from '../components/effects/GridDistortion';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
@@ -142,6 +143,11 @@ const Onboarding = () => {
   const totalSteps      = ONBOARDING_QUESTIONS.length;
   const isLastStep      = currentStep === totalSteps - 1;
 
+  // Analytics: one onboarding_started per user when the flow mounts.
+  useEffect(() => {
+    if (user?.id) logEvent(user.id, EVENT_TYPES.ONBOARDING_STARTED);
+  }, [user?.id]);
+
   const handleAnswer = (id, value) => setAnswers({ ...answers, [id]: value });
 
   const handleNext = async () => {
@@ -156,6 +162,12 @@ const Onboarding = () => {
       });
       setSaving(false);
       if (result.success) {
+        // Analytics: domain choice + onboarding completion.
+        const domain = (answers.interest || '').toLowerCase() || null;
+        if (user?.id) {
+          logDomainSelected(user.id, domain);
+          logOnboardingCompleted(user.id, domain);
+        }
         const path = getDomainPath(answers.interest);
         if (path) { setSavedInterest(answers.interest); setShowPathPreview(true); }
         else       { navigate('/dashboard'); }

@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
 import { logNotification } from '../services/notificationsService';
+import { logBadgeEarned } from '../services/eventsService';
 
 export function useBadgeTracker() {
   const { user } = useAuth();
@@ -132,6 +133,11 @@ export function useBadgeTracker() {
         icon: '⭐',
         actionType: 'view_badge',
         actionTarget: id,
+      });
+
+      // Analytics (fire-and-forget). Domain is optional — callers pass it via extra.
+      logBadgeEarned(user.id, extra.domain || null, {
+        badgeId: id, badgeName: name, tier: badgeInfo.tier, category: badgeInfo.category,
       });
 
       // Auto-clear newlyEarned after 5s (6s for secrets)

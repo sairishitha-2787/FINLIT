@@ -13,6 +13,9 @@ import {
   pickDailyTopic, getTopicByKey, buildLearnState,
 } from '../data/dailyChallengeTopics';
 import { logNotification } from '../services/notificationsService';
+import { logDailyChallengeCompleted, logStreakMilestone } from '../services/eventsService';
+
+const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100, 365];
 
 const BASE_XP        = 130;
 const STREAK_BONUS   = 10;   // per day of streak
@@ -169,6 +172,14 @@ export function useDailyChallenge({ domain, awardXP } = {}) {
       icon: '🔥',
       domain: challenge.domain,
     });
+
+    // Analytics (fire-and-forget).
+    logDailyChallengeCompleted(user.id, challenge.domain, {
+      topicName: challenge.topicName, xpEarned: xp, streakCount: newStreak,
+    });
+    if (STREAK_MILESTONES.includes(newStreak)) {
+      logStreakMilestone(user.id, challenge.domain, { streakCount: newStreak });
+    }
   }, [user, challenge, streak]);
 
   const topicMeta = challenge ? getTopicByKey(challenge.topicKey) : null;
