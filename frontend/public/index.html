@@ -6,9 +6,11 @@
     <meta name="theme-color" content="#6366F1" />
     <meta name="description" content="FINLIT - Learn finance through your interests" />
 
-    <!-- Security headers via meta (CDN/static host fallback) -->
+    <!-- Security headers via meta (CDN/static host fallback).
+         NOTE: X-Frame-Options and CSP 'frame-ancestors' are intentionally NOT
+         here — browsers ignore them in <meta> (and log console errors). Set
+         those two as real HTTP response headers at your host/CDN instead. -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()" />
     <meta http-equiv="Content-Security-Policy" content="
@@ -18,7 +20,6 @@
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' data: https://media.giphy.com https://media0.giphy.com https://media1.giphy.com https://media2.giphy.com https://media3.giphy.com https://media4.giphy.com;
       connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.groq.com http://localhost:3001;
-      frame-ancestors 'none';
       base-uri 'self';
       form-action 'self';
       object-src 'none';

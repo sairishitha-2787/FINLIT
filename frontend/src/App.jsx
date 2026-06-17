@@ -54,7 +54,7 @@ function App() {
   return (
     <AuthProvider>
       <UserProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <ClickSpark
             sparkColor="#ffffff"
             sparkSize={10}

@@ -70,7 +70,9 @@ export const useGamification = () => {
   const loadGamification = async () => {
     const [{ data: streakRow }, { data: badgeRows }] = await Promise.all([
       supabase.from('user_streaks').select('*').eq('user_id', user.id).single(),
-      supabase.from('user_badges').select('badge_id, earned_at, created_at').eq('user_id', user.id),
+      // select('*') (not explicit columns) so a missing earned_at/created_at
+      // column can't trigger a 400; we read whichever timestamp exists below.
+      supabase.from('user_badges').select('*').eq('user_id', user.id),
     ]);
 
     if (badgeRows) {
