@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Map, BarChart2, Award, Menu, X, LogOut, WifiOff, FileText, Settings, Heart } from 'lucide-react';
+import { Home, Map, BarChart2, Award, Menu, X, LogOut, WifiOff, FileText, Settings, Heart, Library } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../context/UserContext';
 import { useGamification } from '../hooks/useGamification';
@@ -121,6 +121,7 @@ const NAV = [
   { icon: Map,       label: 'Runway Map',       path: '/fashion/map'         },
   { icon: BarChart2, label: 'Style Progress',   path: '/fashion/progress'    },
   { icon: Award,     label: 'Designer Labels',  path: '/fashion/achievements' },
+  { icon: Library,   label: 'Glossary',         path: '/glossary'            },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

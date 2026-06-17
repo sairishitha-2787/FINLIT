@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home, BookOpen, BarChart2, Trophy,
   Menu, X, LogOut, WifiOff, FileText, Settings,
-  Music, Zap, Cpu,
+  Music, Zap, Cpu, Library,
 } from 'lucide-react';
 
 import { useMusic } from '../contexts/MusicContext';
@@ -391,6 +391,7 @@ const NAV = [
   { icon: BookOpen,  label: 'The Setlist', path: '/music/setlist' },
   { icon: BarChart2, label: 'The Charts',  path: '/music/charts'  },
   { icon: Trophy,    label: 'The Vault',   path: '/music/vault'   },
+  { icon: Library,   label: 'Glossary',    path: '/glossary'      },
 ];
 
 const CHAR_ICON = { luna: Music, jay: Zap, cypher: Cpu };

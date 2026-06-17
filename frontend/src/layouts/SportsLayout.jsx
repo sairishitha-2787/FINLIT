@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home, BookOpen, BarChart2, Trophy,
   Menu, X, LogOut, WifiOff, FileText, Settings,
-  Zap, Target,
+  Zap, Target, Library,
 } from 'lucide-react';
 
 import { useSports } from '../contexts/SportsContext';
@@ -123,6 +123,7 @@ const NAV = [
   { icon: BookOpen,  label: 'The Playbook',  path: '/sports/playbook'     },
   { icon: BarChart2, label: 'The Scoreboard',path: '/sports/progress'     },
   { icon: Trophy,    label: 'Trophy Case',   path: '/sports/achievements' },
+  { icon: Library,   label: 'Glossary',      path: '/glossary'            },
 ];
 
 const CHAR_ICON = { lyra: Zap, kael: Target, ian: Trophy };

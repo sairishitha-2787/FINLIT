@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BarChart2, Trophy, Map, Settings, Flame, Snowflake, Leaf, X, FileText, LogOut } from 'lucide-react';
+import { Home, BarChart2, Trophy, Map, Settings, Flame, Snowflake, Leaf, X, FileText, LogOut, Library } from 'lucide-react';
 import { gamingTheme, getElementColors } from '../../styles/gamingTheme';
 
 const NAV_ITEMS = [
@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { icon: Map,       label: 'Island Map',   path: '/gaming/map'           },
   { icon: BarChart2, label: 'Progress',     path: '/gaming/progress'      },
   { icon: Trophy,    label: 'Achievements', path: '/gaming/achievements'  },
+  { icon: Library,   label: 'Glossary',     path: '/glossary'             },
 ];
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };

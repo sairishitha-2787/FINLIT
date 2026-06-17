@@ -8,6 +8,7 @@ import ClickSpark from './components/effects/ClickSpark';
 import Welcome from './pages/Welcome';
 import Landing from './pages/Landing';
 import NotificationCenter from './pages/NotificationCenter';
+import Glossary from './pages/Glossary';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
@@ -101,6 +102,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <NotificationCenter />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/glossary"
+              element={
+                <ProtectedRoute>
+                  <Glossary />
                 </ProtectedRoute>
               }
             />
