@@ -15,6 +15,7 @@ import { ONBOARDING_QUESTIONS } from '../utils/constants';
 import GridDistortion from '../components/effects/GridDistortion';
 import LogoutConfirmModal from '../components/shared/LogoutConfirmModal';
 import GlassCard from '../components/core/GlassCard';
+import NeoQuizEnvironment from '../components/quiz/NeoQuizEnvironment';
 import { glass } from '../styles/coreTheme';
 import { getDomainPath } from '../services/chapterService';
 
@@ -30,6 +31,31 @@ const OPTION_ICON_MAP = {
   CreditCard, PiggyBank, TrendingUp, BarChart2, HelpCircle,
   Sprout, Leaf, TreePine,
 };
+
+// Lead mentor per domain (shown on the "Meet your mentor" screen)
+const MENTOR_INTRO = {
+  gaming:  { name: 'Raeveth', role: 'The Aggressive Investor', quote: 'Bold moves, maximum returns — let’s make your money work as hard as you do.' },
+  fashion: { name: 'Raven',   role: 'The Trendsetter',         quote: 'Fortune favors the bold. Your portfolio should be as daring as your wardrobe.' },
+  sports:  { name: 'Lyra',    role: 'The Striker',             quote: 'Every champion drills the fundamentals first. Let’s get you match-fit.' },
+  music:   { name: 'Luna',    role: 'The Vocalist',            quote: 'Every expert was once a beginner. Let’s find your rhythm.' },
+};
+
+// 4-question demo quiz (universal finance fundamentals). Letter answers match
+// the NeoQuizEnvironment format (options[0]=A … options[3]=D).
+const DEMO_QUESTIONS = [
+  { question: 'What does it mean to "pay yourself first"?',
+    options: ['Spend on wants before bills', 'Automatically save before spending', 'Pay the smallest debt first', 'Buy whatever you want'],
+    correctAnswer: 'B', explanation: 'Paying yourself first means automating savings the moment income arrives — before lifestyle spending drains it.' },
+  { question: 'An emergency fund should typically cover…',
+    options: ['1 week of expenses', '3–6 months of expenses', '10 years of income', 'Only your rent'],
+    correctAnswer: 'B', explanation: 'A 3–6 month cushion protects you from job loss or surprise costs without resorting to debt.' },
+  { question: 'What is compound interest?',
+    options: ['Interest only on the original amount', 'Interest earned on your interest', 'A one-time account fee', 'A type of tax'],
+    correctAnswer: 'B', explanation: 'Compound interest earns returns on both your principal AND previously earned interest — it snowballs over time.' },
+  { question: 'Which usually has the HIGHEST long-term return (and risk)?',
+    options: ['A savings account', 'Government bonds', 'Stocks', 'Cash under a mattress'],
+    correctAnswer: 'C', explanation: 'Historically stocks deliver the highest long-term returns, with more short-term ups and downs than savings or bonds.' },
+];
 
 const STEP_META = [
   { label: 'Welcome',   Icon: Smile    },
@@ -109,6 +135,8 @@ const Onboarding = () => {
   const [showPathPreview, setShowPathPreview] = useState(false);
   const [savedInterest, setSavedInterest] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [postStage, setPostStage]         = useState(null);  // 'mentor' | 'quiz' | 'results'
+  const [quizResult, setQuizResult]       = useState(null);
 
   const currentQuestion = ONBOARDING_QUESTIONS[currentStep];
   const totalSteps      = ONBOARDING_QUESTIONS.length;
@@ -153,6 +181,90 @@ const Onboarding = () => {
     center: { x: 0, opacity: 1, scale: 1 },
     exit:   (d) => ({ x: d > 0 ? -64 :  64, opacity: 0, scale: 0.98 }),
   };
+
+  // ── Post-questionnaire mini-flow: Mentor → Demo Quiz → Results ──────────────
+  if (postStage) {
+    const domainMeta = CORE_DOMAINS.find((d) => d.id === savedInterest) || CORE_DOMAINS[0];
+    const mentor = MENTOR_INTRO[savedInterest] || MENTOR_INTRO.gaming;
+    const C = domainMeta.color;
+
+    // Screen 3 — Meet your mentor
+    if (postStage === 'mentor') {
+      return (
+        <div className={`${glass.page} flex flex-col items-center justify-center p-4`}>
+          <GridDistortion {...GRID_BG} />
+          <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.45 }}
+            className="max-w-lg w-full relative z-10">
+            <GlassCard large className="p-8 md:p-10 text-center">
+              <div style={{ display: 'inline-block', background: `${C}1a`, border: `1px solid ${C}40`, borderRadius: 9999, padding: '4px 12px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: C, marginBottom: 16 }}>
+                Your Mentor
+              </div>
+              <div style={{ width: 96, height: 96, borderRadius: '50%', margin: '0 auto 18px', background: domainMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${C}55` }}>
+                <domainMeta.Icon size={42} color="#fff" strokeWidth={1.6} />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold mb-1" style={{ color: '#1e293b' }}>Meet {mentor.name}</h2>
+              <p className="text-sm font-semibold mb-4" style={{ color: C }}>{mentor.role} · {domainMeta.name}</p>
+              <p className="text-base italic mb-8" style={{ color: '#475569', lineHeight: 1.6 }}>“{mentor.quote}”</p>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                onClick={() => setPostStage('quiz')}
+                className={`w-full py-4 text-sm font-bold ${glass.accentBtn}`}>
+                <AnimatedIcon icon={Rocket} size={18} animation="bounce" /> LET’S QUIZ
+              </motion.button>
+            </GlassCard>
+          </motion.div>
+        </div>
+      );
+    }
+
+    // Screen 4 — First demo quiz (reuses the real quiz component)
+    if (postStage === 'quiz') {
+      return (
+        <div className={`${glass.page} flex flex-col items-center justify-center p-4`}>
+          <GridDistortion {...GRID_BG} />
+          <div className="max-w-2xl w-full relative z-10">
+            <div className="text-center mb-4">
+              <h2 className="text-xl md:text-2xl font-bold" style={{ color: '#1e293b' }}>Your First Challenge</h2>
+              <p className="text-sm" style={{ color: '#64748b' }}>4 quick questions — let’s see what you know.</p>
+            </div>
+            <NeoQuizEnvironment
+              questions={DEMO_QUESTIONS}
+              topic="Your First Challenge"
+              gamingMode
+              gamingColors={{ primary: C, secondary: C, glow: `${C}55` }}
+              onComplete={(score, total) => { setQuizResult({ score, total }); setPostStage('results'); }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // Results — celebrate + go to dashboard
+    const score = quizResult?.score ?? 0;
+    const total = quizResult?.total ?? DEMO_QUESTIONS.length;
+    const pct = total ? Math.round((score / total) * 100) : 0;
+    return (
+      <div className={`${glass.page} flex flex-col items-center justify-center p-4`}>
+        <GridDistortion {...GRID_BG} />
+        <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.45 }}
+          className="max-w-md w-full relative z-10">
+          <GlassCard large className="p-8 md:p-10 text-center">
+            <motion.div animate={{ scale: [1, 1.08, 1], rotate: [0, 6, -6, 0] }} transition={{ duration: 2, repeat: Infinity }}
+              style={{ width: 80, height: 80, borderRadius: '50%', margin: '0 auto 18px', background: domainMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px ${C}55` }}>
+              <Rocket size={36} color="#fff" />
+            </motion.div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: '#1e293b' }}>Great job!</h2>
+            <p className="text-base mb-1" style={{ color: '#475569' }}>You scored <b style={{ color: C }}>{score}/{total}</b> ({pct}%)</p>
+            <p className="text-sm mb-8" style={{ color: '#64748b' }}>You’re all set — your {domainMeta.name} journey starts now.</p>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/dashboard')}
+              className={`w-full py-4 text-sm font-bold ${glass.accentBtn}`}>
+              <AnimatedIcon icon={Rocket} size={18} animation="float" /> GO TO DASHBOARD
+            </motion.button>
+          </GlassCard>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (showPathPreview) {
     const path = getDomainPath(savedInterest);
@@ -219,11 +331,11 @@ const Onboarding = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.45 }}
-              onClick={() => navigate('/dashboard')}
+              onClick={() => { setShowPathPreview(false); setPostStage('mentor'); }}
               className={`w-full py-4 text-sm font-bold ${glass.accentBtn}`}
             >
               <AnimatedIcon icon={Rocket} size={18} animation="float" />
-              START CHAPTER 1
+              MEET YOUR MENTOR
             </motion.button>
           </GlassCard>
         </motion.div>
