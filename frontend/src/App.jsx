@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 import { ToastProvider } from './context/ToastProvider';
+import ErrorBoundary from './components/ErrorBoundary';
 import { DomainProvider } from './contexts/DomainContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ClickSpark from './components/effects/ClickSpark';
@@ -54,6 +55,7 @@ import { MusicProvider } from './contexts/MusicContext';
 
 function App() {
   return (
+    <ErrorBoundary>
     <AuthProvider>
       <UserProvider>
         <ToastProvider>
@@ -202,6 +204,7 @@ function App() {
         </ToastProvider>
       </UserProvider>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
