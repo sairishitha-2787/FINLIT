@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 import { ToastProvider } from './context/ToastProvider';
@@ -11,6 +11,7 @@ import Welcome from './pages/Welcome';
 import Landing from './pages/Landing';
 import NotificationCenter from './pages/NotificationCenter';
 import Glossary from './pages/Glossary';
+import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
@@ -135,6 +136,7 @@ function App() {
               <Route path="achievements" element={<GamingAchievementsPage />} />
               <Route path="learn" element={<Learning />} />
               <Route path="settings" element={<GamingSettings />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* Fashion domain */}
@@ -154,6 +156,7 @@ function App() {
               <Route path="progress" element={<FashionProgressPage />} />
               <Route path="achievements" element={<FashionBadgesPage />} />
               <Route path="settings" element={<FashionSettings />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* Sports domain */}
@@ -173,6 +176,7 @@ function App() {
               <Route path="achievements" element={<SportsBadgesPage />} />
               <Route path="learn" element={<SportsLearning />} />
               <Route path="settings" element={<SportsSettings />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* Music domain */}
@@ -196,9 +200,10 @@ function App() {
               <Route path="vinyl"         element={<VinylRecords />} />
               <Route path="neon"          element={<NeonGlitch />} />
               <Route path="forest"        element={<DreamyForest />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
 
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
         </ToastProvider>
