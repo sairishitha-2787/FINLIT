@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
 
@@ -36,7 +36,7 @@ const calculateLevel = (totalXp) => {
 
 const todayStr = () => new Date().toISOString().split('T')[0];
 
-export const useGamification = () => {
+function useProvideGamification() {
   const { user } = useAuth();
   const [xp, setXp] = useState(0);
   const [level, setLevel] = useState(1);
@@ -301,6 +301,22 @@ export const useGamification = () => {
     dismissLevelUp,
     dismissBadgeNotification,
   };
+}
+
+const GamificationContext = createContext(null);
+
+// Single shared instance for the whole app. Without this, every component that
+// called useGamification() got its OWN xp/level/badge state, so XP earned in a
+// quiz never reached the dashboard's separate instance until a full reload.
+export function GamificationProvider({ children }) {
+  const value = useProvideGamification();
+  return <GamificationContext.Provider value={value}>{children}</GamificationContext.Provider>;
+}
+
+export const useGamification = () => {
+  const ctx = useContext(GamificationContext);
+  if (!ctx) throw new Error('useGamification must be used within GamificationProvider');
+  return ctx;
 };
 
 export default useGamification;

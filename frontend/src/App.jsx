@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 import { ToastProvider } from './context/ToastProvider';
+import { GamificationProvider } from './hooks/useGamification';
 import ErrorBoundary from './components/ErrorBoundary';
 import { DomainProvider } from './contexts/DomainContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -59,6 +60,7 @@ function App() {
     <ErrorBoundary>
     <AuthProvider>
       <UserProvider>
+        <GamificationProvider>
         <ToastProvider>
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <ClickSpark
@@ -211,6 +213,7 @@ function App() {
           </Routes>
         </Router>
         </ToastProvider>
+        </GamificationProvider>
       </UserProvider>
     </AuthProvider>
     </ErrorBoundary>
