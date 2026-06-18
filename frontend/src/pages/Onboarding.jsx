@@ -140,6 +140,7 @@ const Onboarding = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [postStage, setPostStage]         = useState(null);  // 'mentor' | 'quiz' | 'results'
   const [quizResult, setQuizResult]       = useState(null);
+  const [showDemoExplain, setShowDemoExplain] = useState(false); // demo-quiz explainer modal
 
   const currentQuestion = ONBOARDING_QUESTIONS[currentStep];
   const totalSteps      = ONBOARDING_QUESTIONS.length;
@@ -220,12 +221,53 @@ const Onboarding = () => {
               <p className="text-sm font-semibold mb-4" style={{ color: C }}>{mentor.role} · {domainMeta.name}</p>
               <p className="text-base italic mb-8" style={{ color: '#475569', lineHeight: 1.6 }}>“{mentor.quote}”</p>
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                onClick={() => setPostStage('quiz')}
+                onClick={() => {
+                  // Explain the demo quiz the first time; otherwise go straight in.
+                  if (localStorage.getItem('finlit_seen_demo_explanation')) setPostStage('quiz');
+                  else setShowDemoExplain(true);
+                }}
                 className={`w-full py-4 text-sm font-bold ${glass.accentBtn}`}>
                 <AnimatedIcon icon={Rocket} size={18} animation="bounce" /> LET’S QUIZ
               </motion.button>
             </GlassCard>
           </motion.div>
+
+          {/* Demo-quiz explainer — first time only; Skip jumps to the dashboard */}
+          <AnimatePresence>
+            {showDemoExplain && (
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(15,23,42,0.45)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+              >
+                <motion.div
+                  initial={{ scale: 0.92, y: 16, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.92, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                  style={{ maxWidth: 420, width: '100%', background: '#fff', borderRadius: 20, padding: '28px 26px', textAlign: 'center', boxShadow: '0 24px 64px rgba(15,23,42,0.35)' }}
+                >
+                  <div style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 16px', background: domainMeta.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 24px ${C}55` }}>
+                    <Rocket size={26} color="#fff" />
+                  </div>
+                  <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1e293b', margin: '0 0 8px' }}>Ready to learn?</h2>
+                  <p style={{ fontSize: 14.5, color: '#475569', lineHeight: 1.6, margin: '0 0 22px' }}>
+                    You’re about to take a quick demo quiz to see how FINLIT works. Don’t
+                    worry — it’s just for fun, and it won’t affect your progress.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                      onClick={() => { localStorage.setItem('finlit_seen_demo_explanation', 'true'); setShowDemoExplain(false); setPostStage('quiz'); }}
+                      style={{ width: '100%', padding: '13px', borderRadius: 12, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#fff', background: C, boxShadow: `0 6px 20px ${C}55` }}>
+                      Let’s Go!
+                    </motion.button>
+                    <button
+                      onClick={() => { localStorage.setItem('finlit_seen_demo_explanation', 'true'); navigate('/dashboard'); }}
+                      style={{ width: '100%', padding: '11px', borderRadius: 12, border: '1px solid rgba(15,23,42,0.15)', background: 'transparent', cursor: 'pointer', fontSize: 13.5, fontWeight: 600, color: '#64748b' }}>
+                      Skip for now
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       );
     }

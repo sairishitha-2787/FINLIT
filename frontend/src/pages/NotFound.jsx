@@ -63,18 +63,29 @@ export default function NotFound() {
       </code>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <button
-          onClick={() => navigate('/')}
-          style={{ ...BTN_BASE, background: '#a78bfa', color: '#1a1530' }}
-        >
-          <Home size={16} strokeWidth={2.4} /> Go Home
-        </button>
-        {domain && (
+        {domain ? (
+          <>
+            {/* In a domain, "home" means that domain's dashboard (its index
+                route, /gaming etc. — there is no /gaming/dashboard route). */}
+            <button
+              onClick={() => navigate(`/${domain}`)}
+              style={{ ...BTN_BASE, background: '#a78bfa', color: '#1a1530' }}
+            >
+              <Home size={16} strokeWidth={2.4} /> Back to {DOMAIN_LABEL[domain]}
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              style={{ ...BTN_BASE, background: 'transparent', borderColor: 'rgba(255,255,255,0.22)', color: '#fff' }}
+            >
+              Home <ArrowRight size={16} strokeWidth={2.4} />
+            </button>
+          </>
+        ) : (
           <button
-            onClick={() => navigate(`/${domain}`)}
-            style={{ ...BTN_BASE, background: 'transparent', borderColor: 'rgba(255,255,255,0.22)', color: '#fff' }}
+            onClick={() => navigate('/')}
+            style={{ ...BTN_BASE, background: '#a78bfa', color: '#1a1530' }}
           >
-            Go to {DOMAIN_LABEL[domain]} <ArrowRight size={16} strokeWidth={2.4} />
+            <Home size={16} strokeWidth={2.4} /> Go Home
           </button>
         )}
       </div>
