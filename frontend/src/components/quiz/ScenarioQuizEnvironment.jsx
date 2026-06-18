@@ -75,6 +75,7 @@ const ScenarioQuizEnvironment = ({
   const [reactionGif, setReactionGif] = useState(null);
   const [gifLoading, setGifLoading]   = useState(false);
   const bossFireRef                   = useRef(false);
+  const submittedRef                  = useRef(false); // one-shot guard against double-submit
 
   const q = questions[idx];
   const level = q?.level || 1;
@@ -206,6 +207,8 @@ const ScenarioQuizEnvironment = ({
   function handleNext() {
     const isLast = idx === questions.length - 1;
     if (isLast) {
+      if (submittedRef.current) return;   // ignore double-taps
+      submittedRef.current = true;
       try { sessionStorage.removeItem(scenarioProgressKey(topic)); } catch {}
       onComplete(score, questions.length);
       return;

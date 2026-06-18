@@ -1,7 +1,7 @@
 // FINLIT Quiz Environment Component
 // Main quiz interface with question flow and GIF feedback
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Question from './Question';
 import AnimatedFeedback from './AnimatedFeedback';
@@ -14,6 +14,8 @@ const QuizEnvironment = ({ questions, topic, onComplete }) => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittedRef = useRef(false); // one-shot guard against double-submit
 
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
@@ -51,6 +53,9 @@ const QuizEnvironment = ({ questions, topic, onComplete }) => {
     setSelectedAnswer(null);
 
     if (isLastQuestion) {
+      if (submittedRef.current) return;   // ignore double-taps
+      submittedRef.current = true;
+      setIsSubmitting(true);
       // Quiz complete — score was already incremented in handleSubmitAnswer
       onComplete(score, totalQuestions);
     } else {
@@ -120,6 +125,7 @@ const QuizEnvironment = ({ questions, topic, onComplete }) => {
               options={currentQuestion.options}
               onNext={handleNextQuestion}
               isLastQuestion={isLastQuestion}
+              submitting={isSubmitting}
             />
           </motion.div>
         )}

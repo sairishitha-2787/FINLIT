@@ -1,3 +1,4 @@
+
 // DailyChallengeCard — "The Daily Cipher" (per-domain)
 // Each domain dashboard renders its OWN daily challenge, themed to match that
 // UI. Pass `domain` (scopes the challenge) and a `theme` object so the card
@@ -17,14 +18,14 @@ function hoursToMidnight() {
 }
 
 const DEFAULT_THEME = {
-  surface:     'rgba(255,255,255,0.04)',
-  border:      'rgba(255,255,255,0.08)',
+  surface: 'rgba(255,255,255,0.04)',
+  border: 'rgba(255,255,255,0.08)',
   textPrimary: '#ffffff',
-  textMuted:   'rgba(255,255,255,0.5)',
-  overlayBg:   'rgba(10,10,12,0.92)',
-  radius:      16,
+  textMuted: 'rgba(255,255,255,0.5)',
+  overlayBg: 'rgba(10,10,12,0.92)',
+  radius: 16,
   fontHeading: "'Inter', sans-serif",
-  fontBody:    "'Inter', sans-serif",
+  fontBody: "'Inter', sans-serif",
 };
 
 export default function DailyChallengeCard({ domain, awardXP, accent, theme: themeProp }) {
@@ -69,16 +70,20 @@ export default function DailyChallengeCard({ domain, awardXP, accent, theme: the
       }}
     >
       {/* accent glow */}
-      <div style={{ position: 'absolute', top: -40, right: -40, width: 140, height: 140, borderRadius: '50%',
-        background: `radial-gradient(circle, ${C}2e 0%, transparent 70%)`, pointerEvents: 'none' }} />
+      <div style={{
+        position: 'absolute', top: -40, right: -40, width: 140, height: 140, borderRadius: '50%',
+        background: `radial-gradient(circle, ${C}2e 0%, transparent 70%)`, pointerEvents: 'none'
+      }} />
 
       {/* header row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
         <span style={{ fontFamily: t.fontBody, fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C }}>
           The Daily Cipher {done && '✓'}
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: t.fontBody, fontWeight: 700,
-          fontSize: 13, color: streak > 0 ? '#fb923c' : t.textMuted }}>
+        <span style={{
+          display: 'flex', alignItems: 'center', gap: 5, fontFamily: t.fontBody, fontWeight: 700,
+          fontSize: 13, color: streak > 0 ? '#fb923c' : t.textMuted
+        }}>
           <Flame size={15} fill={streak > 0 ? '#fb923c' : 'none'} color={streak > 0 ? '#fb923c' : t.textMuted} strokeWidth={streak > 0 ? 0 : 1.6} />
           {streak} day{streak === 1 ? '' : 's'}
         </span>

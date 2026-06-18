@@ -1,7 +1,7 @@
 // FINLIT - Neo-Brutalist Quiz Environment
 // With Confetti and Gamification
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Calculator, Swords, Sparkles, Star } from 'lucide-react';
 import AnimatedIcon from '../shared/AnimatedIcon';
@@ -45,6 +45,10 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
     } catch { return 0; }
   });
   const { awardXP } = useGamification();
+  // One-shot submit guard: a fast double-tap on "See Results" must not fire
+  // onComplete twice (which would double-log events / toasts).
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittedRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
@@ -72,6 +76,8 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
     setScore(0);
     setSelectedAnswer(null);
     setShowFeedback(false);
+    submittedRef.current = false;
+    setIsSubmitting(false);
     try { sessionStorage.removeItem(progressKey(topic)); } catch {}
   };
 
@@ -80,6 +86,9 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
     setSelectedAnswer(null);
 
     if (isLastQuestion) {
+      if (submittedRef.current) return;   // ignore double-taps
+      submittedRef.current = true;
+      setIsSubmitting(true);
       // Clear progress on completion
       try { sessionStorage.removeItem(progressKey(topic)); } catch {}
       const finalScore = score;
@@ -189,7 +198,7 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
             </motion.div>
           ) : (
             <motion.div key={`ff-${currentQuestionIndex}`} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-              <AnimatedFeedback isCorrect={isAnswerCorrect} explanation={currentQuestion.explanation} brutalHonestFeedback={currentQuestion.brutalHonestFeedback} correctAnswer={currentQuestion.correctAnswer} userAnswer={selectedAnswer} options={currentQuestion.options} onNext={handleNextQuestion} onRetry={handleRetry} isLastQuestion={isLastQuestion} fashionMode={true} />
+              <AnimatedFeedback isCorrect={isAnswerCorrect} explanation={currentQuestion.explanation} brutalHonestFeedback={currentQuestion.brutalHonestFeedback} correctAnswer={currentQuestion.correctAnswer} userAnswer={selectedAnswer} options={currentQuestion.options} onNext={handleNextQuestion} onRetry={handleRetry} isLastQuestion={isLastQuestion} submitting={isSubmitting} fashionMode={true} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -281,6 +290,7 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
                 onNext={handleNextQuestion}
                 onRetry={handleRetry}
                 isLastQuestion={isLastQuestion}
+                submitting={isSubmitting}
                 gamingMode={true}
                 gamingColors={gc}
               />
@@ -407,6 +417,7 @@ const NeoQuizEnvironment = ({ questions, topic, onComplete, gamingMode, gamingCo
               onNext={handleNextQuestion}
               onRetry={handleRetry}
               isLastQuestion={isLastQuestion}
+              submitting={isSubmitting}
             />
           </motion.div>
         )}

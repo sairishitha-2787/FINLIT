@@ -31,6 +31,7 @@ const AnimatedFeedback = ({
   onNext,
   onRetry,
   isLastQuestion,
+  submitting,
   gamingMode,
   gamingColors,
   fashionMode,
@@ -151,9 +152,9 @@ const AnimatedFeedback = ({
               Try Again
             </motion.button>
           )}
-          <motion.button whileHover={{ y: -2, boxShadow: '0 10px 28px rgba(192,132,252,0.38)' }} whileTap={{ scale: 0.96 }} onClick={onNext}
-            style={{ background: GRAD, border: 'none', color: '#fff', fontFamily: AFQ.ui, fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '14px 40px', borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 6px 20px rgba(192,132,252,0.28)' }}>
-            {isLastQuestion ? <><Sparkles size={16} /> See Results</> : <>Next Look <ArrowRight size={16} /></>}
+          <motion.button whileHover={{ y: -2, boxShadow: '0 10px 28px rgba(192,132,252,0.38)' }} whileTap={{ scale: 0.96 }} onClick={onNext} disabled={isLastQuestion && submitting}
+            style={{ background: GRAD, border: 'none', color: '#fff', fontFamily: AFQ.ui, fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '14px 40px', borderRadius: 14, cursor: isLastQuestion && submitting ? 'not-allowed' : 'pointer', opacity: isLastQuestion && submitting ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 6px 20px rgba(192,132,252,0.28)' }}>
+            {isLastQuestion ? (submitting ? 'Submitting…' : <><Sparkles size={16} /> See Results</>) : <>Next Look <ArrowRight size={16} /></>}
           </motion.button>
         </motion.div>
       </div>
@@ -234,9 +235,10 @@ const AnimatedFeedback = ({
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             onClick={onNext}
-            style={{ background: `linear-gradient(135deg, ${gc.primary}, ${gc.secondary || gc.primary})`, border: 'none', color: xt.dark, fontFamily: xt.fontH, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 40px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: `0 0 20px ${gc.glow}` }}
+            disabled={isLastQuestion && submitting}
+            style={{ background: `linear-gradient(135deg, ${gc.primary}, ${gc.secondary || gc.primary})`, border: 'none', color: xt.dark, fontFamily: xt.fontH, fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', padding: '14px 40px', borderRadius: '10px', cursor: isLastQuestion && submitting ? 'not-allowed' : 'pointer', opacity: isLastQuestion && submitting ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: '8px', boxShadow: `0 0 20px ${gc.glow}` }}
           >
-            {isLastQuestion ? <><Sparkles size={16} /> See Results</> : <>Next Question <ArrowRight size={16} /></>}
+            {isLastQuestion ? (submitting ? 'Submitting…' : <><Sparkles size={16} /> See Results</>) : <>Next Question <ArrowRight size={16} /></>}
           </motion.button>
         </motion.div>
       </div>
@@ -359,9 +361,11 @@ const AnimatedFeedback = ({
           whileHover={{ x: 4, y: 4 }}
           whileTap={{ scale: 0.95 }}
           onClick={onNext}
+          disabled={isLastQuestion && submitting}
+          style={{ opacity: isLastQuestion && submitting ? 0.6 : 1, cursor: isLastQuestion && submitting ? 'not-allowed' : 'pointer' }}
           className="bg-brutal-green border-4 border-brutal-black shadow-brutal hover:shadow-brutal-hover px-12 py-4 rounded-none font-black text-2xl text-brutal-black"
         >
-          <span className="flex items-center gap-2">{isLastQuestion ? <><Sparkles size={20} strokeWidth={2.5} /> SEE RESULTS</> : <>NEXT QUESTION <ArrowRight size={20} strokeWidth={2.5} /></>}</span>
+          <span className="flex items-center gap-2">{isLastQuestion ? (submitting ? 'SUBMITTING…' : <><Sparkles size={20} strokeWidth={2.5} /> SEE RESULTS</>) : <>NEXT QUESTION <ArrowRight size={20} strokeWidth={2.5} /></>}</span>
         </motion.button>
       </motion.div>
     </div>
