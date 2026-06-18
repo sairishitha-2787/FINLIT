@@ -57,7 +57,15 @@ const ScenarioQuizEnvironment = ({
       return saved ? (JSON.parse(saved).idx || 0) : 0;
     } catch { return 0; }
   });
-  const [stage, setStage]             = useState('answering'); // answering | feedback | retry | evaluating | boss_result
+  const [stage, setStage]             = useState(() => {
+    // Show the scenario briefing first on a fresh scenario quiz (idx 0). When
+    // resuming mid-quiz or with no scenario context, go straight to answering.
+    try {
+      const saved = sessionStorage.getItem(scenarioProgressKey(topic));
+      const savedIdx = saved ? (JSON.parse(saved).idx || 0) : 0;
+      return (scenarioContext && savedIdx === 0) ? 'intro' : 'answering';
+    } catch { return scenarioContext ? 'intro' : 'answering'; }
+  }); // intro | answering | feedback | retry | evaluating | boss_result
   const [selectedChoice, setChoice]   = useState(null);        // MC
   const [calcInput, setCalcInput]     = useState('');          // calculation
   const [showHint, setShowHint]       = useState(false);
@@ -330,6 +338,47 @@ const ScenarioQuizEnvironment = ({
   });
 
   // ── Render ────────────────────────────────────────────────────────────────
+
+  // ── Scenario briefing — read the setup once, then start the questions ────────
+  if (stage === 'intro') {
+    const briefTitle = scenarioTitle || 'Application Challenge';
+    if (fm) {
+      return (
+        <div style={{ maxWidth: 820, margin: '0 auto' }}>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.6)', borderRadius: 22, padding: '28px 26px' }}>
+            <p style={{ fontFamily: FFonts.ui, fontSize: 10, color: FColors.label, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 10px' }}>The Scenario</p>
+            <h2 style={{ fontFamily: FFonts.h, fontSize: 26, color: FColors.deep, margin: '0 0 14px', lineHeight: 1.25 }}>{briefTitle}</h2>
+            <p style={{ fontFamily: FFonts.ui, fontSize: 15, color: FColors.body, lineHeight: 1.7, margin: '0 0 24px' }}>{scenarioContext}</p>
+            <button onClick={() => setStage('answering')} style={{ background: 'linear-gradient(135deg,#f7a0b8,#c084fc)', color: '#fff', border: 'none', borderRadius: 14, padding: '14px 28px', fontFamily: FFonts.ui, fontSize: 14, fontWeight: 700, letterSpacing: '0.04em', cursor: 'pointer' }}>Ready? Start →</button>
+          </motion.div>
+        </div>
+      );
+    }
+    if (gm) {
+      return (
+        <div style={{ maxWidth: 820, margin: '0 auto' }}>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            style={{ background: xt.cardBg, border: xt.border, borderRadius: 16, padding: '28px 26px', backdropFilter: `blur(${xt.blur})` }}>
+            <p style={{ fontFamily: xt.fontL, fontSize: 9, color: xt.muted, letterSpacing: '2.5px', margin: '0 0 10px' }}>THE SCENARIO</p>
+            <h2 style={{ fontFamily: xt.fontH, fontSize: 24, color: xt.text1, margin: '0 0 14px', letterSpacing: '1px' }}>{briefTitle}</h2>
+            <p style={{ fontFamily: xt.fontB, fontSize: 15, color: xt.text2, lineHeight: 1.7, margin: '0 0 24px' }}>{scenarioContext}</p>
+            <button onClick={() => setStage('answering')} style={{ background: levelAccent, color: xt.dark, border: 'none', borderRadius: 12, padding: '14px 28px', fontFamily: xt.fontH, fontSize: 14, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 4px 18px ${gc.glow || levelAccent}` }}>Ready? Start Quiz →</button>
+          </motion.div>
+        </div>
+      );
+    }
+    return (
+      <div className="max-w-3xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="bg-brutal-white border-4 border-brutal-black shadow-brutal p-6">
+          <p className="text-xs font-black text-brutal-black/40 mb-2 tracking-wider">THE SCENARIO</p>
+          <h2 className="text-2xl font-black text-brutal-black mb-3">{briefTitle}</h2>
+          <p className="font-bold text-brutal-black mb-5">{scenarioContext}</p>
+          <button onClick={() => setStage('answering')} className="bg-brutal-blue text-brutal-white border-4 border-brutal-black shadow-brutal px-6 py-3 font-black">Ready? Start Quiz →</button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div style={(gm || fm) ? { maxWidth: '820px', margin: '0 auto' } : undefined} className={(gm || fm) ? '' : 'max-w-3xl mx-auto'}>
