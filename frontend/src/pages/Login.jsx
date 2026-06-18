@@ -4,12 +4,15 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../context/UserContext';
+import { useToast } from '../context/ToastProvider';
+import { consumeSessionExpired } from '../utils/activityTracker';
 import GridDistortion from '../components/effects/GridDistortion';
 import GlassCard from '../components/core/GlassCard';
 import { glass } from '../styles/coreTheme';
 
 const Login = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const { login, user, loading: authLoading } = useAuth();
   const { onboardingComplete, loading: userLoading } = useUser();
   const [email, setEmail] = useState('');
@@ -23,6 +26,12 @@ const Login = () => {
       navigate(onboardingComplete ? '/dashboard' : '/onboarding', { replace: true });
     }
   }, [user, authLoading, userLoading, onboardingComplete, navigate]);
+
+  // Show a one-time notice after an inactivity auto-logout.
+  useEffect(() => {
+    if (consumeSessionExpired()) toast.info('Session expired. Please log in again.');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

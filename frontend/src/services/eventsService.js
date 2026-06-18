@@ -14,6 +14,7 @@
 // analytics, not user-facing notifications.
 
 import { supabase } from '../config/supabase';
+import { updateLastActivity } from '../utils/activityTracker';
 
 // Known event types (documentation + a guard against typos at call sites).
 export const EVENT_TYPES = {
@@ -41,6 +42,8 @@ export const EVENT_TYPES = {
 // logEvent(userId, eventType, domain?, metadata?)
 export async function logEvent(userId, eventType, domain = null, metadata = {}) {
   if (!userId || !eventType) return null;
+  // Any logged event counts as activity for the inactivity auto-logout.
+  updateLastActivity();
   const row = {
     user_id:    userId,
     event_type: eventType,

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../config/supabase';
+import { isUserInactive, clearActivity, markSessionExpired, DEFAULT_INACTIVITY_MINUTES } from '../utils/activityTracker';
 
 const AuthContext = createContext();
 
@@ -17,6 +18,18 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      // Auto-logout: if a session exists but the user has been inactive past
+      // the threshold, sign out instead of restoring it. ProtectedRoute then
+      // redirects to /login, where a flag shows the "session expired" toast.
+      if (session && isUserInactive(DEFAULT_INACTIVITY_MINUTES)) {
+        markSessionExpired();
+        clearActivity();
+        supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+        setLoading(false);
+        return;
+      }
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -88,6 +101,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setError(null);
+    clearActivity();
     const { error } = await supabase.auth.signOut();
     if (error) console.error('Logout error:', error);
   };
