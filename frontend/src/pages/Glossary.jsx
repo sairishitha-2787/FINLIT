@@ -45,25 +45,26 @@ export default function Glossary({ domain = null }) {
   const pageBg = theme ? 'transparent' : '#0b0b14';
 
   const [query, setQuery]     = useState('');
-  const [filter, setFilter]   = useState('all');
+  // Filter tabs are always available. In a domain glossary the filter just
+  // starts on that domain; the user can switch to All / other domains.
+  const [selectedDomain, setSelectedDomain] = useState(domain || 'all');
   const [active, setActive]   = useState(null);
   const [currentSet, setSet]  = useState(1);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return GLOSSARY_TERMS
-      // In domain mode show only global + that domain's terms; else honor tabs.
-      .filter((t) => (domain ? (t.domain === 'global' || t.domain === domain) : (filter === 'all' || t.domain === filter)))
+      .filter((t) => (selectedDomain === 'all' ? true : (t.domain === 'global' || t.domain === selectedDomain)))
       .filter((t) => !q || t.term.toLowerCase().includes(q) || t.short.toLowerCase().includes(q) || t.long.toLowerCase().includes(q))
       .sort((a, b) => a.term.localeCompare(b.term));
-  }, [query, filter, domain]);
+  }, [query, selectedDomain]);
 
   const totalSets = Math.max(1, Math.ceil(filtered.length / SET_SIZE));
   const pageSet   = Math.min(currentSet, totalSets);
   const pageTerms = filtered.slice((pageSet - 1) * SET_SIZE, pageSet * SET_SIZE);
 
   // Reset to the first set whenever the result universe changes.
-  useEffect(() => { setSet(1); }, [query, filter, domain]);
+  useEffect(() => { setSet(1); }, [query, selectedDomain]);
 
   const tabStyle = (on) => ({
     padding: '7px 14px', borderRadius: 99, cursor: 'pointer',
@@ -106,12 +107,10 @@ export default function Glossary({ domain = null }) {
           )}
         </div>
 
-        {/* Filters — only in standalone mode (domain is fixed inside a layout) */}
-        {!domain && (
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-            {FILTERS.map((f) => <button key={f.key} onClick={() => setFilter(f.key)} style={tabStyle(filter === f.key)}>{f.label}</button>)}
-          </div>
-        )}
+        {/* Domain filter tabs */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+          {FILTERS.map((f) => <button key={f.key} onClick={() => setSelectedDomain(f.key)} style={tabStyle(selectedDomain === f.key)}>{f.label}</button>)}
+        </div>
 
         {/* Set indicator */}
         <div style={{ fontFamily: fontBody, fontSize: 12, color: textMuted, marginBottom: 12 }}>
