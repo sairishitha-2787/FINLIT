@@ -136,6 +136,7 @@ function App() {
               <Route path="achievements" element={<GamingAchievementsPage />} />
               <Route path="learn" element={<Learning />} />
               <Route path="settings" element={<GamingSettings />} />
+              <Route path="glossary" element={<Glossary domain="gaming" />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 
@@ -156,6 +157,7 @@ function App() {
               <Route path="progress" element={<FashionProgressPage />} />
               <Route path="achievements" element={<FashionBadgesPage />} />
               <Route path="settings" element={<FashionSettings />} />
+              <Route path="glossary" element={<Glossary domain="fashion" />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 
@@ -176,6 +178,7 @@ function App() {
               <Route path="achievements" element={<SportsBadgesPage />} />
               <Route path="learn" element={<SportsLearning />} />
               <Route path="settings" element={<SportsSettings />} />
+              <Route path="glossary" element={<Glossary domain="sports" />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 
@@ -200,6 +203,7 @@ function App() {
               <Route path="vinyl"         element={<VinylRecords />} />
               <Route path="neon"          element={<NeonGlitch />} />
               <Route path="forest"        element={<DreamyForest />} />
+              <Route path="glossary"      element={<Glossary domain="music" />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 

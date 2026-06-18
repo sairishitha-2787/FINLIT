@@ -123,7 +123,7 @@ const NAV = [
   { icon: Map,       label: 'Runway Map',       path: '/fashion/map'         },
   { icon: BarChart2, label: 'Style Progress',   path: '/fashion/progress'    },
   { icon: Award,     label: 'Designer Labels',  path: '/fashion/achievements' },
-  { icon: Library,   label: 'Glossary',         path: '/glossary'            },
+  { icon: Library,   label: 'Glossary',         path: '/fashion/glossary'    },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

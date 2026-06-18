@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { icon: Map,       label: 'Island Map',   path: '/gaming/map'           },
   { icon: BarChart2, label: 'Progress',     path: '/gaming/progress'      },
   { icon: Trophy,    label: 'Achievements', path: '/gaming/achievements'  },
-  { icon: Library,   label: 'Glossary',     path: '/glossary'             },
+  { icon: Library,   label: 'Glossary',     path: '/gaming/glossary'      },
 ];
 
 const ELEMENT_ICON = { Fire: Flame, Frost: Snowflake, Nature: Leaf };

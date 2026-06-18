@@ -125,7 +125,7 @@ const NAV = [
   { icon: BookOpen,  label: 'The Playbook',  path: '/sports/playbook'     },
   { icon: BarChart2, label: 'The Scoreboard',path: '/sports/progress'     },
   { icon: Trophy,    label: 'Trophy Case',   path: '/sports/achievements' },
-  { icon: Library,   label: 'Glossary',      path: '/glossary'            },
+  { icon: Library,   label: 'Glossary',      path: '/sports/glossary'     },
 ];
 
 const CHAR_ICON = { lyra: Zap, kael: Target, ian: Trophy };

@@ -393,7 +393,7 @@ const NAV = [
   { icon: BookOpen,  label: 'The Setlist', path: '/music/setlist' },
   { icon: BarChart2, label: 'The Charts',  path: '/music/charts'  },
   { icon: Trophy,    label: 'The Vault',   path: '/music/vault'   },
-  { icon: Library,   label: 'Glossary',    path: '/glossary'      },
+  { icon: Library,   label: 'Glossary',    path: '/music/glossary' },
 ];
 
 const CHAR_ICON = { luna: Music, jay: Zap, cypher: Cpu };
