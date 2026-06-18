@@ -4,7 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#6366F1" />
-    <meta name="description" content="FINLIT - Learn finance through your interests" />
+    <meta name="description" content="Master financial literacy through gamified learning across Gaming, Fashion, Sports, and Music. Earn badges, unlock topics, and build real money skills." />
+
+    <!-- Open Graph / social share cards.
+         TODO: replace https://finlit.app with your real domain, and add an
+         og-image.png (1200x630) to /public once a share graphic exists. -->
+    <meta property="og:title" content="FINLIT — Gamified Financial Literacy" />
+    <meta property="og:description" content="Master financial literacy through gamified learning. 4 domains, real money skills, earned through play." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://finlit.app" />
+    <meta property="og:image" content="https://finlit.app/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FINLIT — Gamified Financial Literacy" />
+    <meta name="twitter:description" content="Master financial literacy through gamified learning. 4 domains, real money skills." />
+    <meta name="twitter:image" content="https://finlit.app/og-image.png" />
 
     <!-- Security headers via meta (CDN/static host fallback).
          NOTE: X-Frame-Options and CSP 'frame-ancestors' are intentionally NOT
@@ -19,13 +32,14 @@
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' data: https://media.giphy.com https://media0.giphy.com https://media1.giphy.com https://media2.giphy.com https://media3.giphy.com https://media4.giphy.com;
-      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.groq.com http://localhost:3001;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.groq.com http://localhost:3001 https://*.ingest.sentry.io https://*.sentry.io;
+      worker-src 'self' blob:;
       base-uri 'self';
       form-action 'self';
       object-src 'none';
     " />
 
-    <title>FINLIT - Financial Literacy Made Personal</title>
+    <title>FINLIT — Gamified Financial Literacy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Jura:wght@300;400;500;600;700&family=Michroma&display=swap" rel="stylesheet" />

@@ -9,6 +9,7 @@
 // need their own try/catch.
 
 import React from 'react';
+import * as Sentry from '@sentry/react';
 import ErrorFallback from './ErrorFallback';
 
 export default class ErrorBoundary extends React.Component {
@@ -22,8 +23,11 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log for local debugging. Hook point for Sentry et al. once added.
+    // Log for local debugging.
     console.error('[ErrorBoundary] caught a render error:', error, errorInfo);
+    // Report to Sentry. Safe to call unconditionally — it's a no-op when
+    // Sentry wasn't initialized (no DSN configured).
+    Sentry.captureException(error, { extra: { componentStack: errorInfo?.componentStack } });
   }
 
   render() {
