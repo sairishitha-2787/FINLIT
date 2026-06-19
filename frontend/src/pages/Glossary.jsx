@@ -1,9 +1,8 @@
-// Glossary — financial-term reference. Renders two ways:
-//   • Standalone at /glossary (outside any domain) → neutral cosmic theme.
-//   • Per-domain at /gaming/glossary etc. → inherits that domain's theme via
-//     useTheme(), shows global + that domain's terms, and drops the domain
-//     filter tabs (the domain is fixed).
-// Results are paginated into "sets" of SET_SIZE so the list stays digestible.
+// Glossary — global financial-term reference (no domain filtering).
+//   • Standalone at /glossary → neutral cosmic theme.
+//   • Per-domain at /gaming/glossary etc. → same global terms, themed to that
+//     domain via useTheme().
+// Search + pagination into "sets" of SET_SIZE keep the list digestible.
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,18 +16,7 @@ const NEUTRAL_ACCENT = '#a78bfa';
 const DIFF_COLOR = { easy: '#22C55E', medium: '#F59E0B', hard: '#EF4444' };
 const SET_SIZE = 20;
 
-const FILTERS = [
-  { key: 'all', label: 'All' },
-  { key: 'global', label: 'Global' },
-  { key: 'gaming', label: 'Gaming' },
-  { key: 'fashion', label: 'Fashion' },
-  { key: 'sports', label: 'Sports' },
-  { key: 'music', label: 'Music' },
-];
-
-const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
-
-export default function Glossary({ domain = null }) {
+export default function Glossary() {
   const navigate = useNavigate();
   const theme = useTheme(); // normalized domain theme when inside a layout, else null
 
@@ -45,47 +33,26 @@ export default function Glossary({ domain = null }) {
   const pageBg = theme ? 'transparent' : '#0b0b14';
 
   const [query, setQuery]     = useState('');
-  // Filter tabs are always available. In a domain glossary the filter just
-  // starts on that domain; the user can switch to All / other domains.
-  const [selectedDomain, setSelectedDomain] = useState(domain || 'all');
   const [active, setActive]   = useState(null);
   const [currentSet, setSet]  = useState(1);
 
+  // Global financial-term glossary (no domain filtering).
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return GLOSSARY_TERMS
-      .filter((t) => (selectedDomain === 'all' ? true : (t.domain === 'global' || t.domain === selectedDomain)))
+      .filter((t) => t.domain === 'global')
       .filter((t) => !q || t.term.toLowerCase().includes(q) || t.short.toLowerCase().includes(q) || t.long.toLowerCase().includes(q))
-      .sort((a, b) => {
-        // When a specific domain is selected, surface its terms above the
-        // global ones (otherwise the 4 domain terms get buried among 45
-        // globals and the filter looks like it does nothing). Alphabetical
-        // within each group.
-        if (selectedDomain !== 'all' && selectedDomain !== 'global') {
-          const aDomain = a.domain === selectedDomain ? 0 : 1;
-          const bDomain = b.domain === selectedDomain ? 0 : 1;
-          if (aDomain !== bDomain) return aDomain - bDomain;
-        }
-        return a.term.localeCompare(b.term);
-      });
-  }, [query, selectedDomain]);
+      .sort((a, b) => a.term.localeCompare(b.term));
+  }, [query]);
 
   const totalSets = Math.max(1, Math.ceil(filtered.length / SET_SIZE));
   const pageSet   = Math.min(currentSet, totalSets);
   const pageTerms = filtered.slice((pageSet - 1) * SET_SIZE, pageSet * SET_SIZE);
 
-  // Reset to the first set whenever the result universe changes.
-  useEffect(() => { setSet(1); }, [query, selectedDomain]);
+  // Reset to the first set whenever the search changes.
+  useEffect(() => { setSet(1); }, [query]);
 
-  const tabStyle = (on) => ({
-    padding: '7px 14px', borderRadius: 99, cursor: 'pointer',
-    fontFamily: fontBody, fontSize: 12, fontWeight: 600,
-    background: on ? accent : 'rgba(255,255,255,0.05)',
-    color: on ? '#000' : textMuted,
-    border: `1px solid ${on ? accent : border}`,
-  });
-
-  const title = domain ? `${cap(domain)} Glossary` : 'Glossary';
+  const title = 'Glossary';
 
   return (
     <div style={{ minHeight: theme ? 'auto' : '100vh', background: pageBg, color: textPrimary }}>
@@ -116,11 +83,6 @@ export default function Glossary({ domain = null }) {
               <X size={15} color={textMuted} />
             </button>
           )}
-        </div>
-
-        {/* Domain filter tabs */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-          {FILTERS.map((f) => <button key={f.key} onClick={() => setSelectedDomain(f.key)} style={tabStyle(selectedDomain === f.key)}>{f.label}</button>)}
         </div>
 
         {/* Set indicator */}
