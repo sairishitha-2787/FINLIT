@@ -106,7 +106,9 @@ export default function Glossary() {
                   style={{ textAlign: 'left', padding: '14px 16px', borderRadius: 12, background: surface, borderTop: `1px solid ${border}`, borderRight: `1px solid ${border}`, borderBottom: `1px solid ${border}`, borderLeft: `3px solid ${C}`, cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <span style={{ fontFamily: fontHeading, fontSize: 15, fontWeight: 700, color: textPrimary }}>{t.term}</span>
-                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C, background: `${C}1f`, padding: '2px 7px', borderRadius: 99 }}>{t.domain}</span>
+                    {t.domain !== 'global' && (
+                      <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C, background: `${C}1f`, padding: '2px 7px', borderRadius: 99 }}>{t.domain}</span>
+                    )}
                     <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: DIFF_COLOR[t.difficulty] }}>{t.difficulty}</span>
                   </div>
                   <p style={{ fontFamily: fontBody, fontSize: 13, color: textMuted, margin: 0, lineHeight: 1.5 }}>{t.short}</p>

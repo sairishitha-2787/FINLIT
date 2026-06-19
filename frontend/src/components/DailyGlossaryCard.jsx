@@ -99,7 +99,9 @@ export default function DailyGlossaryCard({ accent: accentProp, theme: themeProp
           {/* term + badges */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
             <span style={{ fontFamily: t.fontHeading, fontSize: 19, color: t.textPrimary, lineHeight: 1.1 }}>{term.term}</span>
-            <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: termColor, background: `${termColor}1f`, border: `1px solid ${termColor}50`, padding: '2px 7px', borderRadius: 99 }}>{term.domain}</span>
+            {term.domain !== 'global' && (
+              <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: termColor, background: `${termColor}1f`, border: `1px solid ${termColor}50`, padding: '2px 7px', borderRadius: 99 }}>{term.domain}</span>
+            )}
             <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: DIFF_COLOR[term.difficulty] }}>{term.difficulty}</span>
           </div>
 

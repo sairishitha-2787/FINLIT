@@ -38,9 +38,11 @@ export default function GlossaryModal({ term: termProp, termId, onClose }) {
             </button>
             <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, fontWeight: 800, color: '#fff', margin: '0 0 8px', paddingRight: 36 }}>{active.term}</h2>
             <div style={{ display: 'flex', gap: 7 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C, background: `${C}1f`, border: `1px solid ${C}50`, padding: '2px 9px', borderRadius: 99 }}>
-                {active.domain}
-              </span>
+              {active.domain !== 'global' && (
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C, background: `${C}1f`, border: `1px solid ${C}50`, padding: '2px 9px', borderRadius: 99 }}>
+                  {active.domain}
+                </span>
+              )}
               <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: DIFF_COLOR[active.difficulty], background: `${DIFF_COLOR[active.difficulty]}1f`, border: `1px solid ${DIFF_COLOR[active.difficulty]}50`, padding: '2px 9px', borderRadius: 99 }}>
                 {active.difficulty}
               </span>
