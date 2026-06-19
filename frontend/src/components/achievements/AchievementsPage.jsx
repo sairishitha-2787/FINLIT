@@ -158,8 +158,9 @@ function BadgeToast({ newlyEarned, domain, theme, onDismiss }) {
           color: isGaming ? '#F59E0B' : '#fde68a',
           marginBottom: 4,
           textTransform: 'uppercase',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         }}>
-          ★ SECRET UNLOCKED ★
+          <Sparkles size={11} /> SECRET UNLOCKED <Sparkles size={11} />
         </div>
       )}
       <div style={{

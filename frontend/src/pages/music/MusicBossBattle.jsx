@@ -557,9 +557,10 @@ export default function MusicBossBattle() {
                 background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.28)',
                 fontFamily: theme.fontSub, fontWeight: 600, fontSize: 11,
                 letterSpacing: '0.06em', color: '#4ade80',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               }}
             >
-              ✓ Season {boss.season + 2} unlocked
+              <CheckCircle size={13} /> Season {boss.season + 2} unlocked
             </motion.div>
           )}
 
@@ -573,9 +574,10 @@ export default function MusicBossBattle() {
                 background: `${color}10`, border: `1px solid ${color}40`,
                 fontFamily: theme.fontSub, fontWeight: 600, fontSize: 11,
                 letterSpacing: '0.06em', color,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               }}
             >
-              ★ Music domain fully mastered
+              <Star size={13} fill={color} strokeWidth={0} /> Music domain fully mastered
             </motion.div>
           )}
 

@@ -25,11 +25,12 @@ const daysBetween = (iso) => Math.max(0, Math.floor((Date.now() - new Date(iso).
 
 // Urgency tier from score + recency
 function urgency(scorePct, days) {
-  if (scorePct < 70 && days <= 1)  return { key: 'now',   label: 'Review now',       icon: '🔥', color: '#EF4444' };
-  if (scorePct < 75 && days <= 3)  return { key: 'soon',  label: 'Review soon',      icon: '⚡', color: '#FBBF24' };
-  if (scorePct < 80 && days <= 7)  return { key: 'week',  label: 'Review this week', icon: '⏰', color: '#3B82F6' };
-  if (scorePct < 85 && days <= 14) return { key: 'soon',  label: 'Refresh memory',   icon: '📚', color: '#FBBF24' };
-  return { key: 'long', label: 'Long-term review', icon: '📚', color: '#9CA3AF' };
+  // `icon` is a lucide key resolved in SuggestedForReview (no emoji).
+  if (scorePct < 70 && days <= 1)  return { key: 'now',   label: 'Review now',       icon: 'flame', color: '#EF4444' };
+  if (scorePct < 75 && days <= 3)  return { key: 'soon',  label: 'Review soon',      icon: 'zap',   color: '#FBBF24' };
+  if (scorePct < 80 && days <= 7)  return { key: 'week',  label: 'Review this week', icon: 'clock', color: '#3B82F6' };
+  if (scorePct < 85 && days <= 14) return { key: 'soon',  label: 'Refresh memory',   icon: 'book',  color: '#FBBF24' };
+  return { key: 'long', label: 'Long-term review', icon: 'book', color: '#9CA3AF' };
 }
 
 // ── Compute suggestions for one domain ────────────────────────────────────────

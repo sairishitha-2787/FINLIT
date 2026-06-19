@@ -177,11 +177,9 @@ function TopicNode({ topic, state, color, glow, onClick }) {
       {!isLocked && (
         isComplete ? (
           <div style={{
-            fontFamily: sportsTheme.fontHeading,
-            fontSize: 11, letterSpacing: '0.5px',
-            color: color, opacity: 0.7,
+            opacity: 0.7, display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            ✓
+            <CheckCircle2 size={15} color={color} />
           </div>
         ) : (
           <ChevronRight size={14} color="rgba(255,255,255,0.25)" />
@@ -287,9 +285,9 @@ function BossNode({ boss, state, color, glow, onClick }) {
             <span style={{
               fontFamily: sportsTheme.fontSub, fontWeight: 700,
               fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
-              color, opacity: 0.8,
+              color, opacity: 0.8, display: 'inline-flex', alignItems: 'center', gap: 5,
             }}>
-              ✓ Season Cleared
+              <CheckCircle2 size={12} /> Season Cleared
             </span>
           ) : (
             <>

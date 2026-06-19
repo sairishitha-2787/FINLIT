@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Check } from 'lucide-react';
 import BadgeCard from './BadgeCard';
 import { hexW } from './hexUtils';
 
@@ -153,7 +153,7 @@ export default function BadgeSection({
           }}
         >
           {allEarned && (
-            <span style={{ fontSize: 12 }}>✓</span>
+            <span style={{ display: 'inline-flex' }}><Check size={12} /></span>
           )}
           {earnedCount} earned
         </span>

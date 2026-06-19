@@ -168,8 +168,7 @@ export function useDailyChallenge({ domain, awardXP } = {}) {
     logNotification(user.id, {
       type: 'daily_challenge',
       title: 'Daily Cipher Complete',
-      description: `${challenge.topicName} · +${xp} XP · ${newStreak}-day streak 🔥`,
-      icon: '🔥',
+      description: `${challenge.topicName} · +${xp} XP · ${newStreak}-day streak`,
       domain: challenge.domain,
     });
 

@@ -984,7 +984,7 @@ export default function FashionLearning() {
                   {[
                     { label: 'Style Points', value: <><SPCounter target={spEarned} /> SP</> },
                     { label: 'Accuracy',     value: `${Math.round((scoreRef.current / (quizTotal || 1)) * 100)}%` },
-                    { label: 'Status',       value: passed ? 'Styled ✓' : 'Keep Going' },
+                    { label: 'Status',       value: passed ? <><Check size={13} style={{ display: 'inline', verticalAlign: '-2px' }} /> Styled</> : 'Keep Going' },
                   ].map(({ label, value }) => (
                     <div key={label} style={{
                       padding: '14px 10px', borderRadius: 18, textAlign: 'center',

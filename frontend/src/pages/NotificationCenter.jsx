@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, ArrowLeft, Check, Archive, Trash2, Settings } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications';
+import NotificationIcon from '../components/NotificationIcon';
 
 const ACCENT = '#a78bfa';
 
@@ -155,7 +156,7 @@ export default function NotificationCenter() {
                 style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '14px 16px', borderRadius: 14,
                   background: n.read ? 'rgba(255,255,255,0.03)' : `${ACCENT}10`,
                   border: `1px solid ${n.read ? 'rgba(255,255,255,0.08)' : `${ACCENT}30`}`, cursor: n.read ? 'default' : 'pointer' }}>
-                <span style={{ fontSize: 22, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{n.icon || '🔔'}</span>
+                <span style={{ flexShrink: 0, marginTop: 1, display: 'inline-flex' }}><NotificationIcon type={n.type} size={20} color={ACCENT} /></span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                     <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 700, color: '#fff' }}>{n.title}</span>

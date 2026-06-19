@@ -130,7 +130,6 @@ export function useBadgeTracker() {
         type: 'badge_earned',
         title: 'Badge Unlocked',
         description: `You earned "${name}"`,
-        icon: '⭐',
         actionType: 'view_badge',
         actionTarget: id,
       });

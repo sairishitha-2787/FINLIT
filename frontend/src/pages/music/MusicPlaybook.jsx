@@ -124,7 +124,7 @@ function VinylTopicNode({ topic, state, onClick }) {
           {topic.difficulty}
         </div>
         {isLocked && (
-          <div style={{ position: 'absolute', right: 12, top: 12, background: 'rgba(19,15,13,0.7)', width: 26, height: 26, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, zIndex: 2 }}>🔒</div>
+          <div style={{ position: 'absolute', right: 12, top: 12, background: 'rgba(19,15,13,0.7)', width: 26, height: 26, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}><Lock size={13} color="#C4C1B8" strokeWidth={2.5} /></div>
         )}
       </div>
       {/* Body */}
@@ -133,7 +133,7 @@ function VinylTopicNode({ topic, state, onClick }) {
         <div style={{ fontSize: 12, color: '#635B51', marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
           <span>{topic.difficulty}</span><span>·</span>
           <b style={{ color: '#551F22' }}>+{topic.xpReward} XP</b>
-          {isComplete && <span style={{ color: '#8A2D31', fontSize: 11, marginLeft: 'auto' }}>✓ Done</span>}
+          {isComplete && <span style={{ color: '#8A2D31', fontSize: 11, marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4 }}><CheckCircle2 size={11} /> Done</span>}
         </div>
         {!isLocked && (
           <div style={{ height: 6, borderRadius: 999, background: 'rgba(48,20,21,0.16)', marginTop: 10, overflow: 'hidden' }}>
@@ -172,7 +172,7 @@ function NeonTopicNode({ topic, state, onClick }) {
         <div style={{ position: 'absolute', left: 12, top: 12, fontSize: 9, letterSpacing: '2px', background: borderCol, color: '#0a0010', padding: '3px 8px', fontWeight: 700, textTransform: 'uppercase', zIndex: 2 }}>
           {topic.difficulty}
         </div>
-        {isLocked && <div style={{ position: 'absolute', right: 12, top: 12, fontSize: 13, color: '#FFD60A', zIndex: 2 }}>🔒</div>}
+        {isLocked && <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 2 }}><Lock size={13} color="#FFD60A" strokeWidth={2.5} /></div>}
       </div>
       {/* Body */}
       <div style={{ padding: '12px 14px 14px' }}>
@@ -219,7 +219,7 @@ function DreamyTopicNode({ topic, state, onClick }) {
         <div style={{ position: 'absolute', left: 14, bottom: 12, fontSize: 10, letterSpacing: '2px', textTransform: 'uppercase', color: '#F3E6E9', zIndex: 2, background: 'rgba(44,31,27,0.55)', backdropFilter: 'blur(8px)', padding: '4px 9px', borderRadius: 999, border: '1px solid rgba(215,152,163,0.3)' }}>
           {topic.difficulty}
         </div>
-        {isLocked && <div style={{ position: 'absolute', left: 14, top: 14, fontSize: 13, zIndex: 2 }}>🔒</div>}
+        {isLocked && <div style={{ position: 'absolute', left: 14, top: 14, zIndex: 2 }}><Lock size={13} color="#C4C1B8" strokeWidth={2.5} /></div>}
       </div>
       {/* Body */}
       <div style={{ padding: '14px 16px 16px' }}>
@@ -227,7 +227,7 @@ function DreamyTopicNode({ topic, state, onClick }) {
         <div style={{ fontSize: 11, color: '#D798A3', marginTop: 7, display: 'flex', gap: 8, letterSpacing: '0.5px' }}>
           <span>{topic.difficulty}</span><span>·</span>
           <b style={{ color: '#F3E6E9' }}>+{topic.xpReward} XP</b>
-          {isComplete && <span style={{ marginLeft: 'auto', color: '#D798A3' }}>✓</span>}
+          {isComplete && <span style={{ marginLeft: 'auto', color: '#D798A3', display: 'inline-flex' }}><CheckCircle2 size={14} /></span>}
         </div>
         {!isLocked && (
           <div style={{ height: 5, borderRadius: 999, background: 'rgba(215,152,163,0.14)', marginTop: 12, overflow: 'hidden' }}>
@@ -304,7 +304,7 @@ function TopicNode({ topic, state, color, theme, cluster, onClick }) {
       {/* Right */}
       {!isLocked && (
         isComplete
-          ? <span style={{ fontFamily: theme.fontHeading, fontSize: 14, color, opacity: 0.8 }}>✓</span>
+          ? <span style={{ opacity: 0.8, display: 'inline-flex' }}><CheckCircle2 size={14} color={color} /></span>
           : <ChevronRight size={14} color="rgba(255,255,255,0.25)" />
       )}
     </motion.button>
@@ -401,8 +401,8 @@ function BossNode({ boss, state, color, glow, theme, cluster, onClick }) {
       {!isLocked && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
           {isDefeated ? (
-            <span style={{ fontFamily: theme.fontSub, fontWeight: 700, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color, opacity: 0.8 }}>
-              ✓ Season Cleared
+            <span style={{ fontFamily: theme.fontSub, fontWeight: 700, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color, opacity: 0.8, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <CheckCircle2 size={12} /> Season Cleared
             </span>
           ) : (
             <>
@@ -451,9 +451,9 @@ function BossChallengeModal({ boss, color, glow, theme, onVictory, onClose }) {
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 0.5, repeat: 2 }}
-              style={{ fontSize: 60, marginBottom: 16 }}
+              style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}
             >
-              🏆
+              <Trophy size={60} color={color} strokeWidth={1.5} />
             </motion.div>
             <div style={{ fontFamily: theme.fontHeading, fontSize: theme.fontHeading.includes('Orbitron') ? 20 : 30, letterSpacing: 2, color, marginBottom: 8, textShadow: `0 0 20px ${glow}` }}>
               CHALLENGE COMPLETE!

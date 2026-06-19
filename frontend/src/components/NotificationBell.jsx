@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Check, ChevronRight } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications';
+import NotificationIcon from './NotificationIcon';
 
 const DEFAULT_THEME = {
   surface:     'rgba(20,20,24,0.98)',
@@ -115,7 +116,7 @@ export default function NotificationBell({ accent = '#a78bfa', theme: themeProp,
                     background: n.read ? 'transparent' : `${C}0e`,
                     border: 'none', borderBottom: `1px solid ${t.border}`,
                   }}>
-                  <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{n.icon || '🔔'}</span>
+                  <span style={{ flexShrink: 0, marginTop: 1, display: 'inline-flex' }}><NotificationIcon type={n.type} size={17} color={C} /></span>
                   <span style={{ flex: 1, minWidth: 0 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <span style={{ fontFamily: t.fontBody, fontSize: 13, fontWeight: 700, color: t.textPrimary }}>{n.title}</span>

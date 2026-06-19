@@ -77,8 +77,8 @@ export default function DailyChallengeCard({ domain, awardXP, accent, theme: the
 
       {/* header row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
-        <span style={{ fontFamily: t.fontBody, fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C }}>
-          The Daily Cipher {done && '✓'}
+        <span style={{ fontFamily: t.fontBody, fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          The Daily Cipher {done && <CheckCircle2 size={11} color={C} />}
         </span>
         <span style={{
           display: 'flex', alignItems: 'center', gap: 5, fontFamily: t.fontBody, fontWeight: 700,
@@ -101,8 +101,9 @@ export default function DailyChallengeCard({ domain, awardXP, accent, theme: the
           <p style={{ fontFamily: t.fontBody, fontSize: 13, color: t.textMuted, margin: '0 0 4px' }}>
             Completed! You earned <b style={{ color: C }}>+{challenge.xpEarned} XP</b>.
           </p>
-          <p style={{ fontFamily: t.fontBody, fontSize: 12, color: t.textMuted, margin: 0, opacity: 0.85 }}>
-            Next cipher in {hrs} hour{hrs === 1 ? '' : 's'} · keep your {streak}-day streak alive 🔥
+          <p style={{ fontFamily: t.fontBody, fontSize: 12, color: t.textMuted, margin: 0, opacity: 0.85, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            Next cipher in {hrs} hour{hrs === 1 ? '' : 's'} · keep your {streak}-day streak alive
+            <Flame size={12} color="#fb923c" fill="#fb923c" strokeWidth={0} />
           </p>
         </div>
       ) : (
@@ -156,7 +157,9 @@ export default function DailyChallengeCard({ domain, awardXP, accent, theme: the
             }}
           >
             <Sparkles size={28} color={C} />
-            <div style={{ fontFamily: t.fontHeading, fontSize: 18, color: t.textPrimary }}>🔥 {justCompleted.streak}-day streak!</div>
+            <div style={{ fontFamily: t.fontHeading, fontSize: 18, color: t.textPrimary, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Flame size={18} color="#fb923c" fill="#fb923c" strokeWidth={0} /> {justCompleted.streak}-day streak!
+            </div>
             <div style={{ fontFamily: t.fontBody, fontSize: 13, color: C, fontWeight: 700 }}>+{justCompleted.xp} XP earned</div>
           </motion.div>
         )}

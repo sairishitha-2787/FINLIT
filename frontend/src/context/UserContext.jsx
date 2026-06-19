@@ -180,7 +180,6 @@ export const UserProvider = ({ children }) => {
         type: 'quiz_complete',
         title: 'Quiz Complete',
         description: `${topicData.topic} · ${topicData.score}/${total} (${p}%)`,
-        icon: p >= 80 ? '🎉' : '🎯',
         actionType: 'review_quiz',
         actionTarget: topicData.topic,
       });

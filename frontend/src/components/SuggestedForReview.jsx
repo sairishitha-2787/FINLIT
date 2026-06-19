@@ -5,8 +5,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
+import { Sparkles, ArrowRight, RotateCcw, Flame, Zap, Clock, BookOpen } from 'lucide-react';
 import { useSpacedRepetition } from '../hooks/useSpacedRepetition';
+
+// Urgency icon keys (from spacedRepetition.urgency) → lucide icons.
+const URGENCY_ICON = { flame: Flame, zap: Zap, clock: Clock, book: BookOpen };
+const UrgencyIcon = ({ name, color }) => {
+  const I = URGENCY_ICON[name] || BookOpen;
+  return <I size={11} color={color} style={{ flexShrink: 0 }} />;
+};
 
 const DEFAULT_THEME = {
   surface:     'rgba(255,255,255,0.04)',
@@ -59,7 +66,7 @@ export default function SuggestedForReview({
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: t.fontBody, fontSize: 12, color: t.textMuted }}>
             <span style={{ color: scoreColor(s.lastScore), fontWeight: 700 }}>Last: {s.lastScore}%</span>
             · {s.daysSince === 0 ? 'today' : `${s.daysSince}d ago`}
-            · <span style={{ color: s.urgency.color }}>{s.urgency.icon} {s.urgency.label}</span>
+            · <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: s.urgency.color }}><UrgencyIcon name={s.urgency.icon} color={s.urgency.color} /> {s.urgency.label}</span>
           </span>
           <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={() => goReview(s)}
             style={{ display: 'flex', alignItems: 'center', gap: 6, background: C, color: '#0a0a0a', padding: '8px 14px', borderRadius: Math.min(t.radius, 10), border: 'none', cursor: 'pointer', fontFamily: t.fontHeading, fontSize: 13, fontWeight: 700 }}>
@@ -96,7 +103,7 @@ export default function SuggestedForReview({
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 99, marginBottom: 8,
               background: `${s.urgency.color}1f`, border: `1px solid ${s.urgency.color}55`,
               fontFamily: t.fontBody, fontSize: 10, fontWeight: 700, color: s.urgency.color }}>
-              {s.urgency.icon} {s.urgency.label}
+              <UrgencyIcon name={s.urgency.icon} color={s.urgency.color} /> {s.urgency.label}
             </span>
             <div style={{ fontFamily: t.fontHeading, fontSize: 16, color: t.textPrimary, lineHeight: 1.15, marginBottom: 6 }}>{s.topic}</div>
             <div style={{ fontFamily: t.fontBody, fontSize: 11, color: t.textMuted, marginBottom: 12 }}>

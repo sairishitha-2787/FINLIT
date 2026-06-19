@@ -6,7 +6,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
+import { Lock, Star, Mic, Headphones, Zap, Music } from 'lucide-react';
 import { hexW, hexPathD } from './hexUtils';
 
 const HEX_CLIP_SHARP = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
@@ -93,8 +93,9 @@ function TooltipPortal({ badge, domain, rect, glowColor }) {
           textTransform: 'uppercase', marginBottom: 4,
           color: accentColor,
           fontFamily: isMusic ? "'DM Sans', sans-serif" : nameStyle.fontFamily,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
         }}>
-          ★ Exclusive to {badge.characterExclusive.toUpperCase()}
+          <Star size={10} fill={accentColor} strokeWidth={0} /> Exclusive to {badge.characterExclusive.toUpperCase()}
         </div>
       )}
 
@@ -208,11 +209,11 @@ export default function BadgeCard({ badge, domain = 'gaming', size = 100, glowCo
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   flexShrink: 0,
                 }}>
-                  <span style={{ fontSize: 14 }}>
-                    {badge.characterExclusive === 'luna' ? '🎤'
-                      : badge.characterExclusive === 'jay' ? '🎧'
-                      : badge.characterExclusive === 'cypher' ? '⚡'
-                      : '🎵'}
+                  <span style={{ display: 'inline-flex' }}>
+                    {badge.characterExclusive === 'luna' ? <Mic size={14} color="#0a0a0a" />
+                      : badge.characterExclusive === 'jay' ? <Headphones size={14} color="#0a0a0a" />
+                      : badge.characterExclusive === 'cypher' ? <Zap size={14} color="#0a0a0a" />
+                      : <Music size={14} color="#0a0a0a" />}
                   </span>
                 </div>
                 <p style={{
