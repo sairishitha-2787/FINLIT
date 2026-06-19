@@ -479,13 +479,24 @@ const ScenarioQuizEnvironment = ({
             {/* Card body */}
             <div style={(gm || fm) ? { padding: '24px' } : undefined} className={(gm || fm) ? '' : 'p-6'}>
 
-              {/* Question text */}
+              {/* Per-question scenario setup (distinct from the question itself).
+                  Both fields can contain \n\n line breaks, so preserve them and
+                  always render the full text — never truncate. */}
               {fm ? (
-                <p style={{ fontFamily: FFonts.h, fontSize: 18, fontWeight: 500, color: FColors.deep, lineHeight: 1.55, marginBottom: 24 }}>{q?.question || q?.scenario}</p>
+                <>
+                  {q?.scenario && <p style={{ fontFamily: FFonts.ui, fontSize: 14, color: FColors.body, lineHeight: 1.65, marginBottom: 14, whiteSpace: 'pre-line' }}>{q.scenario}</p>}
+                  {q?.question && <p style={{ fontFamily: FFonts.h, fontSize: 18, fontWeight: 500, color: FColors.deep, lineHeight: 1.55, marginBottom: 24, whiteSpace: 'pre-line' }}>{q.question}</p>}
+                </>
               ) : gm ? (
-                <p style={{ fontFamily: xt.fontB, fontSize: '17px', color: xt.text1, lineHeight: 1.65, marginBottom: '24px', fontWeight: 500 }}>{q?.question || q?.scenario}</p>
+                <>
+                  {q?.scenario && <p style={{ fontFamily: xt.fontB, fontSize: '14px', color: xt.text2, lineHeight: 1.7, marginBottom: '14px', whiteSpace: 'pre-line' }}>{q.scenario}</p>}
+                  {q?.question && <p style={{ fontFamily: xt.fontB, fontSize: '17px', color: xt.text1, lineHeight: 1.65, marginBottom: '24px', fontWeight: 500, whiteSpace: 'pre-line' }}>{q.question}</p>}
+                </>
               ) : (
-                <p className="text-xl font-black text-brutal-black mb-6 leading-snug">{q?.question || q?.scenario}</p>
+                <>
+                  {q?.scenario && <p className="text-base font-semibold text-brutal-black/70 mb-3 leading-relaxed" style={{ whiteSpace: 'pre-line' }}>{q.scenario}</p>}
+                  {q?.question && <p className="text-xl font-black text-brutal-black mb-6 leading-snug" style={{ whiteSpace: 'pre-line' }}>{q.question}</p>}
+                </>
               )}
 
               {/* ── MULTIPLE CHOICE ── */}
