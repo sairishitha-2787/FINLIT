@@ -56,7 +56,18 @@ export default function Glossary({ domain = null }) {
     return GLOSSARY_TERMS
       .filter((t) => (selectedDomain === 'all' ? true : (t.domain === 'global' || t.domain === selectedDomain)))
       .filter((t) => !q || t.term.toLowerCase().includes(q) || t.short.toLowerCase().includes(q) || t.long.toLowerCase().includes(q))
-      .sort((a, b) => a.term.localeCompare(b.term));
+      .sort((a, b) => {
+        // When a specific domain is selected, surface its terms above the
+        // global ones (otherwise the 4 domain terms get buried among 45
+        // globals and the filter looks like it does nothing). Alphabetical
+        // within each group.
+        if (selectedDomain !== 'all' && selectedDomain !== 'global') {
+          const aDomain = a.domain === selectedDomain ? 0 : 1;
+          const bDomain = b.domain === selectedDomain ? 0 : 1;
+          if (aDomain !== bDomain) return aDomain - bDomain;
+        }
+        return a.term.localeCompare(b.term);
+      });
   }, [query, selectedDomain]);
 
   const totalSets = Math.max(1, Math.ceil(filtered.length / SET_SIZE));
