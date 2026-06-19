@@ -183,6 +183,7 @@ const ScenarioQuizEnvironment = ({
     } else if (!isRetry && retryAvailable) {
       setLastResult({ correct: false, explanation: q.feedback?.wrong || 'Try again!' });
       setRetry(false);
+      setCalcInput('');   // clear the wrong value so Try Again is a fresh attempt
       setStage('retry');
     } else {
       setLastResult({ correct: false, explanation: q.feedback?.wrong || 'Check the formula and try again.' });
