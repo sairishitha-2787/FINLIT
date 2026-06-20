@@ -1,191 +1,126 @@
-# FINLIT — AI-Powered Financial Literacy Platform
+# FINLIT — Gamified Financial Literacy Platform
 
-> Personalized finance education through interest-based analogies. Learn budgeting through gaming, investing through sports, or credit through fashion — whatever clicks for you.
+Master financial concepts through your interests. Learn budgeting through gaming, investing through sports, or credit through fashion — whatever clicks for you.
 
 ## Overview
 
-FINLIT makes financial literacy accessible by meeting learners where they are. Instead of dry textbook explanations, every concept is taught using analogies drawn from the user's own interests. A gamer learns about compound interest through XP multipliers. A fashion lover understands diversification through capsule wardrobes.
+FINLIT is a gamified financial-literacy platform with 4 interest-based domains (Gaming, Music, Fashion, Sports). Each domain teaches the same financial concepts using domain-specific analogies, characters, and scenarios. AI generates fresh explanations and scenario quizzes; a gamification layer (XP, levels, streaks, badges) keeps learners engaged. Data persists to Supabase.
 
-The platform uses Hugging Face's Mistral-7B model to generate fresh, personalized explanations on demand, a 3-level quiz system with GIF feedback, and a gamification layer (XP, levels, streaks, badges) to keep learners engaged — all persisted to Supabase.
-
-## Features
-
-- **11 interest domains** — Gaming, Music, Sports, Fashion, CSE, Writing, Fitness, Dance, Travel, Food, Film
-- **AI-generated explanations** — Hugging Face Mistral-7B creates unique analogies per topic + interest combination
-- **3-level quiz system** — Understanding → Application → Boss Fight, with Giphy-powered GIF feedback
-- **Gamification** — XP, 10 levels, daily streak tracking, 6 unlockable badges (persisted to Supabase)
-- **Supabase backend** — Auth (email/password), user profiles, progress tracking, quiz results
-- **Cosmic onboarding** — 5-step flow that personalizes the entire experience
-- **Floating AI mentor** — Contextual chatbot available throughout the learning flow
+**Core Features:**
+- 🎮 4 interest domains (Gaming, Music, Fashion, Sports) — each fully themed
+- 🤖 AI-generated explanations + scenario quizzes (Groq) with Giphy feedback
+- 📚 60-term glossary (searchable, organized in 3 sets) + a Daily Glossary card
+- 🏆 Mastery gates (70% quiz threshold to unlock the next topic)
+- ⭐ Domain-specific milestone badges (awarded on topic completion)
+- 🎯 Daily Cipher challenge (per-domain, one per 24 hours) + streaks
+- 📈 XP tracking, 10 levels, daily-streak bonuses
+- 🧮 In-quiz calculator for calculation questions
+- 👾 Star-weighted boss fights (3★=1, 4★=1.5, 5★=2 toward the pass score)
+- 🔒 Auto-logout after 3 hours of inactivity
+- 📊 Event logging (quiz submissions, badge awards, streak milestones)
+- 🔔 In-app notification center + bell
+- ⚡ App-wide error boundary + optional Sentry reporting
+- 🧠 Floating AI mentor (contextual chatbot)
+- 📱 Responsive design (mobile, tablet, desktop)
 
 ## Tech Stack
 
-| Layer | Technologies |
-|---|---|
-| Frontend | React 18, Tailwind CSS, Framer Motion, React Router |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 (CRA), Tailwind CSS, Framer Motion, Lucide icons, React Router v6 |
 | Backend | Node.js, Express |
-| Database | Supabase (PostgreSQL + Auth) |
-| AI | Hugging Face Inference API (Mistral-7B-Instruct) |
-| Media | Giphy API |
-| Animations | canvas-confetti, Framer Motion |
+| Database / Auth | Supabase (PostgreSQL + Auth, Row-Level Security) |
+| AI | Groq (`llama-3.3-70b-versatile`) — explanations, scenario quizzes, mentor |
+| Media | Giphy API (quiz feedback GIFs) |
+| Error reporting | Sentry (`@sentry/react`, optional/env-gated) |
+| State | React Context (Auth, User, Gamification, Theme, Toast) |
 
 ## Project Structure
 
-```
+```text
 FINLIT/
-├── backend/
-│   ├── config/
-│   │   ├── interestDomains.js    # 11 interest domains + 30+ financial topics
-│   │   └── supabase.js           # Supabase admin client (service role)
-│   ├── routes/
-│   │   └── auth.js               # Signup, login, logout, token validation
-│   ├── services/
-│   │   ├── huggingfaceService.js # AI explanation + quiz generation
-│   │   └── giphyService.js       # GIF fetching for quiz feedback
-│   ├── server.js                 # Express server + all API endpoints
-│   └── test-supabase.js          # Connection health check script
-│
+├── backend/                       # Express API (AI, auth proxy, GIFs)
+│   ├── config/                    # supabase (service role), domain vocab, scenario templates
+│   ├── routes/                    # auth, quiz, mentor, chapters, recommendations
+│   ├── services/                  # scenarioGenerator, explanationGenerator,
+│   │                              #   mentorPromptBuilder, giphyService, cleanupService
+│   └── server.js
 └── frontend/
-    ├── src/
-    │   ├── components/
-    │   │   ├── dashboard/        # BentoDashboard, TopicSelector
-    │   │   ├── learning/         # ExplanationDisplay, JargonFlashcard
-    │   │   ├── mentor/           # FloatingMentor chatbot
-    │   │   ├── onboarding/       # InterestSelector
-    │   │   ├── quiz/             # NeoQuizEnvironment, AnimatedFeedback, QuizCard
-    │   │   └── shared/           # Button, LevelUpModal, LoadingAnimation, XPPopup
-    │   ├── config/
-    │   │   └── supabase.js       # Supabase browser client (anon key)
-    │   ├── context/
-    │   │   ├── AuthContext.jsx   # Auth state + signup/login/logout methods
-    │   │   └── UserContext.jsx   # User profile, progress, onboarding state
-    │   ├── hooks/
-    │   │   └── useGamification.js # XP, levels, streaks, badges (Supabase-backed)
-    │   ├── pages/
-    │   │   ├── Landing.jsx       # Entry page with cosmic particle animation
-    │   │   ├── Signup.jsx        # Registration with password strength meter
-    │   │   ├── Login.jsx         # Login with "forgot password" link
-    │   │   ├── ForgotPassword.jsx
-    │   │   ├── Onboarding.jsx    # 5-step personalization flow
-    │   │   ├── Dashboard.jsx     # Bento grid hub
-    │   │   └── Learning.jsx      # Explanation + quiz flow
-    │   ├── services/
-    │   │   ├── api.js            # Calls to backend (explain, quiz, GIFs)
-    │   │   ├── profileService.js # CRUD for user_profiles table
-    │   │   └── progressService.js # Saves to progress + quiz_results tables
-    │   └── utils/
-    │       ├── constants.js
-    │       └── storage.js        # localStorage utilities
-    ├── tailwind.config.js        # Neo-Brutalist + cosmic design tokens
-    └── package.json
+    └── src/
+        ├── components/
+        │   ├── quiz/              # NeoQuizEnvironment, ScenarioQuizEnvironment,
+        │   │                      #   AnimatedFeedback, QuizCard, Calculator
+        │   ├── ErrorBoundary.jsx / ErrorFallback.jsx
+        │   ├── Toast.jsx / NotificationBell.jsx / NotificationIcon.jsx
+        │   ├── DailyGlossaryCard.jsx / DailyChallengeCard.jsx / SuggestedForReview.jsx
+        │   ├── achievements/      # AchievementsPage, BadgeCard, BadgeSection
+        │   └── mentor/            # FloatingMentor
+        ├── context/
+        │   ├── AuthContext.jsx    # login/logout + inactivity auto-logout gate
+        │   ├── UserContext.jsx    # profile, progress, badge awarding
+        │   ├── ThemeContext.jsx   # ThemeProvider + useTheme (domain theming)
+        │   └── ToastProvider.jsx  # toast queue + useToast
+        ├── contexts/              # Domain/Fashion/Sports/Music character contexts
+        ├── hooks/
+        │   ├── useGamification.js # GamificationProvider + useGamification (XP/level/badges)
+        │   ├── useBadgeTracker.js / useDailyChallenge.js / useMasteryProgress.js
+        │   └── useNotifications.js / useSpacedRepetition.js
+        ├── layouts/               # GamingLayout, MusicLayout, FashionLayout, SportsLayout
+        ├── pages/
+        │   ├── Landing / Login / Signup / ForgotPassword
+        │   ├── Onboarding.jsx     # questionnaire → mentor → demo quiz (with skip)
+        │   ├── gaming|music|fashion|sports/  # Dashboard, Map/Playbook, Learning, Settings, Badges
+        │   ├── Glossary.jsx       # 60 global terms, 3 sets, search
+        │   ├── NotFound.jsx       # domain-aware 404
+        │   └── NotificationCenter.jsx
+        ├── services/
+        │   ├── api.js             # backend calls (explain, quiz, gifs, mentor)
+        │   ├── eventsService.js   # analytics event logging
+        │   ├── badgeService.js    # badge persistence (user_badges)
+        │   ├── progressService.js / profileService.js / notificationsService.js
+        │   └── activityTracker.js # inactivity timeout
+        ├── config/
+        │   ├── badgesConfig.js    # gaming/fashion/sports badge configs
+        │   ├── badgeRules.js      # milestone → badge mapping
+        │   └── supabase.js        # browser client (anon key)
+        ├── data/                  # glossaryTerms.js (60 terms), musicBadges.js, topics
+        └── styles/                # per-domain theme tokens + normalizeTheme.js
 ```
 
-## Database Schema
-
-Six tables in Supabase (PostgreSQL):
+## Database Schema (Supabase / PostgreSQL)
 
 | Table | Purpose |
-|---|---|
-| `user_profiles` | Name, interest domain, difficulty, goals |
-| `user_streaks` | XP total, current level, streak count, last active date |
-| `user_badges` | Unlocked badge records per user |
-| `progress` | Completed topic records with score |
+|-------|---------|
+| `auth.users` | Authentication (managed by Supabase) |
+| `user_profiles` | Name, primary interest/domain, difficulty, goals |
+| `user_streaks` | XP total, current level, streak count, last active |
+| `progress` | Completed-topic records + scores |
 | `quiz_results` | Quiz completion records per topic |
-| `mentor_conversations` | (Reserved for future mentor history) |
+| `user_badges` | Earned badges per user |
+| `daily_challenges` | Per-user/per-domain Daily Cipher state |
+| `defeated_bosses` | Boss-defeat records |
+| `events` | Analytics: quiz_submitted, badge_earned, streak_milestone, session_started, … |
+| `notifications` | In-app notification queue |
+| `mentor_conversations` | Mentor chat history |
 
-Row Level Security is enabled on all tables. The backend uses the service role key; the frontend uses the anon key with RLS policies.
+Row-Level Security is enabled on all tables (each user only sees their own rows). The backend uses the **service role** key; the frontend uses the **anon** key. Note: tables created via the SQL editor also need API-role grants — see `supabase/migrations/` (`grant_table_access.sql`, `grant_progress_access.sql`, `add_events.sql`).
 
-## Environment Variables
+## Quiz System (3 Levels per Topic)
 
-**`backend/.env`**
-```env
-HUGGINGFACE_API_KEY=your_hf_key_here
-GIPHY_API_KEY=your_giphy_key_here
-PORT=3001
-FRONTEND_URL=http://localhost:3000
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your_service_role_key_here
-```
+1. **Level 1 — Understanding** (multiple choice, 2 questions) — concepts via domain analogies.
+2. **Level 2 — Application** (calculation, 2 questions) — real-world math, with the in-quiz calculator.
+3. **Level 3 — Boss Fight** (open-ended scenario, 1 question) — AI-graded, star-rated.
 
-**`frontend/.env`**
-```env
-REACT_APP_API_URL=http://localhost:3001/api
-REACT_APP_SUPABASE_URL=https://your-project.supabase.co
-REACT_APP_SUPABASE_ANON_KEY=your_anon_key_here
-```
+**Pass threshold: ≥70% (≥3.5 of 5).**
+- Regular questions: 1 point each.
+- Boss: 3★ = 1, 4★ = 1.5, 5★ = 2 points.
+- Total = regular correct + boss weight; ≥3.5 ⇒ pass and the next topic unlocks.
 
-## Setup
-
-### 1. Clone and install dependencies
-
-```bash
-git clone https://github.com/sairishitha-2787/FINLIT.git
-cd FINLIT
-
-# Backend
-cd backend && npm install
-
-# Frontend
-cd ../frontend && npm install
-```
-
-### 2. Configure environment variables
-
-Copy the env templates above into `backend/.env` and `frontend/.env` and fill in your keys.
-
-**Required API keys:**
-- [Hugging Face](https://huggingface.co/settings/tokens) — free, use a read token
-- [Giphy](https://developers.giphy.com/) — free tier
-- [Supabase](https://supabase.com/) — free tier, create a new project
-
-### 3. Configure Supabase
-
-In your Supabase project:
-1. Disable email confirmation: **Authentication → Providers → Email → Disable "Confirm email"**
-2. Run the table creation SQL from the project schema
-3. Grant table permissions: run `GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres, anon, authenticated, service_role;`
-
-### 4. Run the application
-
-```bash
-# Terminal 1 — Backend
-cd backend && npm start   # http://localhost:3001
-
-# Terminal 2 — Frontend
-cd frontend && npm start  # http://localhost:3000
-```
-
-## API Reference
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | Health check |
-| `GET` | `/api/interests` | All 11 interest domains |
-| `GET` | `/api/topics?difficulty=beginner` | Topics by difficulty |
-| `POST` | `/api/explain` | Generate personalized explanation |
-| `POST` | `/api/quiz` | Generate 5-question quiz |
-| `GET` | `/api/gifs/correct` | Celebration GIF |
-| `GET` | `/api/gifs/wrong` | Encouragement GIF |
-| `GET` | `/api/gifs/celebration` | Quiz completion GIF |
-| `POST` | `/api/recommend` | Topic recommendations |
-| `POST` | `/api/auth/signup` | Register new user |
-| `POST` | `/api/auth/login` | Login |
-| `POST` | `/api/auth/logout` | Logout |
-| `GET` | `/api/auth/user` | Validate token + fetch profile |
-
-## Quiz System
-
-Each topic generates 5 questions across 3 progressive levels:
-
-- **Level 1 — Understanding (2 questions):** Conceptual questions using interest-based analogies
-- **Level 2 — Application (2 questions):** Real-world calculations and scenario problems  
-- **Level 3 — Boss Fight (1 question):** Complex multi-variable decision-making scenario
-
-Correct answers trigger a celebration GIF + XP award. Wrong answers show an encouragement GIF + explanation.
+Application/scenario questions show the scenario setup first, then the question.
 
 ## Gamification
 
-| Action | XP Earned |
+| XP Action | Reward |
 |---|---|
 | Read explanation | +10 XP |
 | Use mentor chat | +20 XP |
@@ -193,38 +128,102 @@ Correct answers trigger a celebration GIF + XP award. Wrong answers show an enco
 | Perfect quiz score | +50 XP |
 | Daily streak bonus | +25 XP |
 
-10 levels with thresholds: 100 → 250 → 500 → 1,000 → 1,750 → 2,750 → 4,000 → 5,500 → 7,500 → 10,000 XP
+10 levels: 100 → 250 → 500 → 1,000 → 1,750 → 2,750 → 4,000 → 5,500 → 7,500 → 10,000 XP.
 
-**Badges:** First Lesson, Perfect Score, 3-Day Streak, Week Warrior, Level 5, Topic Master
+**Milestone badges** are awarded per domain on topic completion (and 100% scores), e.g.:
+- 1 topic — First Steps / First Stream / First Look / First Whistle
+- 5 topics — Streaming Enthusiast / Week One Warrior / Team Player
+- 10 topics — Topic Master / Chart Climber / Iron Will
+- 100% score — Perfect Score / Clean Sheet / Perfectionist / Perfect Form
 
-## Design System
+## Domain Theming
 
-FINLIT uses two visual themes:
+Each domain has unique colors, fonts, and UI:
 
-**Neo-Brutalist** (dashboard, learning, quiz)
-- Bold 4px black borders everywhere
-- Hard box shadows: `8px 8px 0px #000`
-- Zero border radius
-- High-contrast palette: `#3352FF` blue, `#FF90E8` pink, `#70FFCA` green
+| Domain | Accent | Heading font |
+|---|---|---|
+| Gaming | Blue/mint | Orbitron |
+| Music | Violet (per-cluster) | Bebas Neue / Space Mono / Cormorant |
+| Fashion | Pink | Playfair Display |
+| Sports | Amber | Bebas Neue |
 
-**Cosmic** (auth pages, onboarding)
-- Deep navy/purple gradients
-- Frosted glass cards
-- Floating particle animations
-- Purple glow effects
+`ThemeContext` + `normalizeTheme.js` expose a unified theme shape, so shared components (Daily Glossary card, toasts, etc.) auto-adopt the active domain's look.
 
-## Interest Domains
+## Key Features Explained
 
-| Domain | Alias Keywords |
-|---|---|
-| Gaming | gaming, games, esports |
-| Music | music, production |
-| Sports | sports, gym, fitness |
-| Fashion | fashion, style |
-| CSE | cse, cs, programming, coding, tech |
-| Writing | writing, books, reading |
-| Fitness | fitness, dance |
-| Travel | travel |
-| Food | food, cooking |
-| Film | film, movies |
-| General | (default fallback) |
+**Mastery gates (70%)** — a topic unlocks only after the previous one is passed at ≥70%.
+
+**Auto-logout (3h inactivity)** — every logged event stamps `finlit_last_activity`; on load, if >3h have passed the user is signed out (→ `/login` with a "Session expired" notice).
+
+**Error boundary** — render crashes show a friendly fallback with Refresh / Go Home instead of a blank screen; reported to Sentry when a DSN is configured.
+
+**Domain-aware 404** — `/gaming/anything-invalid` → 404 with "Back to Gaming"; `/anything-invalid` → "Go Home".
+
+## Setup
+
+### Prerequisites
+- Node.js 16+
+- Supabase project (free tier)
+- Groq API key, Giphy API key
+
+### Environment variables
+
+**`backend/.env`**
+```env
+PORT=3001
+FRONTEND_URL=http://localhost:3000
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your_service_role_key
+GROQ_API_KEY=your_groq_key
+GIPHY_API_KEY=your_giphy_key
+```
+
+**`frontend/.env`**
+```env
+REACT_APP_API_URL=http://localhost:3001/api
+REACT_APP_SUPABASE_URL=https://your-project.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+# Optional — error reporting; leave blank to disable
+REACT_APP_SENTRY_DSN=
+```
+
+### Configure Supabase
+1. Disable email confirmation (**Authentication → Providers → Email**).
+2. Create the tables listed above.
+3. Run the SQL in `supabase/migrations/` (table creation + the GRANT migrations) in the SQL editor.
+
+### Run locally
+```bash
+# Terminal 1 — backend
+cd backend && npm install && npm run dev    # http://localhost:3001
+
+# Terminal 2 — frontend
+cd frontend && npm install && npm start     # http://localhost:3000
+```
+
+### Deploy
+- **Frontend** → Vercel/Netlify (root directory `frontend`, add the `REACT_APP_*` env vars).
+- **Backend** → any Node host (Render/Railway/Fly). Point the frontend's `REACT_APP_API_URL` at the deployed backend URL. The app needs the backend running for AI explanations, quiz generation, GIFs, and the mentor.
+
+## Known Limitations & Future Work
+
+**Not yet wired:** boss-defeat / XP-threshold / average-score badges (need extra tracking); the rich per-domain badge sets are largely display-only beyond the milestone badges. Multi-language, native mobile, and offline mode are out of scope.
+
+**Post-launch:** analytics dashboard over the `events` table, in-app feedback form, performance monitoring, content expansion (more glossary terms / topics).
+
+## Pre-ship Checklist
+- [ ] Each domain: onboarding → quiz (≥70%) → badge on achievements page → next topic unlocks
+- [ ] <70% routes to review; ≥70% passes
+- [ ] Calculator opens on calculation questions and copies the result
+- [ ] Glossary: 3 sets, search works, related terms clickable
+- [ ] Auto-logout after 3h idle; logout from settings works
+- [ ] `/anything-invalid` shows the 404
+- [ ] `npm run build` passes; no red console errors (lint warnings OK)
+
+## License
+
+MIT — see `LICENSE`.
+
+---
+
+Maintained by [@sairishitha-2787](https://github.com/sairishitha-2787). Built for financial-literacy learners everywhere.
