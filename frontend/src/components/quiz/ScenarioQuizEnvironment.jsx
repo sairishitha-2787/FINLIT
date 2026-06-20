@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 import { evaluateOpenEnded, getCorrectGif, getWrongGif } from '../../services/api';
 import useGamification from '../../hooks/useGamification';
 import { gamingTheme } from '../../styles/gamingTheme';
+import CalculatorModal from '../Calculator';
 
 const FALLBACK_GIFS = {
   correct: 'https://media.giphy.com/media/67ThRZlYBvibtdF9JH/giphy.gif',
@@ -84,6 +85,7 @@ const ScenarioQuizEnvironment = ({
   const [gifLoading, setGifLoading]   = useState(false);
   const bossFireRef                   = useRef(false);
   const submittedRef                  = useRef(false); // one-shot guard against double-submit
+  const [showCalculator, setShowCalculator] = useState(false);
 
   const q = questions[idx];
   const level = q?.level || 1;
@@ -499,6 +501,30 @@ const ScenarioQuizEnvironment = ({
                   {q?.question && <p className="text-xl font-black text-brutal-black mb-6 leading-snug" style={{ whiteSpace: 'pre-line' }}>{q.question}</p>}
                 </>
               )}
+
+              {/* ── Calculator (calculation questions) ── */}
+              {q?.type === 'calculation' && (stage === 'answering' || stage === 'retry') && (
+                <button
+                  onClick={() => setShowCalculator(true)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 16,
+                    padding: '8px 14px', borderRadius: 10, cursor: 'pointer',
+                    fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
+                    background: fm ? `rgba(${hexToRgbStr(fa)},0.12)` : gm ? `rgba(${hexToRgbStr(levelAccent)},0.12)` : '#fff',
+                    border: fm ? `1px solid rgba(${hexToRgbStr(fa)},0.3)` : gm ? `1px solid rgba(${hexToRgbStr(levelAccent)},0.3)` : '2px solid #000',
+                    color: fm ? FColors.deep : gm ? levelAccent : '#000',
+                    fontFamily: fm ? FFonts.ui : gm ? xt.fontL : 'inherit',
+                  }}
+                >
+                  <Calculator size={14} /> Calculator
+                </button>
+              )}
+
+              <CalculatorModal
+                isOpen={showCalculator}
+                onClose={() => setShowCalculator(false)}
+                onCopyResult={(value) => setCalcInput(value)}
+              />
 
               {/* ── MULTIPLE CHOICE ── */}
               {q?.type === 'multiple_choice' && stage === 'answering' && (
