@@ -11,6 +11,8 @@ import { saveTopicProgress, fetchUserProgress } from '../services/progressServic
 import { logNotification } from '../services/notificationsService';
 import { logQuizSubmitted, logTopicUnlocked, logSessionStarted } from '../services/eventsService';
 import { MASTERY_THRESHOLD } from '../hooks/useMasteryProgress';
+import { evaluateBadgeRules } from '../config/badgeRules';
+import { awardBadges } from '../services/badgeService';
 
 const UserContext = createContext();
 
@@ -193,6 +195,17 @@ export const UserProvider = ({ children }) => {
       if (p >= MASTERY_THRESHOLD) {
         logTopicUnlocked(user.id, evtDomain, { topicName: topicData.topic, percent: p });
       }
+
+      // Award the domain's milestone badges (topics-completed + perfect score)
+      // so they actually appear on the achievements page. Idempotent.
+      const newCount = completedTopics.includes(topicData.topic)
+        ? completedTopics.length
+        : completedTopics.length + 1;
+      const earned = evaluateBadgeRules(evtDomain, {
+        topics: newCount,
+        isPerfect: total > 0 && topicData.score === total,
+      });
+      if (earned.length) awardBadges(user.id, earned);
     }
     return true;
   };
