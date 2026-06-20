@@ -41,6 +41,10 @@ const FColors = { deep: '#9d1f4a', mid: '#d4537e', body: '#b0627a', label: '#c98
 
 const scenarioProgressKey = (topic) => `finlit_scenario_prog_${(topic || '').replace(/\s+/g, '_')}`;
 
+// Boss fight is star-weighted toward the score: 3★ = 1, 4★ = 1.5, 5★ = 2
+// correct-answer equivalents (below 3★ contributes nothing).
+const bossStarWeight = (stars) => (stars >= 5 ? 2 : stars >= 4 ? 1.5 : stars >= 3 ? 1 : 0);
+
 const ScenarioQuizEnvironment = ({
   questions,
   topic,
@@ -197,8 +201,9 @@ const ScenarioQuizEnvironment = ({
     if (!openInput.trim()) return;
     setEvaluating(true);
     setStage('evaluating');
+    let result;
     try {
-      const result = await evaluateOpenEnded({
+      result = await evaluateOpenEnded({
         topic,
         domain: '',
         scenarioContext: scenarioContext || '',
@@ -206,13 +211,15 @@ const ScenarioQuizEnvironment = ({
         evaluationCriteria: q.evaluationCriteria || [],
         userAnswer: openInput,
       });
-      setOpenEval(result);
     } catch {
-      setOpenEval({ score: 3, passed: true, feedback: 'Great effort!', strengths: [], missed: [] });
-    } finally {
-      setEvaluating(false);
-      setStage('boss_result');
+      result = { score: 3, passed: true, feedback: 'Great effort!', strengths: [], missed: [] };
     }
+    setOpenEval(result);
+    // Add the star-weighted boss contribution to the overall score so the
+    // final pass check (>=70%) counts the boss alongside the regular questions.
+    setScore((s) => s + bossStarWeight(result.score || 0));
+    setEvaluating(false);
+    setStage('boss_result');
   }
 
   function handleNext() {

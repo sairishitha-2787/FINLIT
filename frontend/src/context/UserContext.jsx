@@ -169,7 +169,9 @@ export const UserProvider = ({ children }) => {
     if (user) {
       saveTopicProgress(user.id, {
         topic: topicData.topic,
-        score: topicData.score,
+        // Round for storage — boss-weighted scores can be fractional (e.g. 3.5),
+        // which an integer column would reject (and silently drop the row).
+        score: topicData.score == null ? null : Math.round(topicData.score),
         totalQuestions: topicData.totalQuestions,
       }).then(({ error }) => {
         if (error) console.error('Progress save error:', error.message);
