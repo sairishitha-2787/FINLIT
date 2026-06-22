@@ -87,6 +87,10 @@ app.use(cors({
       return callback(null, true);
     }
     if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    // Allow Vercel preview + production deploys (any *.vercel.app subdomain).
+    try {
+      if (new URL(origin).hostname.endsWith('.vercel.app')) return callback(null, true);
+    } catch { /* malformed origin → fall through to reject */ }
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
