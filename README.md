@@ -32,5 +32,3 @@ Environment variables go in `backend/.env` and `frontend/.env`; table creation a
 ## Where it stands
 
 The core loop — onboarding, quizzing, earning badges, unlocking the next topic — works end to end, with auto-logout after 3 hours idle and a domain-aware 404 page. A few things aren't wired up yet: boss-defeat and score-threshold badges need extra tracking, and the richer per-domain badge sets are mostly display-only beyond the milestone badges. No mobile app or offline mode planned for now.
-
-MIT licensed.
