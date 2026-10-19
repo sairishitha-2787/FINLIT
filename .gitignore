@@ -49,9 +49,9 @@ tmp/
 temp/
 
 # Raw asset staging directories (not part of project structure)
-BADGES/
-CHARACTERS/
-ZONES/
+/BADGES/
+/CHARACTERS/
+/ZONES/
 
 # Nested sub-project at repo root
 FINLIT/
