@@ -1,8 +1,8 @@
 // Music domain badge config — Batch 1 (42 badges)
-// Image paths: /badges/music/[id].png
-// Drop cropped PNGs into public/badges/music/ and they load automatically.
+// Image paths: /BADGES/music/[id].png (case-sensitive on Vercel)
+// Drop cropped PNGs into public/BADGES/music/ and they load automatically.
 
-const M = (id) => ({ imagePath: `/badges/music/${id}.png` });
+const M = (id) => ({ imagePath: `/BADGES/music/${id}.png` });
 
 // ── Category A: Milestone Badges (15) ─────────────────────────────────────────
 const MILESTONE_BADGES = [
