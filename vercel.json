@@ -1,6 +1,10 @@
 {
-  "experimentalServices": {
-    "frontend": { "root": "frontend", "routePrefix": "/", "framework": "create-react-app" },
-    "backend": { "root": "backend", "routePrefix": "/_/backend", "framework": "express" }
-  }
+  "services": {
+    "frontend": { "root": "frontend/", "framework": "create-react-app" },
+    "backend": { "root": "backend/", "framework": "express" }
+  },
+  "rewrites": [
+    { "source": "/_/backend/(.*)", "destination": { "service": "backend" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
+  ]
 }

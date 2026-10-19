@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name })
       });
-      const json = await res.json();
+      const json = await readJson(res);
       if (!json.success) throw new Error(json.error);
 
       // Auto sign-in after account creation
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password }),
         }
       );
-      const json = await res.json();
+      const json = await readJson(res);
       if (!json.success) throw new Error(json.error);
 
       // Hydrate the local Supabase client with the session returned by the backend
@@ -127,6 +127,17 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// Backend replies are JSON; anything else (empty 405, HTML fallback page) means
+// the request never reached the API, so surface that instead of a parse error.
+async function readJson(res) {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`Can't reach the server (HTTP ${res.status}). Please try again later.`);
+  }
+}
 
 function formatError(message) {
   if (message.includes('Invalid login credentials')) return 'Invalid email or password';

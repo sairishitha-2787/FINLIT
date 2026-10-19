@@ -35,6 +35,17 @@ const app  = express();
 const PORT = process.env.PORT || 3001;
 const isProd = process.env.NODE_ENV === 'production';
 
+// ── Vercel route prefix ──────────────────────────────────────────────────────
+// On Vercel the backend is mounted at /_/backend and receives the full path.
+// Strip the prefix so routes stay /api/... both locally and in production.
+const VERCEL_PREFIX = '/_/backend';
+app.use((req, _res, next) => {
+  if (req.url === VERCEL_PREFIX || req.url.startsWith(VERCEL_PREFIX + '/') || req.url.startsWith(VERCEL_PREFIX + '?')) {
+    req.url = req.url.slice(VERCEL_PREFIX.length) || '/';
+  }
+  next();
+});
+
 // ── Security headers ─────────────────────────────────────────────────────────
 app.use(helmet({
   contentSecurityPolicy: {
@@ -80,12 +91,10 @@ const ALLOWED_ORIGINS = [
 
 app.use(cors({
   origin(origin, callback) {
-    // In production: reject requests with no origin (prevents server-side abuse)
-    // In development: allow no-origin for curl/Postman convenience
-    if (!origin) {
-      if (isProd) return callback(new Error('CORS: direct server-to-server calls not permitted'));
-      return callback(null, true);
-    }
+    // No Origin header: same-origin GETs from our own frontend (served from the
+    // same Vercel domain) and non-browser clients. CORS doesn't apply to them;
+    // requireAuth and the rate limiters do the actual protecting.
+    if (!origin) return callback(null, true);
     if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
     // Allow Vercel preview + production deploys (any *.vercel.app subdomain).
     try {
